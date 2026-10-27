@@ -37,6 +37,7 @@ def _parser() -> argparse.ArgumentParser:
         if command == "export":
             sources = sub.add_mutually_exclusive_group(required=True)
             sources.add_argument("--source-bundle", type=Path)
+            sources.add_argument("--run-root", type=Path, help="verified fitted run store containing RUN_ID/attempts/ATTEMPT_ID/checkpoints")
             sources.add_argument("--teacher-assets", type=Path)
             sub.add_argument("--teacher-manifest-sha256")
             sub.add_argument("--runtime-spec", type=Path)

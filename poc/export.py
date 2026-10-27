@@ -19,7 +19,7 @@ class _Config:
         return dict(self.__dict__)
 
 
-def _load_scientific(path, manifest):
+def _load_scientific(path, manifest, *, values=None):
     import torch
     from torch import nn
     from safetensors.torch import load_file
@@ -35,8 +35,9 @@ def _load_scientific(path, manifest):
     model.config = _Config(raw['config'])
     model.head_dim, model.rope_theta = raw['head_dim'], raw['rope_theta']
     model.tokenizer_digest = raw['tokenizer_digest']
-    values = {}
-    for file in sorted({o['file'] for o in raw['owners']}): values.update(load_file(path/file,device='cpu'))
+    if values is None:
+        values = {}
+        for file in sorted({o['file'] for o in raw['owners']}): values.update(load_file(path/file,device='cpu'))
     owners = {}
     for record in raw['owners']:
         tensor = values[record['name']]
@@ -103,14 +104,25 @@ def _load_scientific(path, manifest):
 
 
 def export_command(args) -> int:
-    """Explicit source export; run/attempt are provenance labels until fitting exists."""
+    """Resolve an owned fitted generation, or retain explicit-source provenance."""
     import hashlib
     import json
     from poc.bundle import _canonical, _read_json, load_bundle, verify_bundle
     from poc.contracts import thaw
     receipt_path = args.out.with_name(args.out.name+'.receipt.json')
     if receipt_path.exists(): raise FileExistsError(receipt_path)
-    if args.source_bundle is not None:
+    fitted = None
+    if args.run_root is not None:
+        if args.runtime_spec is None:
+            from poc.config import ConfigError
+            raise ConfigError('--run-root requires --runtime-spec')
+        from poc.checkpoint import resolve_fitted_run, checkpoint_decoder
+        fitted, checkpoint_ref = resolve_fitted_run(args.run_root,args.run,args.attempt)
+        decoder = checkpoint_decoder(fitted)
+        runtime = RuntimeSpec(**_read_json(args.runtime_spec))
+        source_digest = checkpoint_ref.manifest_sha256
+        kind = 'verified_fitted_checkpoint'
+    elif args.source_bundle is not None:
         manifest = verify_bundle(args.source_bundle)
         source_digest = hashlib.sha256((args.source_bundle/'manifest.json').read_bytes()).hexdigest()
         decoder = load_bundle(args.source_bundle,backend='torch')
@@ -132,6 +144,12 @@ def export_command(args) -> int:
                'source_kind':kind,'source_manifest_sha256':source_digest,
                'bundle_manifest_sha256':ref.manifest_sha256,'fitted_checkpoint_resolved':False,
                'scope':'floating canonical export; native deployment requires separate MLX qualification'}
+    if fitted is not None:
+        receipt.update(run_id=args.run,attempt_id=args.attempt,fitted_checkpoint_resolved=True,
+            checkpoint_manifest_sha256=checkpoint_ref.manifest_sha256,
+            fitted_candidate_digest=fitted.candidate_digest,fit_step=fitted.step,
+            fit_valid_target_presentations=fitted.target_cursor)
+        receipt.pop('run_label');receipt.pop('attempt_label')
     receipt_path.write_bytes(_canonical(receipt))
     print(json.dumps({'bundle':ref.directory,'manifest_sha256':ref.manifest_sha256,'receipt':str(receipt_path)},sort_keys=True))
     return 0

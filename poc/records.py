@@ -49,7 +49,7 @@ def locked_ledger(path: Path):
             fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
 
 
-def read_rows(stream) -> list[dict]:
+def read_rows(stream, *, first_event_id: int = 1) -> list[dict]:
     data = stream.read()
     if data and not data.endswith(b"\n"):
         raise RecordError("truncated ledger tail; retained for diagnosis")
@@ -58,7 +58,7 @@ def read_rows(stream) -> list[dict]:
     except (ValueError, UnicodeError) as exc:
         raise RecordError("invalid ledger JSON; retained for diagnosis") from exc
     if any(not isinstance(row, dict) or type(row.get("event_id")) is not int or row["event_id"] != index
-           for index, row in enumerate(rows, 1)):
+           for index, row in enumerate(rows, first_event_id)):
         raise RecordError("nonmonotonic ledger event IDs")
     return rows
 

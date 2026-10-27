@@ -146,16 +146,19 @@ class ProbePolicy:
 
 @contextmanager
 def _charged(recorder, **counts):
-    """Preflight then durably charge dispatched work on success, error or interrupt."""
+    """Persist dispatched counts before execution; retain them on hard termination."""
+    prepaid=dict(counts)
     if recorder is not None:
-        recorder.check(CostRecord(**counts))
+        recorder.check(CostRecord(**prepaid))
+        recorder.record(CostRecord(**prepaid))
     start = time.monotonic()
     try:
         yield counts
     finally:
         if recorder is not None:
             elapsed = time.monotonic()-start
-            recorder.record(CostRecord(wall_seconds=elapsed,search_seconds=elapsed if counts.get('search_proposals') else 0,**counts))
+            additional={key:value-prepaid.get(key,0) for key,value in counts.items()}
+            recorder.record(CostRecord(wall_seconds=elapsed,search_seconds=elapsed if counts.get('search_proposals') else 0,**additional))
 
 
 def _encode(tokenizer, text):
@@ -352,18 +355,26 @@ def prefix_for_probe(decoder: DecoderAdapter,batch: Batch,depth: int,*,source: s
 
 
 def backward_local_discrepancy(teacher: DecoderAdapter,candidate_operator: FFNOperator,boundary: Boundary,*,
-                                chunk_size: int,denominator: int,record: ProbeRecord,recorder: Recorder | None = None) -> MetricSums:
+                                chunk_size: int,denominator: int,record: ProbeRecord,recorder: Recorder | None = None,
+                                loss_mask: torch.Tensor | None = None) -> MetricSums:
     """Accumulate candidate-only gradients; caller discards update on any error."""
     if record.use != 'fit': raise PermissionError('gradient probes require fit provenance')
     _match_boundary(boundary,record,patched=True)
     if record.teacher_digest != teacher.manifest().checkpoint_digest:
         raise ValueError('local target teacher must match probe provenance')
+    loss_batch=boundary.batch
+    if loss_mask is not None:
+        eligible=boundary.batch.target_mask
+        if (loss_mask.dtype != torch.bool or loss_mask.shape != eligible.shape or loss_mask.device != eligible.device
+                or (loss_mask & ~eligible).any().item()):
+            raise ValueError('loss mask must be a subset of original probe eligibility')
+        loss_batch=replace(boundary.batch,target_mask=loss_mask)
     t,s = _branches(teacher,candidate_operator,boundary,_CountsOnlyRecorder(recorder) if recorder else None)
-    if not boundary.batch.target_mask.any().item():
-        return backward_distillation(t,s,boundary.batch,alpha=0,denominator=denominator,chunk_size=chunk_size)
+    if not loss_batch.target_mask.any().item():
+        return backward_distillation(t,s,loss_batch,alpha=0,denominator=denominator,chunk_size=chunk_size)
     with _charged(recorder,suffix_backward_calls=1,student_backward_calls=1,
-                  valid_target_presentations=int(boundary.batch.target_mask.sum().item())):
-        return backward_distillation(t,s,boundary.batch,alpha=0,denominator=denominator,chunk_size=chunk_size)
+                  valid_target_presentations=int(loss_batch.target_mask.sum().item())):
+        return backward_distillation(t,s,loss_batch,alpha=0,denominator=denominator,chunk_size=chunk_size)
 
 
 @dataclass(frozen=True)
