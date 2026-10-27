@@ -193,6 +193,9 @@ class TorchDecoder(nn.Module):
     def _validate_cache(self, cache, batch):
         if not isinstance(cache, CacheState) or len(cache.layers) != len(self.layers):
             raise ValueError('cache must contain one buffer per executed depth')
+        if (any(not isinstance(layer, LayerCache) for layer in cache.layers)
+                or len({id(layer) for layer in cache.layers}) != len(cache.layers)):
+            raise ValueError('cache requires distinct per-depth LayerCache owners')
         if batch.input_ids.shape[0] != 1 or not batch.attention_mask.all().item():
             raise ValueError('cached execution supports one unpadded batch row only')
         if not torch.equal(batch.positions[0], torch.arange(cache.start_position+cache.length,

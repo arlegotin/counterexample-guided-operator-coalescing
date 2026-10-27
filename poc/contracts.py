@@ -267,3 +267,51 @@ class DecoderAdapter(Protocol):
     def suffix_logits(self, after_ffn: Tensor, boundary: Boundary) -> Tensor: ...
     def score_continuations(self, requests: Sequence[ContinuationRequest]) -> list[ContinuationScore]: ...
     def manifest(self) -> ModelManifest: ...
+
+
+@dataclass(frozen=True)
+class Partition:
+    """Canonical groups ordered by their first original depth; complete coverage."""
+    groups: tuple[tuple[int, ...], ...]
+    depth: int
+
+    def __post_init__(self) -> None:
+        groups = tuple(tuple(group) for group in self.groups)
+        if type(self.depth) is not int or self.depth < 1 or not 1 <= len(groups) <= self.depth:
+            raise ValueError('partition requires 1 <= K <= actual depth')
+        flat = [depth for group in groups for depth in group]
+        if (any(not group for group in groups) or any(type(depth) is not int for depth in flat)
+                or sorted(flat) != list(range(self.depth))):
+            raise ValueError('partition must cover every depth exactly once')
+        canonical = tuple(sorted((tuple(sorted(group)) for group in groups), key=lambda group: group[0]))
+        if groups != canonical:
+            raise ValueError('partition groups must be canonicalized')
+        object.__setattr__(self, 'groups', groups)
+
+    @property
+    def reuse_map(self) -> tuple[int, ...]:
+        mapping = {depth: owner for owner, group in enumerate(self.groups) for depth in group}
+        return tuple(mapping[depth] for depth in range(self.depth))
+
+
+@dataclass(frozen=True)
+class OwnerRecord:
+    name: str
+    shape: tuple[int, ...]
+    numel: int
+    trainable: bool
+    category: str
+    use_sites: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class BankStateRef:
+    """Hashed tiny bank fixture requiring an external base; not a deployment bundle."""
+    directory: str
+    manifest_sha256: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.directory, str) or not self.directory:
+            raise ValueError('state directory required')
+        if not isinstance(self.manifest_sha256, str) or not re.fullmatch(r'[0-9a-f]{64}', self.manifest_sha256):
+            raise ValueError('bank state manifest requires SHA-256')
