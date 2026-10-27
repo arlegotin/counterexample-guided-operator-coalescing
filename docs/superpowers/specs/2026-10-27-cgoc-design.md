@@ -93,7 +93,7 @@ class Batch:
     input_ids: Tensor          # int64 [B,S]
     attention_mask: Tensor     # bool [B,S]
     target_mask: Tensor        # bool [B,S-1]
-    positions: Tensor          # integer [B,S]; absolute within original document
+    positions: Tensor          # integer [B,S]; absolute within this model context
     document_ids: tuple[str, ...]
     cluster_ids: tuple[str, ...]
 
@@ -122,7 +122,7 @@ class DecoderAdapter(Protocol):
 
 The candidate suffix input remains differentiable even with frozen suffix parameters. Teacher target branches use no-grad; the candidate-through-teacher-suffix branch must not. Student-state probes detach the current candidate prefix, then feed that **same boundary** to both FFNs through the **teacher** suffix. These target predictions are not mislabeled as the teacher's natural predictions.
 
-**R05 — Causality and positions.** Right-pad teacher-forced batches; real EOS remains a target even when EOS equals padding ID. Target index `j` scores input token `j+1` using hidden position `j`. The final input position has no next-token target. Position offsets are identical across methods. For independent sampled document windows, retain the window's original position offset; rollouts and cache parity tests cover nonzero offsets. If the source model cannot support that convention faithfully, amend it before comparison. Never concatenate documents through attention.
+**R05 — Causality and positions.** Right-pad teacher-forced batches; real EOS remains a target even when EOS equals padding ID. Target index `j` scores input token `j+1` using hidden position `j`. The final input position has no next-token target. Position offsets are identical across methods. Proposal: independently recomputed sampled and WikiText rolling windows reset model position IDs to `0..S-1`, while retaining their original document offsets in `WindowRecord`. A cropped context is not represented as an uncomputed full-document prefix; long source documents therefore do not silently exceed the teacher's positional range. Incremental generation continues the cached context's positions; parity tests include nonzero continuation offsets. Donor alignment uses the model-context position and records source spans separately. Never concatenate documents through attention.
 
 Initial native cached generation is batch one. Mixed prompt lengths are checked by independent requests against batched teacher-forced outputs; unsupported padded cache batching fails explicitly. Full versus cached logits must agree for teacher, compact bank, quantized bank, whole-block baseline, and reduced-depth variants on each supported path. RoPE and cache slots follow actual execution order while a separate original-depth map identifies surviving weights in pruning baselines.
 
@@ -221,7 +221,7 @@ Separate `merge_only` from `merge_then_repair`. At target K, split the worst mem
 | SV | Projection-specific SharVeT adaptation with explicit upstream-compatible versus actual-module-input labels |
 | P | Natural-KL-guided FFN removal and block removal, plus XMerge-derived adjacent-block reconstruction |
 | QCE | Empirical counterexample-guided precision allocation on dense model; additional fixed-bank allocation control |
-| M | Full CGOC and prespecified mechanism ablations |
+| M | Full CGOC; explicit `active` and `random_donor` mining variants with matched-bank architecture, eligible pools, caps and fit exposure; separate equal-construction-time comparison |
 
 For CKA, center matched outputs. If denominator is zero, identical nonzero outputs score one; otherwise return a degeneracy flag and use a declared structural fallback, including all-zero outputs. No NaN similarity. The fallback is logged, not described as measured functional similarity.
 
@@ -235,7 +235,9 @@ Whole-block R shares q/k/v/o plus gate/up/down, with correctly shaped LoRA and p
 
 QCE starts at the lowest **validated feasible** precision, measures complete-model KL benefit/actual bytes of each matrix upgrade, accepts the best positive affordable ratio, remeasures jointly, and tries unvisited budget-neutral up/down swaps on disjoint scoring records. Refresh its hard cases with the same allowed procedure. No feasible low-bit start means infeasible, not permission to invent a kernel. Native dynamic Q remains separately eligible.
 
-Mechanism comparisons match K, residual rank, precision, original depth, optimization exposure, candidate pools, and information access. The strongest development-selected matched control is the attribution comparator. Deployment comparisons allow each baseline its best eligible architecture/precision below B*. Equal-query, equal-fit-exposure, and equal-total-construction-time results are separate analyses, never mislabeled interchangeable budgets. Freeze their selection rule before protected access.
+The end-to-end `M/random_donor` variant replaces candidate-loss-based donor selection with seeded random selection from the same eligible proposal pool. It retains the same per-document caps, depth balance, selected-example count, natural/student-state policy, fitting/refitting exposure and compiler/repair settings. Record all scoring/generation costs and also compare under equal total construction time, allowing saved mining time to fund fitting or search under the frozen rule. It is an eligible matched-bank control whenever claiming an active-mining benefit for the complete model. Random scoring of identical single-merge trials alone does not satisfy this control. RC receives the exact shared donor case IDs, tokens and masks; current student-reached boundaries are recomputed for each method's model and their state digests recorded, rather than pretending different students reach identical numeric states.
+
+Mechanism comparisons match K, residual rank, precision, original depth, optimization exposure, candidate pools, and information access. The strongest development-selected matched control, including the random-donor variant when applicable, is the attribution comparator. Deployment comparisons allow each baseline its best eligible architecture/precision below B*. Equal-query, equal-fit-exposure, and equal-total-construction-time results are separate analyses, never mislabeled interchangeable budgets. Freeze their selection rule before protected access.
 
 ## 9. Canonical deployment and byte accounting
 
@@ -253,7 +255,7 @@ GPTQ pools calibration inputs over every use of each canonical shared owner. Sha
 
 Exercise official dense DWQ separately; packed quantized weights are not assumed trainable. Shared refinement may train only verified floating factors/scales and must declare differences. An unavailable shared DWQ path does not weaken or exclude a working dense DWQ competitor. Mixed precision assigns bits to canonical owners, validates the joint model, and includes residual/embedding choices where supported. Calibrated packed tied embeddings must serve both lookup and output projection from one owner, or be recorded as a counted materialization/unsupported format.
 
-**R19 — Payload ceiling and frontier.** Proposal: instantiate the deterministic SEQUENCE K=15/rank-8 map as the **format anchor**, use BF16 residuals and validated 4-bit/group-64 base tensors, and measure its complete payload before comparing quality. Its bytes define B*. This anchor removes ambiguity about which candidate-specific file/map sizes define the ceiling. No successful quality result is implied. If the format is unsupported, a pre-confirmation amendment chooses a measured alternative; never use an idealized byte estimate. Actual finalists must fit B*, including variable manifest/runtime overhead; the anchor does not exempt M from its own code cost.
+**R19 — Payload ceiling and frontier.** Proposal: instantiate the deterministic SEQUENCE K=15/rank-8 map as the **format anchor**, use BF16 residuals and validated 4-bit/group-64 base tensors, and measure its complete payload at WP03 before any B*-constrained baseline fitting/allocation. A minimal shared RTN export suffices; shared learned quantization is a later stage. Its bytes define B*. Persist the anchor's artifact digest and exact byte count; later code changes are charged to each finalist and do not silently redefine the anchor. This anchor removes ambiguity about which candidate-specific file/map sizes define the ceiling. No successful quality result is implied. If the format is unsupported, a pre-confirmation amendment chooses a measured alternative before dependent allocation; never use an idealized byte estimate. Actual finalists must fit B*, including variable manifest/runtime overhead; the anchor does not exempt M from its own code cost.
 
 Select baseline* by lowest development full-model teacher KL among eligible complete artifacts at or below B*. Tie-break by lower payload, then lower measured construction cost, then stable artifact ID. Select the strongest matched-bank comparator independently. Report all feasible points, smaller points without padding, runtime, install cost, and learning curves. Keep exploratory K=L, ceil(L/2), ceil(L/3), and K=1 only when justified; rank 0, rank 8, and a development-selected larger-rank control are explicit ablations. K=L with adapters has larger bytes than the adapter-free teacher.
 

@@ -65,7 +65,7 @@ The blueprint's table is consistent. The 135M half-bank ratio is approximately 1
 | Search byte savings can be confused with quantized payload savings | Topology can be scored with hypothetical bytes | R15/R19: actual canonical scientific-format bytes in search; separate native payload ceiling |
 | Preparation must read data that later becomes protected | Absolute “never read protected data” would make deduplication impossible | R11: outcome-blind preparation then role-restricted access; honest local isolation boundary |
 | BLiMP has no official train/dev/test partition in the blueprint | Smoke tests and protocol choices could leak protected answers | R12: explicit proposed 10% development/90% protected split within every paradigm, labeled subset reporting |
-| Natural sampled windows lack a precise overlap/offset convention | Different contexts/duplicate targets can change KL denominators | R12: saved deterministic starts, no within-document overlap, explicit short-document behavior |
+| Natural sampled windows lack a precise overlap/offset convention | Different contexts/duplicate targets can change KL denominators; original-document position IDs can exceed the model range on long articles | R05/R12: reset independently recomputed context positions, save source offsets separately, non-overlapping sampled windows and explicit short-document behavior |
 | ARC prompt/answer token boundary is ambiguous under BPE | Scoring answer tokens alone may fail to represent the stated continuation | R12: full concatenation offsets, validated stable boundary/separator, refusal on ambiguity |
 | Near-duplicate components can transitively span roles or sources | Exact per-document hashing misses leakage | R10: connected components before splitting; cross-source preparation screen and limitations |
 | confirm_B comes from the same web pool | Calling it independent-source evidence would overstate replication | R23: independent held-out components, fresh-source claims require separately untouched data |
@@ -76,6 +76,7 @@ The blueprint's table is consistent. The 135M half-bank ratio is approximately 1
 | Adapter-bearing K=L is larger than the teacher | Identity baseline could be assigned the wrong byte cost | R06/R19: separate adapter-free teacher and matched rank-bearing identity |
 | Fresh process does not imply cold OS page cache | “Cold load” timing can exaggerate or understate deployment behavior | R21: name process/cache boundaries separately |
 | Mutable upstream APIs are cited as executable assumptions | Dependency drift can invalidate quantizer adapters and shape support | R02/R18: exact local resolution, imported-binding tests and capability matrix |
+| Byte-constrained baseline allocation cannot precede definition of B* | A late anchor creates a dependency cycle or encourages guessed budgets | R19: minimal shared RTN anchor at WP03/Task 9; later baseline allocations consume its persisted bytes |
 
 The BLiMP split, window policy, archive codec, anchor map, access-token design, data normalization, and module decomposition are author proposals. They are exposed in the spec for review. They are not claimed to have been experimentally validated or approved by the user.
 
@@ -138,4 +139,12 @@ Hardware memory, dependency pins, exact asset revisions, numerical tolerances, u
 
 ## Review record
 
-The specification receives the Superpowers builder check before handoff. The implementation plan receives a separate self-review for requirement coverage, exact interfaces, task boundaries, negative tests, and feasible verification commands. Review findings and their resolutions belong in the decision log; a passed document review is not an experimental result.
+The fresh Superpowers builder check reported “nothing important left.” Plan self-review checked requirement coverage, exact interfaces, task boundaries, negative tests and verification commands; it moved tiny-bank round-trip serialization before real-asset preparation to remove a WP01 dependency cycle.
+
+A separate integrated review of commits `9846751..22e47df` identified three important issues, all addressed in the final documents:
+
+1. **Anchor ordering:** B*-constrained baselines need measured bytes before allocation. Task 9 now creates a minimal shared RTN anchor; Task 20 verifies its fixed identity/bytes.
+2. **Window positions:** source-document offsets can exceed the model's positional range. Independent windows now reset model-context positions while preserving source offsets as provenance; cached continuation offsets still advance.
+3. **Random-donor attribution:** random scoring of identical single merges is insufficient to establish active mining's full-model benefit. Tasks 10/13/14 now own an explicit complete random-donor variant with matched pools/caps/fitting and separate equal-time accounting.
+
+The reviewer found no critical issue or additional substantive contradiction in the loss/gradient math, parameter accounting, factor orientation, quantization algebra, protected protocol or statistics. Hardware compatibility, empirical outcomes, complete bibliography accuracy and permissions remain future evidence gates, not conclusions of this document review. [DECISIONS.md](../../DECISIONS.md) records the resolutions and proposal status.

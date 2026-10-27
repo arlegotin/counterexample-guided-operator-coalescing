@@ -8,6 +8,7 @@
 - Completed documentation: [critical analysis](docs/analysis/2026-10-27-blueprint-review.md), [design specification](docs/superpowers/specs/2026-10-27-cgoc-design.md), and [implementation plan](docs/superpowers/plans/2026-10-27-cgoc.md).
 - Design builder check: fresh Superpowers reviewer reported “nothing important left.” This is a document review, not scientific validation.
 - Plan self-review: requirement/hypothesis coverage, interfaces, failure cases, gate ordering, and task verification commands checked; tiny serialization moved before real-asset preparation to avoid a WP01 dependency cycle.
+- Integrated review: identified early payload-anchor ownership, independent-window position semantics, and the full-pipeline random-donor control. Corrections are recorded in D17–D19; no critical issue or additional mathematical contradiction was reported.
 - Last successful experimental gate: none. WP00 remains unexecuted.
 - Active run/attempt/checkpoint: none.
 - Next implementation action after document review: Task 1 in the plan, on the current branch.
