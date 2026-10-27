@@ -1,0 +1,132 @@
+"""Two-parent medoid trials with CPU SVD residuals and one common fitting path."""
+from collections.abc import Sequence
+from copy import deepcopy
+from dataclasses import dataclass,field
+import hashlib
+import weakref
+import torch
+from torch import nn
+from poc.bank import BankDecoder,PROJECTIONS,canonicalize_partition,initialize_residual,_Factors
+from poc.contracts import Batch,Budget,CostRecord,DecoderAdapter
+from poc.data.manifest import DataManifest
+from poc.train import TrainingConfig,TrainingSources,fit_model
+
+
+@dataclass
+class MergeTrial:
+    model: BankDecoder
+    teacher: DecoderAdapter
+    pair: tuple[int,int]
+    affected_depths: tuple[int,...]
+    selected_parent: int
+    medoid_scores: tuple[dict,...]
+    initialized_digest: str
+    fitted_digest: str|None=None
+    sources: TrainingSources|None=None
+    recorder: object|None=None
+    fit_summary: dict=field(default_factory=dict)
+
+
+def centered_linear_cka(x,y):
+    x=x.detach().cpu().double();y=y.detach().cpu().double()
+    if x.ndim!=2 or y.ndim!=2 or x.shape[0]!=y.shape[0] or x.shape[0]<2:raise ValueError('CKA needs matched nondegenerate observations')
+    x=x-x.mean(0);y=y-y.mean(0)
+    numerator=(x.T@y).square().sum();denominator=(x.T@x).square().sum().sqrt()*(y.T@y).square().sum().sqrt()
+    if not torch.isfinite(denominator) or denominator<=0:raise ValueError('CKA degenerate centered activation')
+    return float((numerator/denominator).item())
+
+
+def _call(recorder,fn,**counts):
+    if recorder is None:return fn()
+    from poc.train import _call as measured
+    return measured(recorder,fn,**counts)
+
+
+def _fit_batches(fit,teacher):
+    """Natural windows require verified tokens after the allowed exposure reader."""
+    import json
+    from pathlib import Path
+    from poc.data.access import open_records
+    from poc.data.windows import TokenDocument,WindowPolicy,make_windows
+    result=[]
+    for row in open_records(fit,purpose='fit'):
+        data=Path(row.token_path).read_bytes()
+        if hashlib.sha256(data).hexdigest()!=row.token_sha256:raise ValueError('fit token hash mismatch')
+        raw=json.loads(data);tokens=raw['token_ids'] if isinstance(raw,dict) else raw
+        windows=make_windows(TokenDocument(row.document_id,tuple(tokens)),WindowPolicy())
+        if not windows or not windows[0].target_indices:raise ValueError('empty fit window')
+        from poc.teacher_validation import _batch
+        w=windows[0]
+        result.append(_batch(w.token_ids,device=teacher.device,document_id=row.document_id,cluster_id=fit.membership[row.document_id],targets=w.target_indices))
+    return tuple(result)
+
+
+def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,int],fit:DataManifest,seed:int,*,batches:Sequence[Batch]|None=None,recorder=None)->MergeTrial:
+    if not isinstance(current,BankDecoder):raise ValueError('canonical bank required')
+    if any(role!='fit' for role in fit.roles.values()):raise PermissionError('medoid selection requires fit records')
+    if not fit.records:raise ValueError('nonempty fit population required')
+    if len(pair)!=2 or any(type(x) is not int for x in pair) or not 0<=pair[0]<pair[1]<len(current.layers):raise ValueError('canonical depth pair required')
+    groups=current.partition.groups;indices=tuple(current.partition.reuse_map[d] for d in pair)
+    if indices[0]==indices[1]:raise ValueError('pair already shares an operator')
+    affected=tuple(sorted(groups[indices[0]]+groups[indices[1]]))
+    batches=tuple(batches) if batches is not None else _fit_batches(fit,teacher)
+    if not batches or set(i for b in batches for i in b.document_ids)!=set(fit.roles):raise ValueError('exact fit document population required')
+    h=hashlib.sha256(fit.digest().encode())
+    for b in batches:
+        if any(fit.membership[i]!=c for i,c in zip(b.document_ids,b.cluster_ids,strict=True)):raise ValueError('fit component identity mismatch')
+        for tensor in (b.input_ids,b.attention_mask,b.target_mask,b.positions):h.update(tensor.detach().cpu().contiguous().numpy().tobytes())
+    fit_digest=h.hexdigest();candidate=deepcopy(current)
+    merged=canonicalize_partition([g for k,g in enumerate(groups) if k not in indices]+[affected],len(current.layers))
+    old_owners={g:current.bank[k] for k,g in enumerate(groups)}
+    candidate.bank=nn.ModuleList([deepcopy(current.bank[indices[0]] if g==affected else old_owners[g]) for g in merged.groups])
+    candidate.partition=merged;merged_index=merged.reuse_map[pair[0]]
+    for depth,layer in enumerate(candidate.layers):
+        layer.mlp.index=merged.reuse_map[depth];layer.mlp._owners_ref=weakref.ref(candidate.bank)
+    def install(parent_index):
+        with torch.no_grad():
+            for name in PROJECTIONS:getattr(candidate.bank[merged_index],name).weight.copy_(getattr(current.bank[parent_index],name).weight)
+        for depth in affected:
+            residuals={}
+            for k,name in enumerate(PROJECTIONS):
+                if current.rank:
+                    delta=getattr(teacher.layers[depth].mlp,name).weight.detach()-getattr(candidate.bank[merged_index],name).weight.detach()
+                    a,b=_call(recorder,lambda:initialize_residual(delta,current.rank,(seed+depth*3+k)%2**63))
+                    residuals[name]=_Factors(a,b)
+            candidate.layers[depth].mlp.residuals=nn.ModuleDict(residuals)
+    rows=[];best=None;best_delta=None
+    for index in sorted(indices,key=lambda k:groups[k]):
+        _call(recorder,lambda:None,search_proposals=1)
+        install(index);sums=[]
+        with torch.no_grad():
+            for depth in affected:
+                for b in batches:
+                    boundary=_call(recorder,lambda:teacher.prefix_boundary(b,depth),teacher_forward_calls=1)
+                    target=_call(recorder,lambda:teacher.ff_residual(boundary),teacher_forward_calls=1)
+                    actual=_call(recorder,lambda:teacher.ff_residual(boundary,candidate.layers[depth].mlp),student_forward_calls=1)
+                    mask=b.target_mask
+                    error=(actual[:,:-1]-target[:,:-1]).double().square().mean(-1)[mask]
+                    if not error.numel():raise ValueError('nonempty fit activation mask required')
+                    sums.append(float(error.mean().item()))
+        score=sum(sums)/len(sums);parent=groups[index][0]
+        if not torch.isfinite(torch.tensor(score)):raise ValueError('nonfinite medoid reconstruction')
+        rows.append(dict(parent=parent,mse=score,fit_digest=fit_digest,components=len(set(fit.membership.values())),documents=len(fit.records)))
+        if best is None or score<best[0]:
+            best=(score,index,parent)
+            # Only changed residuals, not a second model/optimizer snapshot.
+            best_delta={d:{k:v.detach().cpu().clone() for k,v in candidate.layers[d].mlp.residuals.state_dict().items()} for d in affected}
+    if best[1]!=index:
+        with torch.no_grad():
+            for name in PROJECTIONS:getattr(candidate.bank[merged_index],name).weight.copy_(getattr(current.bank[best[1]],name).weight)
+        for d,values in best_delta.items():candidate.layers[d].mlp.residuals.load_state_dict(values)
+    return MergeTrial(candidate,teacher,pair,affected,best[2],tuple(rows),candidate.manifest().checkpoint_digest,recorder=recorder)
+
+
+def fit_trial(trial:MergeTrial,schedule:TrainingConfig,budget:Budget)->MergeTrial:
+    if trial.fitted_digest is not None:raise ValueError('score-only trial cannot be refitted')
+    if schedule.phase!='local' or tuple(schedule.affected_depths)!=trial.affected_depths:raise ValueError('common local schedule must cover exact merged group')
+    if trial.sources is None or trial.recorder is None:raise ValueError('auditable training sources and recorder required')
+    result=fit_model(trial.model,trial.teacher,trial.sources,schedule,budget,trial.recorder)
+    if result.state.step!=schedule.max_updates or result.state.target_cursor!=schedule.max_updates*8192:raise ValueError('incomplete common exact-target fitting allowance')
+    trial.fitted_digest=result.state.candidate_digest
+    trial.fit_summary=dict(updates=result.state.step,targets=result.state.target_cursor,metrics=result.metrics)
+    return trial
