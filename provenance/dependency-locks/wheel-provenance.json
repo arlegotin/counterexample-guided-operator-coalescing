@@ -1,0 +1,1717 @@
+[
+  {
+    "archive_hash_verified": true,
+    "declared_license": "PSF-2.0",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "aiohappyeyeballs",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/aio-libs/aiohappyeyeballs/issues",
+      "Changelog": "https://github.com/aio-libs/aiohappyeyeballs/blob/main/CHANGELOG.md",
+      "Documentation": "https://aiohappyeyeballs.readthedocs.io",
+      "Repository": "https://github.com/aio-libs/aiohappyeyeballs"
+    },
+    "source_archives": [
+      {
+        "sha256": "065665c041c42a5938ed220bdcd7230f22527fbec085e1853d2402c8a3615d9d",
+        "url": "https://files.pythonhosted.org/packages/ce/f4/eec0465c2f67b2664688d0240b3212d5196fd89e741df67ddb81f8d35658/aiohappyeyeballs-2.7.1.tar.gz"
+      }
+    ],
+    "version": "2.7.1",
+    "wheel_filename": "aiohappyeyeballs-2.7.1-py3-none-any.whl",
+    "wheel_sha256": "9243213661e29250eb41368e5daa826fc017156c3b8a11440826b2e3ed376472",
+    "wheel_url": "https://files.pythonhosted.org/packages/71/43/1947f06babed6b3f1d7f38b0c767f52df66bfb2bc10b468c4a7de9eceff2/aiohappyeyeballs-2.7.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "Apache-2.0 AND MIT",
+    "local_patches": [],
+    "name": "aiohttp",
+    "project_urls": {
+      "CI: GitHub Actions": "https://github.com/aio-libs/aiohttp/actions?query=workflow%3ACI",
+      "Chat: Matrix": "https://matrix.to/#/#aio-libs:matrix.org",
+      "Chat: Matrix Space": "https://matrix.to/#/#aio-libs-space:matrix.org",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/aiohttp",
+      "Docs: Changelog": "https://docs.aiohttp.org/en/stable/changes.html",
+      "Docs: RTD": "https://docs.aiohttp.org",
+      "GitHub: issues": "https://github.com/aio-libs/aiohttp/issues",
+      "GitHub: repo": "https://github.com/aio-libs/aiohttp",
+      "Homepage": "https://github.com/aio-libs/aiohttp"
+    },
+    "source_archives": [
+      {
+        "sha256": "5558a7f5a05af9ecf744af91e5baefc436f93c9333e656c27ec253f9a6bbe178",
+        "url": "https://files.pythonhosted.org/packages/6c/4c/bdccd81e9ee225b69c60e7766c9a5b05364f118f4d383713b89a682d772d/aiohttp-3.14.5.tar.gz"
+      }
+    ],
+    "version": "3.14.5",
+    "wheel_filename": "aiohttp-3.14.5-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "d079c0a0135c36e7beb6f1c88087c8f108dc5891cdd0b5eafa778421bda70ed2",
+    "wheel_url": "https://files.pythonhosted.org/packages/64/91/11b89f45ca486252dd67dd5f3231fec04bf5518da39a95cb3997619f17fb/aiohttp-3.14.5-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache 2.0",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "aiosignal",
+    "project_urls": {
+      "CI: GitHub Actions": "https://github.com/aio-libs/aiosignal/actions",
+      "Chat: Gitter": "https://gitter.im/aio-libs/Lobby",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/aiosignal",
+      "Docs: RTD": "https://docs.aiosignal.org",
+      "GitHub: issues": "https://github.com/aio-libs/aiosignal/issues",
+      "GitHub: repo": "https://github.com/aio-libs/aiosignal",
+      "Homepage": "https://github.com/aio-libs/aiosignal"
+    },
+    "source_archives": [
+      {
+        "sha256": "f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7",
+        "url": "https://files.pythonhosted.org/packages/61/62/06741b579156360248d1ec624842ad0edf697050bbaf7c3e46394e106ad1/aiosignal-1.4.0.tar.gz"
+      }
+    ],
+    "version": "1.4.0",
+    "wheel_filename": "aiosignal-1.4.0-py3-none-any.whl",
+    "wheel_sha256": "053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e",
+    "wheel_url": "https://files.pythonhosted.org/packages/fb/76/641ae371508676492379f16e2fa48f4e2c11741bd63c48be4b12a6b09cba/aiosignal-1.4.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "annotated-doc",
+    "project_urls": {
+      "Changelog": "https://github.com/fastapi/annotated-doc/release-notes.md",
+      "Documentation": "https://github.com/fastapi/annotated-doc",
+      "Homepage": "https://github.com/fastapi/annotated-doc",
+      "Issues": "https://github.com/fastapi/annotated-doc/issues",
+      "Repository": "https://github.com/fastapi/annotated-doc"
+    },
+    "source_archives": [
+      {
+        "sha256": "c7e58ce09192557605d8bbd92836d7e1d520ac9580096042c0bfd197efacf1bb",
+        "url": "https://files.pythonhosted.org/packages/5a/8e/38aa427ed5402449e226975b649c5dc73ccadfefeb95e6aecb8f8ea4b6b6/annotated_doc-0.0.5.tar.gz"
+      }
+    ],
+    "version": "0.0.5",
+    "wheel_filename": "annotated_doc-0.0.5-py3-none-any.whl",
+    "wheel_sha256": "117bac03a25ede5df5440e855b32d556049ca169ead221505badf432fed4b101",
+    "wheel_url": "https://files.pythonhosted.org/packages/3e/30/e900b21425a860e195f32e37657aa1f7c7f2b1bfb26f03ca209b90933c06/annotated_doc-0.0.5-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "anyio",
+    "project_urls": {
+      "Changelog": "https://anyio.readthedocs.io/en/stable/versionhistory.html",
+      "Documentation": "https://anyio.readthedocs.io/en/latest/",
+      "Issue tracker": "https://github.com/agronholm/anyio/issues",
+      "Source code": "https://github.com/agronholm/anyio"
+    },
+    "source_archives": [
+      {
+        "sha256": "9f28306018cbd6d329e64a36d58256edff76dd996fe423bc957326e578b82a94",
+        "url": "https://files.pythonhosted.org/packages/a9/d2/f4d173e22df740bc37b1db102b386ba719b66e95b0f0d751f556b387e6d2/anyio-4.15.1.tar.gz"
+      }
+    ],
+    "version": "4.15.1",
+    "wheel_filename": "anyio-4.15.1-py3-none-any.whl",
+    "wheel_sha256": "6152fdbbf9a77fdec97731721bebf7c4c44f7c29b424b0065826173efc7ed101",
+    "wheel_url": "https://files.pythonhosted.org/packages/12/b8/4bd346e22b28902df4d651910f5242c28d84e4a5c2435ca5c3f797ed7e2e/anyio-4.15.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "attrs",
+    "project_urls": {
+      "Changelog": "https://www.attrs.org/en/stable/changelog.html",
+      "Documentation": "https://www.attrs.org/",
+      "Funding": "https://github.com/sponsors/hynek",
+      "GitHub": "https://github.com/python-attrs/attrs",
+      "Tidelift": "https://tidelift.com/subscription/pkg/pypi-attrs?utm_source=pypi-attrs&utm_medium=pypi"
+    },
+    "source_archives": [
+      {
+        "sha256": "d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32",
+        "url": "https://files.pythonhosted.org/packages/9a/8e/82a0fe20a541c03148528be8cac2408564a6c9a0cc7e9171802bc1d26985/attrs-26.1.0.tar.gz"
+      }
+    ],
+    "version": "26.1.0",
+    "wheel_filename": "attrs-26.1.0-py3-none-any.whl",
+    "wheel_sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+    "wheel_url": "https://files.pythonhosted.org/packages/64/b4/17d4b0b2a2dc85a6df63d1157e028ed19f90d4cd97c36717afef2bc2f395/attrs-26.1.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "click",
+    "project_urls": {
+      "Changes": "https://click.palletsprojects.com/page/changes/",
+      "Chat": "https://discord.gg/pallets",
+      "Documentation": "https://click.palletsprojects.com/",
+      "Donate": "https://palletsprojects.com/donate",
+      "Source": "https://github.com/pallets/click/"
+    },
+    "source_archives": [
+      {
+        "sha256": "ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34",
+        "url": "https://files.pythonhosted.org/packages/c7/0e/7fa0ef50764b67090eca4114772a2abf8b6148198475e54c660b97caeee6/click-8.5.0.tar.gz"
+      }
+    ],
+    "version": "8.5.0",
+    "wheel_filename": "click-8.5.0-py3-none-any.whl",
+    "wheel_sha256": "255bc9599cf7748b4b1a446ccc735421bd08a2ae529a8b88597d3de5664ee360",
+    "wheel_url": "https://files.pythonhosted.org/packages/58/50/6c0d534c5f134586a8e1ba4e330569e32f057e33372ae556463212fb4cd3/click-8.5.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD-3-Clause",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "cloudpickle",
+    "project_urls": {
+      "Homepage": "https://github.com/cloudpipe/cloudpickle"
+    },
+    "source_archives": [
+      {
+        "sha256": "7fda9eb655c9c230dab534f1983763de5835249750e85fbcef43aaa30a9a2414",
+        "url": "https://files.pythonhosted.org/packages/27/fb/576f067976d320f5f0114a8d9fa1215425441bb35627b1993e5afd8111e5/cloudpickle-3.1.2.tar.gz"
+      }
+    ],
+    "version": "3.1.2",
+    "wheel_filename": "cloudpickle-3.1.2-py3-none-any.whl",
+    "wheel_sha256": "9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+    "wheel_url": "https://files.pythonhosted.org/packages/88/39/799be3f2f0f38cc727ee3b4f1445fe6d5e4133064ec2e4115069418a5bb6/cloudpickle-3.1.2-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache 2.0",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "datasets",
+    "project_urls": {
+      "Download": "https://github.com/huggingface/datasets/tags",
+      "Homepage": "https://github.com/huggingface/datasets"
+    },
+    "source_archives": [
+      {
+        "sha256": "1561347daa8841b51351ef2ad1647b4ee4af406852c0f7bd1df587ac1ca7888e",
+        "url": "https://files.pythonhosted.org/packages/17/e6/b5d8c77f13cc6269660b0f2691e8875777b9d94972e281b7b2c25f25bd9d/datasets-5.1.0.tar.gz"
+      }
+    ],
+    "version": "5.1.0",
+    "wheel_filename": "datasets-5.1.0-py3-none-any.whl",
+    "wheel_sha256": "86fd08b280485aab82894d2c81842c4151d93b575efea0054315104cb7bc3cec",
+    "wheel_url": "https://files.pythonhosted.org/packages/24/cc/7f624629846c709ef1c68aa61bfb8d0ae2638cbe265104a1c2f7a630949e/datasets-5.1.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD-3-Clause",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "dill",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/uqfoundation/dill/issues",
+      "Documentation": "http://dill.rtfd.io",
+      "Download": "https://pypi.org/project/dill/#files",
+      "Homepage": "https://github.com/uqfoundation/dill",
+      "Source Code": "https://github.com/uqfoundation/dill"
+    },
+    "source_archives": [
+      {
+        "sha256": "423092df4182177d4d8ba8290c8a5b640c66ab35ec7da59ccfa00f6fa3eea5fa",
+        "url": "https://files.pythonhosted.org/packages/81/e1/56027a71e31b02ddc53c7d65b01e68edf64dea2932122fe7746a516f75d5/dill-0.4.1.tar.gz"
+      }
+    ],
+    "version": "0.4.1",
+    "wheel_filename": "dill-0.4.1-py3-none-any.whl",
+    "wheel_sha256": "1e1ce33e978ae97fcfcff5638477032b801c46c7c65cf717f95fbc2248f79a9d",
+    "wheel_url": "https://files.pythonhosted.org/packages/1e/77/dc8c558f7593132cf8fefec57c4f60c83b16941c574ac5f619abb3ae7933/dill-0.4.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "filelock",
+    "project_urls": {
+      "Documentation": "https://py-filelock.readthedocs.io",
+      "Homepage": "https://github.com/tox-dev/py-filelock",
+      "Source": "https://github.com/tox-dev/py-filelock",
+      "Tracker": "https://github.com/tox-dev/py-filelock/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d",
+        "url": "https://files.pythonhosted.org/packages/d8/28/3893324bcadf8f89b1616637468d766af3f625008c0735bf704fdfa86617/filelock-4.2.4.tar.gz"
+      }
+    ],
+    "version": "4.2.4",
+    "wheel_filename": "filelock-4.2.4-py3-none-any.whl",
+    "wheel_sha256": "301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e",
+    "wheel_url": "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache-2.0",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "frozenlist",
+    "project_urls": {
+      "CI: Github Actions": "https://github.com/aio-libs/frozenlist/actions",
+      "Chat: Matrix": "https://matrix.to/#/#aio-libs:matrix.org",
+      "Chat: Matrix Space": "https://matrix.to/#/#aio-libs-space:matrix.org",
+      "Code of Conduct": "https://github.com/aio-libs/.github/blob/master/CODE_OF_CONDUCT.md",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/frozenlist",
+      "Docs: Changelog": "https://github.com/aio-libs/frozenlist/blob/master/CHANGES.rst#changelog",
+      "Docs: RTD": "https://frozenlist.aio-libs.org",
+      "GitHub: issues": "https://github.com/aio-libs/frozenlist/issues",
+      "GitHub: repo": "https://github.com/aio-libs/frozenlist",
+      "Homepage": "https://github.com/aio-libs/frozenlist"
+    },
+    "source_archives": [
+      {
+        "sha256": "3ede829ed8d842f6cd48fc7081d7a41001a56f1f38603f9d49bf3020d59a31ad",
+        "url": "https://files.pythonhosted.org/packages/2d/f5/c831fac6cc817d26fd54c7eaccd04ef7e0288806943f7cc5bbf69f3ac1f0/frozenlist-1.8.0.tar.gz"
+      }
+    ],
+    "version": "1.8.0",
+    "wheel_filename": "frozenlist-1.8.0-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "f833670942247a14eafbb675458b4e61c82e002a148f49e68257b79296e865c4",
+    "wheel_url": "https://files.pythonhosted.org/packages/2b/94/5c8a2b50a496b11dd519f4a24cb5496cf125681dd99e94c604ccdea9419a/frozenlist-1.8.0-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "fsspec",
+    "project_urls": {
+      "Changelog": "https://filesystem-spec.readthedocs.io/en/latest/changelog.html",
+      "Documentation": "https://filesystem-spec.readthedocs.io/en/latest/",
+      "Homepage": "https://github.com/fsspec/filesystem_spec"
+    },
+    "source_archives": [
+      {
+        "sha256": "c803c40f4cf860b49dea58ee3e1c33cb9c790520e233537e1340049f89b82a88",
+        "url": "https://files.pythonhosted.org/packages/00/78/f34251dadb8f3921264a1d9b8946f5e542014ee2614b285261b4e40e6775/fsspec-2026.7.0.tar.gz"
+      }
+    ],
+    "version": "2026.7.0",
+    "wheel_filename": "fsspec-2026.7.0-py3-none-any.whl",
+    "wheel_sha256": "b57ddbafedfaef7018c1ecab32aa200a9d7ca26b77965f64e48b70061249d279",
+    "wheel_url": "https://files.pythonhosted.org/packages/fd/3c/6a2bf344106328fd04963664a60b9bb6496fc25df8e962fcdc1367285fb9/fsspec-2026.7.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "h11",
+    "project_urls": {
+      "Homepage": "https://github.com/python-hyper/h11"
+    },
+    "source_archives": [
+      {
+        "sha256": "4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1",
+        "url": "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz"
+      }
+    ],
+    "version": "0.16.0",
+    "wheel_filename": "h11-0.16.0-py3-none-any.whl",
+    "wheel_sha256": "63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86",
+    "wheel_url": "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp38-abi3-macosx_11_0_arm64"
+    ],
+    "license_expression": "Apache-2.0",
+    "local_patches": [],
+    "name": "hf-xet",
+    "project_urls": {
+      "Documentation": "https://huggingface.co/docs/hub/xet/index",
+      "Homepage": "https://github.com/huggingface/xet-core",
+      "Issues": "https://github.com/huggingface/xet-core/issues",
+      "Repository": "https://github.com/huggingface/xet-core.git"
+    },
+    "source_archives": [
+      {
+        "sha256": "d406ec79053c0871817f700c2ac8c36ba0d87f9c34b7458b0f0063bb218b0466",
+        "url": "https://files.pythonhosted.org/packages/9e/27/06d899ea7bd721d272f84aac98bdb238de98af4cc767a69056d967d68c71/hf_xet-1.7.0.tar.gz"
+      }
+    ],
+    "version": "1.7.0",
+    "wheel_filename": "hf_xet-1.7.0-cp38-abi3-macosx_11_0_arm64.whl",
+    "wheel_sha256": "59fba37039233c7fcbe196817d6cdcf1b40dfb17b410f229d85b0cf0a1848da4",
+    "wheel_url": "https://files.pythonhosted.org/packages/c3/47/a26ebdce7056a61e931f228439bc0ab08cbec239d1690f965e5e637cba79/hf_xet-1.7.0-cp38-abi3-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "httpcore2",
+    "project_urls": {
+      "Changelog": "https://github.com/pydantic/httpx2/blob/main/src/httpcore2/CHANGELOG.md",
+      "Homepage": "https://github.com/pydantic/httpx2",
+      "Source": "https://github.com/pydantic/httpx2/blob/main/src/httpcore2"
+    },
+    "source_archives": [
+      {
+        "sha256": "c72cd0413563b17e1cd8354677dff887466f8ec2551679759e93126534428643",
+        "url": "https://files.pythonhosted.org/packages/c0/61/afa9d6b7452f9eca73f73d45324eb0bb52f098fd5e6049bf6b8263be9b4e/httpcore2-2.16.0.tar.gz"
+      }
+    ],
+    "version": "2.16.0",
+    "wheel_filename": "httpcore2-2.16.0-py3-none-any.whl",
+    "wheel_sha256": "5c4358319f2602d984ad93182c9fee5160f22e9da7babdda870a5e7c4e2dc34f",
+    "wheel_url": "https://files.pythonhosted.org/packages/af/c2/ce417c397afa5181f0e3c6ff01a4d01639414e1adef08730d97571297151/httpcore2-2.16.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "httpx2",
+    "project_urls": {
+      "Changelog": "https://github.com/pydantic/httpx2/blob/main/src/httpx2/CHANGELOG.md",
+      "Homepage": "https://github.com/pydantic/httpx2",
+      "Source": "https://github.com/pydantic/httpx2"
+    },
+    "source_archives": [
+      {
+        "sha256": "0d54c98128e8f2ff7fbbde0fca8c359e5f032edeaaaac443cdb7f31f685bcd7f",
+        "url": "https://files.pythonhosted.org/packages/43/73/5ca2cedf5e4e50423d1c258877865a6b62793633b561c58499f8aeb33b7e/httpx2-2.16.0.tar.gz"
+      }
+    ],
+    "version": "2.16.0",
+    "wheel_filename": "httpx2-2.16.0-py3-none-any.whl",
+    "wheel_sha256": "fd2c5d7909e8d86fe92d53020c310ca0e4e431b838c207c5754b9bbf0308d49a",
+    "wheel_url": "https://files.pythonhosted.org/packages/7b/3d/2e4bc4fd1ef9770871669adb348d612a6e4786b303a23f9935b81c48dd60/httpx2-2.16.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache-2.0",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "huggingface_hub",
+    "project_urls": {
+      "Homepage": "https://github.com/huggingface/huggingface_hub"
+    },
+    "source_archives": [
+      {
+        "sha256": "0b783b37f200f1d25bef2344a997c7d410f4437fbe9d8fd965f958e75cec7aef",
+        "url": "https://files.pythonhosted.org/packages/46/dd/585639d95f6a987c0bdfb9045f050f4ad67240775644ba7a4fdc5aca3a3b/huggingface_hub-2.3.0.tar.gz"
+      }
+    ],
+    "version": "2.3.0",
+    "wheel_filename": "huggingface_hub-2.3.0-py3-none-any.whl",
+    "wheel_sha256": "5da369600233568a126eb5578754935b2add9446b42d9e2fc0927d56840ac1a5",
+    "wheel_url": "https://files.pythonhosted.org/packages/c7/89/5f6ef1162d0323f167b6baab04d1b4bd6a946161a8af6d86f622d9d79aa1/huggingface_hub-2.3.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "idna",
+    "project_urls": {
+      "Changelog": "https://github.com/kjd/idna/blob/master/HISTORY.md",
+      "Issue tracker": "https://github.com/kjd/idna/issues",
+      "Source": "https://github.com/kjd/idna"
+    },
+    "source_archives": [
+      {
+        "sha256": "a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44",
+        "url": "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz"
+      }
+    ],
+    "version": "3.20",
+    "wheel_filename": "idna-3.20-py3-none-any.whl",
+    "wheel_sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+    "wheel_url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "iniconfig",
+    "project_urls": {
+      "Homepage": "https://github.com/pytest-dev/iniconfig"
+    },
+    "source_archives": [
+      {
+        "sha256": "67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960",
+        "url": "https://files.pythonhosted.org/packages/01/e1/2069291243c926a2ff1cd706c7f3eeb9b62144bf60f77c9fb9ff2fb26bd3/iniconfig-2.3.1.tar.gz"
+      }
+    ],
+    "version": "2.3.1",
+    "wheel_filename": "iniconfig-2.3.1-py3-none-any.whl",
+    "wheel_sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+    "wheel_url": "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "Jinja2",
+    "project_urls": {
+      "Changes": "https://jinja.palletsprojects.com/changes/",
+      "Chat": "https://discord.gg/pallets",
+      "Documentation": "https://jinja.palletsprojects.com/",
+      "Donate": "https://palletsprojects.com/donate",
+      "Source": "https://github.com/pallets/jinja/"
+    },
+    "source_archives": [
+      {
+        "sha256": "0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d",
+        "url": "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz"
+      }
+    ],
+    "version": "3.1.6",
+    "wheel_filename": "jinja2-3.1.6-py3-none-any.whl",
+    "wheel_sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+    "wheel_url": "https://files.pythonhosted.org/packages/62/a1/3d680cbfd5f4b8f15abc1d571870c5fc3e594bb582bc3b64ea099db13e56/jinja2-3.1.6-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "joblib",
+    "project_urls": {
+      "Homepage": "https://joblib.readthedocs.io",
+      "Source": "https://github.com/joblib/joblib"
+    },
+    "source_archives": [
+      {
+        "sha256": "2ccc96785b12046c08fd6d55839c12857831b54a3c1673ffadd2f04bfc4eda03",
+        "url": "https://files.pythonhosted.org/packages/d5/1d/537ab090f302b838943a1b56497dd53059b9a9b46a074936470173a2e207/joblib-1.6.0.tar.gz"
+      }
+    ],
+    "version": "1.6.0",
+    "wheel_filename": "joblib-1.6.0-py3-none-any.whl",
+    "wheel_sha256": "3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+    "wheel_url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "markdown-it-py",
+    "project_urls": {
+      "Documentation": "https://markdown-it-py.readthedocs.io",
+      "Homepage": "https://github.com/executablebooks/markdown-it-py"
+    },
+    "source_archives": [
+      {
+        "sha256": "04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49",
+        "url": "https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz"
+      }
+    ],
+    "version": "4.2.0",
+    "wheel_filename": "markdown_it_py-4.2.0-py3-none-any.whl",
+    "wheel_sha256": "9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a",
+    "wheel_url": "https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "MarkupSafe",
+    "project_urls": {
+      "Changes": "https://markupsafe.palletsprojects.com/page/changes/",
+      "Chat": "https://discord.gg/pallets",
+      "Documentation": "https://markupsafe.palletsprojects.com/",
+      "Donate": "https://palletsprojects.com/donate",
+      "Source": "https://github.com/pallets/markupsafe/"
+    },
+    "source_archives": [
+      {
+        "sha256": "2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6",
+        "url": "https://files.pythonhosted.org/packages/38/9b/e422a865e1d5d57d0e509b4e0bf1c1a70a7f6382c29a5aa428df994c8bc8/markupsafe-3.0.4.tar.gz"
+      }
+    ],
+    "version": "3.0.4",
+    "wheel_filename": "markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f",
+    "wheel_url": "https://files.pythonhosted.org/packages/a2/f0/d6613774d86fbf6d145751d43c59875e47a6f9f17daee0aef173bd36d90e/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "mdurl",
+    "project_urls": {
+      "Homepage": "https://github.com/executablebooks/mdurl"
+    },
+    "source_archives": [
+      {
+        "sha256": "bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba",
+        "url": "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz"
+      }
+    ],
+    "version": "0.1.2",
+    "wheel_filename": "mdurl-0.1.2-py3-none-any.whl",
+    "wheel_sha256": "84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8",
+    "wheel_url": "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_26_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "mlx",
+    "project_urls": {
+      "Homepage": "https://github.com/ml-explore/mlx"
+    },
+    "source_archives": [],
+    "version": "0.32.4",
+    "wheel_filename": "mlx-0.32.4-cp312-cp312-macosx_26_0_arm64.whl",
+    "wheel_sha256": "7928869076db6267ab3ebdb253b2c80be1e738b3032c783170bd1d59d460c578",
+    "wheel_url": "https://files.pythonhosted.org/packages/af/44/90bbdc3cdd120e1181f7c4f617ff996530159f2ea3ba3c08b83b08314d21/mlx-0.32.4-cp312-cp312-macosx_26_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "mlx-lm",
+    "project_urls": {
+      "Homepage": "https://github.com/ml-explore/mlx-lm",
+      "Issues": "https://github.com/ml-explore/mlx-lm/issues",
+      "Repository": "https://github.com/ml-explore/mlx-lm"
+    },
+    "source_archives": [
+      {
+        "sha256": "1af8a92f6a141c3e2bf5b0369ac4464203a8e2189c47b9e40d3e921e5b3a1fe9",
+        "url": "https://files.pythonhosted.org/packages/e1/46/eff1c17019b82912020d4d716527e6fcf4ac392b55cddef03eeb60566ab4/mlx_lm-0.32.2.tar.gz"
+      }
+    ],
+    "version": "0.32.2",
+    "wheel_filename": "mlx_lm-0.32.2-py3-none-any.whl",
+    "wheel_sha256": "5c0991248cfff5872503d74f466d2532dd8cb7fb3670cb9be7a06d7305dadc04",
+    "wheel_url": "https://files.pythonhosted.org/packages/d1/4f/000eefdeb41388782b47e7f39904cf2d9e7e49a60df5e172097c358dba8e/mlx_lm-0.32.2-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py3-none-macosx_26_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "mlx-metal",
+    "project_urls": {
+      "Homepage": "https://github.com/ml-explore/mlx"
+    },
+    "source_archives": [],
+    "version": "0.32.4",
+    "wheel_filename": "mlx_metal-0.32.4-py3-none-macosx_26_0_arm64.whl",
+    "wheel_sha256": "514df92d41a286895d2564b4b18f4da45096bd7a4a0c47e1042f345ad5a7f936",
+    "wheel_url": "https://files.pythonhosted.org/packages/2a/d6/4340ed6e184f71693d7f531c9ae55d677451351245760d71f8dd714dcbe5/mlx_metal-0.32.4-py3-none-macosx_26_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "mpmath",
+    "project_urls": {
+      "Documentation": "http://mpmath.org/doc/current/",
+      "Homepage": "http://mpmath.org/",
+      "Source": "https://github.com/fredrik-johansson/mpmath",
+      "Tracker": "https://github.com/fredrik-johansson/mpmath/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "7a28eb2a9774d00c7bc92411c19a89209d5da7c4c9a9e227be8330a23a25b91f",
+        "url": "https://files.pythonhosted.org/packages/e0/47/dd32fa426cc72114383ac549964eecb20ecfd886d1e5ccf5340b55b02f57/mpmath-1.3.0.tar.gz"
+      }
+    ],
+    "version": "1.3.0",
+    "wheel_filename": "mpmath-1.3.0-py3-none-any.whl",
+    "wheel_sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+    "wheel_url": "https://files.pythonhosted.org/packages/43/e3/7d92a15f894aa0c9c4b49b8ee9ac9850d6e63b03c9c32c0367a13ae62209/mpmath-1.3.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "Apache-2.0",
+    "local_patches": [],
+    "name": "multidict",
+    "project_urls": {
+      "CI: GitHub": "https://github.com/aio-libs/multidict/actions",
+      "Chat: Matrix": "https://matrix.to/#/#aio-libs:matrix.org",
+      "Chat: Matrix Space": "https://matrix.to/#/#aio-libs-space:matrix.org",
+      "Code of Conduct": "https://github.com/aio-libs/.github/blob/master/CODE_OF_CONDUCT.md",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/multidict",
+      "Docs: Changelog": "https://multidict.aio-libs.org/en/latest/changes/",
+      "Docs: RTD": "https://multidict.aio-libs.org",
+      "GitHub: issues": "https://github.com/aio-libs/multidict/issues",
+      "GitHub: repo": "https://github.com/aio-libs/multidict",
+      "Homepage": "https://github.com/aio-libs/multidict"
+    },
+    "source_archives": [
+      {
+        "sha256": "e8af3e6f1bdbc31fd762b094133b478b89988eaebc63cbe82b1d9e3bbd15cede",
+        "url": "https://files.pythonhosted.org/packages/7b/6b/29ef8e752f5854dcc267ded0652c475bec99b86f255957a0d4fcad657b18/multidict-7.2.1.tar.gz"
+      }
+    ],
+    "version": "7.2.1",
+    "wheel_filename": "multidict-7.2.1-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "d37773029ba034a2cc970b6eeb67dad3bff9d894393c51f6bb1c6b4f563a032c",
+    "wheel_url": "https://files.pythonhosted.org/packages/bf/e4/bd8838244fd1309165c79e74af9a6b9e9e42fd0f2c24c75bee665fc9ba69/multidict-7.2.1-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD-3-Clause",
+    "installed_wheel_tags": [
+      "py312-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "multiprocess",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/uqfoundation/multiprocess/issues",
+      "Documentation": "http://multiprocess.rtfd.io",
+      "Download": "https://pypi.org/project/multiprocess/#files",
+      "Homepage": "https://github.com/uqfoundation/multiprocess",
+      "Source Code": "https://github.com/uqfoundation/multiprocess"
+    },
+    "source_archives": [
+      {
+        "sha256": "952021e0e6c55a4a9fe4cd787895b86e239a40e76802a789d6305398d3975897",
+        "url": "https://files.pythonhosted.org/packages/a2/f2/e783ac7f2aeeed14e9e12801f22529cc7e6b7ab80928d6dcce4e9f00922d/multiprocess-0.70.19.tar.gz"
+      }
+    ],
+    "version": "0.70.19",
+    "wheel_filename": "multiprocess-0.70.19-py312-none-any.whl",
+    "wheel_sha256": "3a56c0e85dd5025161bac5ce138dcac1e49174c7d8e74596537e729fd5c53c28",
+    "wheel_url": "https://files.pythonhosted.org/packages/71/70/38998b950a97ea279e6bd657575d22d1a2047256caf707d9a10fbce4f065/multiprocess-0.70.19-py312-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "narwhals",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/narwhals-dev/narwhals/issues",
+      "Documentation": "https://narwhals-dev.github.io/narwhals/",
+      "Homepage": "https://github.com/narwhals-dev/narwhals",
+      "Repository": "https://github.com/narwhals-dev/narwhals"
+    },
+    "source_archives": [
+      {
+        "sha256": "2d9860c80d6610820826e94c6e42ce4b1d92d89cdd479586e652a8d211dab345",
+        "url": "https://files.pythonhosted.org/packages/67/43/e11d75a7fb635c6f63dd6e176cb3e050ec2fee35f2f2267b332a6ad351ec/narwhals-2.28.0.tar.gz"
+      }
+    ],
+    "version": "2.28.0",
+    "wheel_filename": "narwhals-2.28.0-py3-none-any.whl",
+    "wheel_sha256": "1f69d6385ec30e2fa6e1fdeb37c562ecabd0f713f6f3e3b58a668c5c9df9567f",
+    "wheel_url": "https://files.pythonhosted.org/packages/cf/82/8ef9c7e0f50493307a49c09cfa7f00c5a778b6d1921f7b2dabe1d3a5809e/narwhals-2.28.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "networkx",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/networkx/networkx/issues",
+      "Documentation": "https://networkx.org/documentation/stable/",
+      "Homepage": "https://networkx.org/",
+      "Source Code": "https://github.com/networkx/networkx"
+    },
+    "source_archives": [
+      {
+        "sha256": "fd77a511bd90f39f3d016351345b52cf5319b813bdca01de3f755d3cca62e96a",
+        "url": "https://files.pythonhosted.org/packages/dc/76/3af777226b63a5e64a6b36b1ec5855c14e2b94a37096d4760e595fc43511/networkx-3.7.tar.gz"
+      }
+    ],
+    "version": "3.7",
+    "wheel_filename": "networkx-3.7-py3-none-any.whl",
+    "wheel_sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+    "wheel_url": "https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_14_0_arm64"
+    ],
+    "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+    "local_patches": [],
+    "name": "numpy",
+    "project_urls": {
+      "documentation": "https://numpy.org/doc/",
+      "download": "https://pypi.org/project/numpy/#files",
+      "homepage": "https://numpy.org",
+      "release notes": "https://numpy.org/doc/stable/release",
+      "source": "https://github.com/numpy/numpy",
+      "tracker": "https://github.com/numpy/numpy/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+        "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz"
+      }
+    ],
+    "version": "2.5.4",
+    "wheel_filename": "numpy-2.5.4-cp312-cp312-macosx_14_0_arm64.whl",
+    "wheel_sha256": "9cb18a327b49c5c337f972b03682f6a49855525faaf3c0d3e9c96cd0fd8880a8",
+    "wheel_url": "https://files.pythonhosted.org/packages/31/2f/5ea3570fcb8ccd0882bea99436a513b2c85dad8f774a2057849130a8fb99/numpy-2.5.4-cp312-cp312-macosx_14_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "Apache-2.0 OR BSD-2-Clause",
+    "local_patches": [],
+    "name": "packaging",
+    "project_urls": {
+      "Documentation": "https://packaging.pypa.io/",
+      "Source": "https://github.com/pypa/packaging"
+    },
+    "source_archives": [
+      {
+        "sha256": "94edc256424af38762eb31306eed28beb9f0efc50a8837492c9d6fd6004aed79",
+        "url": "https://files.pythonhosted.org/packages/7d/fa/3944b40b07da9ce895c0e6303a5ab7d53da063554f534556b134a54d6093/packaging-26.3.tar.gz"
+      }
+    ],
+    "version": "26.3",
+    "wheel_filename": "packaging-26.3-py3-none-any.whl",
+    "wheel_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+    "wheel_url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "pandas",
+    "project_urls": {
+      "changelog": "https://pandas.pydata.org/docs/whatsnew/index.html",
+      "documentation": "https://pandas.pydata.org/docs/",
+      "funding": "https://opencollective.com/pandas",
+      "homepage": "https://pandas.pydata.org",
+      "issues": "https://github.com/pandas-dev/pandas/issues",
+      "source": "https://github.com/pandas-dev/pandas"
+    },
+    "source_archives": [
+      {
+        "sha256": "ecb9b2d8a817b1e1ba1fdb90c0abe9eab31b4fdf2562b7a56b86ac66ace17e49",
+        "url": "https://files.pythonhosted.org/packages/55/b1/a10c0d1a7e3ce44eb42635771004aa503e3b9ddde0bd39c524dda65f7eff/pandas-3.1.0.tar.gz"
+      }
+    ],
+    "version": "3.1.0",
+    "wheel_filename": "pandas-3.1.0-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "cc5e4e12d287ea77bbf4c4d4bf47ed152d82a990d3a6794dee7c350f887532b5",
+    "wheel_url": "https://files.pythonhosted.org/packages/1b/4b/af8ca15261db52ab07f5d0c2d4c1bc28d822ea4c2a79756bc2606c012e7c/pandas-3.1.0-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "pip",
+    "project_urls": {
+      "Changelog": "https://pip.pypa.io/en/stable/news/",
+      "Documentation": "https://pip.pypa.io",
+      "Homepage": "https://pip.pypa.io/",
+      "Source": "https://github.com/pypa/pip"
+    },
+    "source_archives": [
+      {
+        "sha256": "8e0a97f7b4c47ae4a494560da84775e9e2f671d415d8d828e052efefb206b30b",
+        "url": "https://files.pythonhosted.org/packages/47/3e/68beeeeb306ea20ffd30b3ed993f531d16cd884ec4f60c9b1e238f69f2af/pip-25.0.tar.gz"
+      }
+    ],
+    "version": "25.0",
+    "wheel_filename": "pip-25.0-py3-none-any.whl",
+    "wheel_sha256": "b6eb97a803356a52b2dd4bb73ba9e65b2ba16caa6bcb25a7497350a4e5859b65",
+    "wheel_url": "https://files.pythonhosted.org/packages/85/8a/1ddf40be20103bcc605db840e9ade09c8e8c9f920a03e9cfe88eae97a058/pip-25.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "pluggy",
+    "project_urls": {
+      "Changelog": "https://pluggy.readthedocs.io/en/latest/changelog.html",
+      "Documentation": "https://pluggy.readthedocs.io/",
+      "Funding": "https://tidelift.com/subscription/pkg/pypi-pluggy",
+      "Homepage": "https://github.com/pytest-dev/pluggy",
+      "Issues": "https://github.com/pytest-dev/pluggy/issues",
+      "Repository": "https://github.com/pytest-dev/pluggy"
+    },
+    "source_archives": [
+      {
+        "sha256": "d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8",
+        "url": "https://files.pythonhosted.org/packages/bf/db/7fc19e6f2dc92a966727031389fc2e08b558f0f25eb7403c1119ad4713cd/pluggy-1.7.0.tar.gz"
+      }
+    ],
+    "version": "1.7.0",
+    "wheel_filename": "pluggy-1.7.0-py3-none-any.whl",
+    "wheel_sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+    "wheel_url": "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache-2.0",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "propcache",
+    "project_urls": {
+      "CI: GitHub Workflows": "https://github.com/aio-libs/propcache/actions?query=branch:master",
+      "Chat: Matrix": "https://matrix.to/#/#aio-libs:matrix.org",
+      "Chat: Matrix Space": "https://matrix.to/#/#aio-libs-space:matrix.org",
+      "Code of Conduct": "https://github.com/aio-libs/.github/blob/master/CODE_OF_CONDUCT.md",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/propcache",
+      "Docs: Changelog": "https://propcache.readthedocs.io/en/latest/changes/",
+      "Docs: RTD": "https://propcache.readthedocs.io",
+      "GitHub: issues": "https://github.com/aio-libs/propcache/issues",
+      "GitHub: repo": "https://github.com/aio-libs/propcache",
+      "Homepage": "https://github.com/aio-libs/propcache"
+    },
+    "source_archives": [
+      {
+        "sha256": "ff6b113f50bc066a698db5d944d2c6dc7507168dd3341e255a8892fd0715a558",
+        "url": "https://files.pythonhosted.org/packages/b3/9a/9fbf4e4ec0c2d7f1c32519fff782ef467859b8faa9fbc5331a96f6395d43/propcache-0.5.4.tar.gz"
+      }
+    ],
+    "version": "0.5.4",
+    "wheel_filename": "propcache-0.5.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "87a3caecf8095e48dc72f84bfa42e23a848cf410cc9cc13031fba4869b706a21",
+    "wheel_url": "https://files.pythonhosted.org/packages/25/88/1d7df7201750b37765ef2b23bc1c526c028dadde80afa0f57a118fc01182/propcache-0.5.4-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "3-Clause BSD License",
+    "installed_wheel_tags": [
+      "cp310-abi3-macosx_10_9_universal2"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "protobuf",
+    "project_urls": {
+      "Homepage": "https://developers.google.com/protocol-buffers/"
+    },
+    "source_archives": [
+      {
+        "sha256": "497d0463ff3316681da6c0b9e8d06cb465d61abce00b613ab42226175644d1bb",
+        "url": "https://files.pythonhosted.org/packages/d9/89/5b8517baa72f84a67b8a307ba953c91057af618bf40bf676f3c03551f8f0/protobuf-7.36.2.tar.gz"
+      }
+    ],
+    "version": "7.36.2",
+    "wheel_filename": "protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl",
+    "wheel_sha256": "cbc70b17ee27e28894c7fee8bb04be1abead49e936bc70eb60052531eee2079e",
+    "wheel_url": "https://files.pythonhosted.org/packages/32/72/98342feb672507c8f3a69e34b4fa8961f608edba5c1a48a6f47156d92cb5/protobuf-7.36.2-cp310-abi3-macosx_10_9_universal2.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD-3-Clause",
+    "installed_wheel_tags": [
+      "cp36-abi3-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "psutil",
+    "project_urls": {
+      "Homepage": "https://github.com/giampaolo/psutil"
+    },
+    "source_archives": [
+      {
+        "sha256": "0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372",
+        "url": "https://files.pythonhosted.org/packages/aa/c6/d1ddf4abb55e93cebc4f2ed8b5d6dbad109ecb8d63748dd2b20ab5e57ebe/psutil-7.2.2.tar.gz"
+      }
+    ],
+    "version": "7.2.2",
+    "wheel_filename": "psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+    "wheel_sha256": "1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979",
+    "wheel_url": "https://files.pythonhosted.org/packages/80/c4/f5af4c1ca8c1eeb2e92ccca14ce8effdeec651d5ab6053c589b074eda6e1/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_12_0_arm64"
+    ],
+    "license_expression": "Apache-2.0",
+    "local_patches": [],
+    "name": "pyarrow",
+    "project_urls": {
+      "Documentation": "https://arrow.apache.org/docs/python",
+      "Homepage": "https://arrow.apache.org/",
+      "Issues": "https://github.com/apache/arrow/issues",
+      "Repository": "https://github.com/apache/arrow"
+    },
+    "source_archives": [
+      {
+        "sha256": "0cccd36e00ea3afeb52ded61f2721ce71f604853d70c45365c58324eb773d6ae",
+        "url": "https://files.pythonhosted.org/packages/ec/34/17c34cb38e5d940e38f0f0d9fdfa0e8a506676409ea9b85aff7e3079f831/pyarrow-26.0.0.tar.gz"
+      }
+    ],
+    "version": "26.0.0",
+    "wheel_filename": "pyarrow-26.0.0-cp312-cp312-macosx_12_0_arm64.whl",
+    "wheel_sha256": "90ddaf7c625307ad52f31a9b25c34fe5e4897c7529ee3481135822b2b6842ff1",
+    "wheel_url": "https://files.pythonhosted.org/packages/b3/60/6793778f2617cce469383dac0ba08c4f2401cf342df0c7b9ca53939d9b46/pyarrow-26.0.0-cp312-cp312-macosx_12_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-2-Clause",
+    "local_patches": [],
+    "name": "Pygments",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/pygments/pygments/issues",
+      "Changelog": "https://github.com/pygments/pygments/blob/master/CHANGES",
+      "Documentation": "https://pygments.org/docs",
+      "Homepage": "https://pygments.org",
+      "Source": "https://github.com/pygments/pygments"
+    },
+    "source_archives": [
+      {
+        "sha256": "610ca751c9bc2492b38eb9a38a7fbc93edbbb2d7182edaf34e66ae493dee5c8c",
+        "url": "https://files.pythonhosted.org/packages/49/2e/ced460408999b33da6b31b0021b0f37d329e202d4169aeb164493778f25b/pygments-2.21.0.tar.gz"
+      }
+    ],
+    "version": "2.21.0",
+    "wheel_filename": "pygments-2.21.0-py3-none-any.whl",
+    "wheel_sha256": "2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+    "wheel_url": "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "pytest",
+    "project_urls": {
+      "Changelog": "https://docs.pytest.org/en/stable/changelog.html",
+      "Contact": "https://docs.pytest.org/en/stable/contact.html",
+      "Funding": "https://docs.pytest.org/en/stable/sponsor.html",
+      "Homepage": "https://docs.pytest.org/en/latest/",
+      "Source": "https://github.com/pytest-dev/pytest",
+      "Tracker": "https://github.com/pytest-dev/pytest/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313",
+        "url": "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz"
+      }
+    ],
+    "version": "9.1.1",
+    "wheel_filename": "pytest-9.1.1-py3-none-any.whl",
+    "wheel_sha256": "37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c",
+    "wheel_url": "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Dual License",
+    "installed_wheel_tags": [
+      "py2-none-any",
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "python-dateutil",
+    "project_urls": {
+      "Documentation": "https://dateutil.readthedocs.io/en/stable/",
+      "Homepage": "https://github.com/dateutil/dateutil",
+      "Source": "https://github.com/dateutil/dateutil"
+    },
+    "source_archives": [
+      {
+        "sha256": "7ebcb3c29a92f3ceafe79a7a48a5c45677e9e004bbeec5742ac0bbb00560b7a2",
+        "url": "https://files.pythonhosted.org/packages/0e/df/f15f80383f152452d8985b36d95cb8751f901a3e0ff4cd27f7e118f168e2/python_dateutil-3.0.0.tar.gz"
+      }
+    ],
+    "version": "3.0.0",
+    "wheel_filename": "python_dateutil-3.0.0-py2.py3-none-any.whl",
+    "wheel_sha256": "3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+    "wheel_url": "https://files.pythonhosted.org/packages/5a/17/cebee01d1c0c1441174cf0456ddc91b280d79acb65340c05e41d77866ee8/python_dateutil-3.0.0-py2.py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "PyYAML",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/yaml/pyyaml/issues",
+      "CI": "https://github.com/yaml/pyyaml/actions",
+      "Documentation": "https://pyyaml.org/wiki/PyYAMLDocumentation",
+      "Download": "https://pypi.org/project/PyYAML/",
+      "Homepage": "https://pyyaml.org/",
+      "Mailing lists": "http://lists.sourceforge.net/lists/listinfo/yaml-core",
+      "Source Code": "https://github.com/yaml/pyyaml"
+    },
+    "source_archives": [
+      {
+        "sha256": "d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+        "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz"
+      }
+    ],
+    "version": "6.0.3",
+    "wheel_filename": "pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0",
+    "wheel_url": "https://files.pythonhosted.org/packages/89/a0/6cf41a19a1f2f3feab0e9c0b74134aa2ce6849093d5517a0c550fe37a648/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "Apache-2.0 AND CNRI-Python",
+    "local_patches": [],
+    "name": "regex",
+    "project_urls": {
+      "Homepage": "https://github.com/mrabarnett/mrab-regex"
+    },
+    "source_archives": [
+      {
+        "sha256": "8b5fcc4771732191b2b7d1dd68d8f0353f47f8d90b6150f6dce58bf1112442cb",
+        "url": "https://files.pythonhosted.org/packages/fc/f2/af1da9d3ceed77bfcdce40427d49ba0be94e4fe84245e3bfef68c10e75b6/regex-2026.9.29.tar.gz"
+      }
+    ],
+    "version": "2026.9.29",
+    "wheel_filename": "regex-2026.9.29-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "f57dc6b8fef170f105d2cf5cdce254f47b137d7755086cf7050f47e16582abba",
+    "wheel_url": "https://files.pythonhosted.org/packages/37/14/f3f0ba083d2094392d5eabf56db5ea6ba469fd6e927afd187042054ea68a/regex-2026.9.29-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "rich",
+    "project_urls": {
+      "Documentation": "https://rich.readthedocs.io/en/latest/",
+      "Homepage": "https://github.com/Textualize/rich"
+    },
+    "source_archives": [
+      {
+        "sha256": "edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36",
+        "url": "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz"
+      }
+    ],
+    "version": "15.0.0",
+    "wheel_filename": "rich-15.0.0-py3-none-any.whl",
+    "wheel_sha256": "33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb",
+    "wheel_url": "https://files.pythonhosted.org/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp310-abi3-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "safetensors",
+    "project_urls": {
+      "Homepage": "https://github.com/huggingface/safetensors",
+      "Source": "https://github.com/huggingface/safetensors"
+    },
+    "source_archives": [
+      {
+        "sha256": "fabaf3e0f18a6618d9b36560682562157f77c2b71fcffc7b432be2baed9d753d",
+        "url": "https://files.pythonhosted.org/packages/45/06/f955dbbb1859e3bd23c8ac6141af5106e7ad5fedec4a3a6e3d60f94b7001/safetensors-0.8.0.tar.gz"
+      }
+    ],
+    "version": "0.8.0",
+    "wheel_filename": "safetensors-0.8.0-cp310-abi3-macosx_11_0_arm64.whl",
+    "wheel_sha256": "c80201d22cbf405b80647a60ada77bba06c8fba2da2743ba1e89cdcc39a81f25",
+    "wheel_url": "https://files.pythonhosted.org/packages/f5/b1/fa7c600e7dceae12e9606c7578cbc9ff1e1ed55844883ee5c92205e86226/safetensors-0.8.0-cp310-abi3-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_12_0_arm64"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "scikit-learn",
+    "project_urls": {
+      "download": "https://pypi.org/project/scikit-learn/#files",
+      "homepage": "https://scikit-learn.org",
+      "release notes": "https://scikit-learn.org/stable/whats_new",
+      "source": "https://github.com/scikit-learn/scikit-learn",
+      "tracker": "https://github.com/scikit-learn/scikit-learn/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977",
+        "url": "https://files.pythonhosted.org/packages/d2/eb/eaf5e07fcc0da7149b0e084f24e54edd7441b9a89ce7e034032ae97fe3a0/scikit_learn-1.9.1.tar.gz"
+      }
+    ],
+    "version": "1.9.1",
+    "wheel_filename": "scikit_learn-1.9.1-cp312-cp312-macosx_12_0_arm64.whl",
+    "wheel_sha256": "8c14ce41d561f7749f990b41d6703fe02c4669fbc485e598e069e0a1967b488e",
+    "wheel_url": "https://files.pythonhosted.org/packages/60/ea/57e57539ce175d774fc291ed091b0a6d756854b92cd92554c6bb4d0ae498/scikit_learn-1.9.1-cp312-cp312-macosx_12_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Copyright (c) 2001-2002 Enthought, Inc. 2003, SciPy Developers. (full text in installed distribution)",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_14_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "scipy",
+    "project_urls": {
+      "documentation": "https://docs.scipy.org/doc/scipy/",
+      "download": "https://github.com/scipy/scipy/releases",
+      "homepage": "https://scipy.org/",
+      "source": "https://github.com/scipy/scipy",
+      "tracker": "https://github.com/scipy/scipy/issues"
+    },
+    "source_archives": [
+      {
+        "sha256": "52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307",
+        "url": "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz"
+      }
+    ],
+    "version": "1.18.1",
+    "wheel_filename": "scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl",
+    "wheel_sha256": "7bbf207c4453ce1ad2e00b17313852b33310b83090c2311bdaf97f93c0380d12",
+    "wheel_url": "https://files.pythonhosted.org/packages/a5/f6/a5b82f8abbe14d134691b8b903696f701d25a081353a29dc655c364d9e62/scipy-1.18.1-cp312-cp312-macosx_14_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": "Apache-2.0",
+    "local_patches": [],
+    "name": "sentencepiece",
+    "project_urls": {
+      "Homepage": "https://github.com/google/sentencepiece"
+    },
+    "source_archives": [
+      {
+        "sha256": "3d2b5e824b5622038dc7b490897efe05ebbbb9e7350fc142f3ecc8789ef9bdf6",
+        "url": "https://files.pythonhosted.org/packages/cc/33/ea3cb3839607eb175da835244a798f797f478c5ddf0e8ecdf57ea85a4c70/sentencepiece-0.2.2.tar.gz"
+      }
+    ],
+    "version": "0.2.2",
+    "wheel_filename": "sentencepiece-0.2.2-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "38111ed1f79268f399c505028023d5eaaf0ab4e5eafceb709468b0d3323e7838",
+    "wheel_url": "https://files.pythonhosted.org/packages/bd/44/caa9cab5f261a019e2808bc5046152775dc57352ba9cbae7525e9e7a1ed4/sentencepiece-0.2.2-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "setuptools",
+    "project_urls": {
+      "Changelog": "https://setuptools.pypa.io/en/stable/history.html",
+      "Documentation": "https://setuptools.pypa.io/",
+      "Source": "https://github.com/pypa/setuptools"
+    },
+    "source_archives": [
+      {
+        "sha256": "3ff8b3b5492a0aa66960f4419365a86b84e013070d4313e4d4a6894f5d64d6bc",
+        "url": "https://files.pythonhosted.org/packages/70/b3/c19426f783614d625699a4b247faf628ea9ab1db228674491767b417f9e1/setuptools-84.2.1.tar.gz"
+      }
+    ],
+    "version": "84.2.1",
+    "wheel_filename": "setuptools-84.2.1-py3-none-any.whl",
+    "wheel_sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2",
+    "wheel_url": "https://files.pythonhosted.org/packages/ef/55/6dc6d6bb953bdfc52519a0059592c52b6e3b8ad51cf8256dffceb55b0610/setuptools-84.2.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "ISC License",
+    "installed_wheel_tags": [
+      "py2-none-any",
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "shellingham",
+    "project_urls": {
+      "Homepage": "https://github.com/sarugaku/shellingham"
+    },
+    "source_archives": [
+      {
+        "sha256": "8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de",
+        "url": "https://files.pythonhosted.org/packages/58/15/8b3609fd3830ef7b27b655beb4b4e9c62313a4e8da8c676e142cc210d58e/shellingham-1.5.4.tar.gz"
+      }
+    ],
+    "version": "1.5.4",
+    "wheel_filename": "shellingham-1.5.4-py2.py3-none-any.whl",
+    "wheel_sha256": "7ecfff8f2fd72616f7481040475a65b2bf8af90a56c89140852d1120324e8686",
+    "wheel_url": "https://files.pythonhosted.org/packages/e0/f9/0595336914c5619e5f28a1fb793285925a8cd4b432c9da0a987836c7f822/shellingham-1.5.4-py2.py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MIT",
+    "installed_wheel_tags": [
+      "py2-none-any",
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "six",
+    "project_urls": {
+      "Homepage": "https://github.com/benjaminp/six"
+    },
+    "source_archives": [
+      {
+        "sha256": "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81",
+        "url": "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+      }
+    ],
+    "version": "1.17.0",
+    "wheel_filename": "six-1.17.0-py2.py3-none-any.whl",
+    "wheel_sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+    "wheel_url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "sympy",
+    "project_urls": {
+      "Homepage": "https://sympy.org",
+      "Source": "https://github.com/sympy/sympy"
+    },
+    "source_archives": [
+      {
+        "sha256": "d3d3fe8df1e5a0b42f0e7bdf50541697dbe7d23746e894990c030e2b05e72517",
+        "url": "https://files.pythonhosted.org/packages/83/d3/803453b36afefb7c2bb238361cd4ae6125a569b4db67cd9e79846ba2d68c/sympy-1.14.0.tar.gz"
+      }
+    ],
+    "version": "1.14.0",
+    "wheel_filename": "sympy-1.14.0-py3-none-any.whl",
+    "wheel_sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+    "wheel_url": "https://files.pythonhosted.org/packages/a2/09/77d55d46fd61b4a135c444fc97158ef34a095e5681d0a6c10b75bf356191/sympy-1.14.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "BSD-3-Clause",
+    "local_patches": [],
+    "name": "threadpoolctl",
+    "project_urls": {
+      "homepage": "https://github.com/joblib/threadpoolctl"
+    },
+    "source_archives": [
+      {
+        "sha256": "61348cfb77d53b9242e0017029244b559b810c142ced65b4e21eeca1843959a7",
+        "url": "https://files.pythonhosted.org/packages/00/dc/6c58154c1c65f758ea979e7139cb76993a9cfc662d14e9be3c4a667cfb77/threadpoolctl-3.7.0.tar.gz"
+      }
+    ],
+    "version": "3.7.0",
+    "wheel_filename": "threadpoolctl-3.7.0-py3-none-any.whl",
+    "wheel_sha256": "cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+    "wheel_url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp310-abi3-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "tokenizers",
+    "project_urls": {
+      "Homepage": "https://github.com/huggingface/tokenizers",
+      "Source": "https://github.com/huggingface/tokenizers"
+    },
+    "source_archives": [
+      {
+        "sha256": "cded33237c77caeef62944d32aa9a7ef42bdce2b3497e18d137e072a8c4be438",
+        "url": "https://files.pythonhosted.org/packages/e0/7c/2cabb2174e772636683008f2c5621949b645da7d303c596589e84516a184/tokenizers-0.23.3.tar.gz"
+      }
+    ],
+    "version": "0.23.3",
+    "wheel_filename": "tokenizers-0.23.3-cp310-abi3-macosx_11_0_arm64.whl",
+    "wheel_sha256": "68649e97d5b43c44c031d8d848874a6eecae8f8fe40ea989aa777a5a83aca716",
+    "wheel_url": "https://files.pythonhosted.org/packages/b2/72/01e49f032bb346e5aaf06c10c74fe8aeec847173adbadd66eb7c53054bf2/tokenizers-0.23.3-cp310-abi3-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_14_0_arm64"
+    ],
+    "license_expression": "Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT",
+    "local_patches": [],
+    "name": "torch",
+    "project_urls": {
+      "Documentation": "https://pytorch.org/docs",
+      "Forum": "https://discuss.pytorch.org",
+      "Homepage": "https://pytorch.org",
+      "Issue Tracker": "https://github.com/pytorch/pytorch/issues",
+      "Repository": "https://github.com/pytorch/pytorch"
+    },
+    "source_archives": [],
+    "version": "2.14.1",
+    "wheel_filename": "torch-2.14.1-cp312-cp312-macosx_14_0_arm64.whl",
+    "wheel_sha256": "420dbf314c180ee4b86e9bc00aee5746a7d6e5bacdd7df925af671ed393f0b2e",
+    "wheel_url": "https://files.pythonhosted.org/packages/4b/3c/379349820e9a6e713826de3d0b88f07728541bdcabe2a3afd128871cdc4b/torch-2.14.1-cp312-cp312-macosx_14_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "MPL-2.0 AND MIT",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "tqdm",
+    "project_urls": {
+      "changelog": "https://tqdm.github.io/releases",
+      "homepage": "https://tqdm.github.io",
+      "repository": "https://github.com/tqdm/tqdm",
+      "wiki": "https://github.com/tqdm/tqdm/wiki"
+    },
+    "source_archives": [
+      {
+        "sha256": "cefd0eca11b2a37a3aee776544d4f4ae913f02688135b5556b8788dfa474afc4",
+        "url": "https://files.pythonhosted.org/packages/0d/ea/b2a5bd54b28a324dae8211928b2d730b6547500342c7e6c6dea08bd0a485/tqdm-4.70.1.tar.gz"
+      }
+    ],
+    "version": "4.70.1",
+    "wheel_filename": "tqdm-4.70.1-py3-none-any.whl",
+    "wheel_sha256": "c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73",
+    "wheel_url": "https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache 2.0 License",
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "transformers",
+    "project_urls": {
+      "Homepage": "https://github.com/huggingface/transformers"
+    },
+    "source_archives": [
+      {
+        "sha256": "43c971a3eb9ab68dc9dfff430f8ab8a0fba09af2f68b608fd70c6245d2ddb8e7",
+        "url": "https://files.pythonhosted.org/packages/f6/9d/59e6232df8761e2c82d52e0bef5382e830d1cd65f02f648712ccd7675e7b/transformers-5.21.0.tar.gz"
+      }
+    ],
+    "version": "5.21.0",
+    "wheel_filename": "transformers-5.21.0-py3-none-any.whl",
+    "wheel_sha256": "8803a8712932aa3441c1e8bb340e66d5e3eca079fe65d9b717ede2f3ead01c79",
+    "wheel_url": "https://files.pythonhosted.org/packages/73/fa/fb638d54bffff44700c8d487608c1f2872823e606fbd043b3c29c93236cf/transformers-5.21.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "truststore",
+    "project_urls": {
+      "Documentation": "https://truststore.readthedocs.io",
+      "Source": "https://github.com/sethmlarson/truststore"
+    },
+    "source_archives": [
+      {
+        "sha256": "30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd",
+        "url": "https://files.pythonhosted.org/packages/ee/9f/c5201d42a484c061e528825fc8e2d565f5abd50a4ced6fb7d29c4ec99b2b/truststore-0.10.5.tar.gz"
+      }
+    ],
+    "version": "0.10.5",
+    "wheel_filename": "truststore-0.10.5-py3-none-any.whl",
+    "wheel_sha256": "9aaaedaefaf06d8b206278cf8b5012bc897f485a874503501e12d776df78951c",
+    "wheel_url": "https://files.pythonhosted.org/packages/51/e9/3a7820be2bb0fe53b6bc9c3be26d3d1158004e4c3ab953aa6840b955b1e9/truststore-0.10.5-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "MIT",
+    "local_patches": [],
+    "name": "typer",
+    "project_urls": {
+      "Changelog": "https://typer.tiangolo.com/release-notes/",
+      "Documentation": "https://typer.tiangolo.com",
+      "Homepage": "https://github.com/fastapi/typer",
+      "Issues": "https://github.com/fastapi/typer/issues",
+      "Repository": "https://github.com/fastapi/typer"
+    },
+    "source_archives": [
+      {
+        "sha256": "d0396f770a560ab1b0a8504e13b5f254b728cedb05c61cf0359e944e50ce8901",
+        "url": "https://files.pythonhosted.org/packages/03/51/d33db42cc72ffd8c30777547b42d01f0cbf9d95a770457698d0174b3ed71/typer-0.27.3.tar.gz"
+      }
+    ],
+    "version": "0.27.3",
+    "wheel_filename": "typer-0.27.3-py3-none-any.whl",
+    "wheel_sha256": "e50022f28b82a86313e54501317a1db64bf8f8d036ff8cfe5ca7e47675454aff",
+    "wheel_url": "https://files.pythonhosted.org/packages/07/ea/2e31b67051e91a133189e9c000c222502ddc6969856416de0d095de4c0b0/typer-0.27.3-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": null,
+    "installed_wheel_tags": [
+      "py3-none-any"
+    ],
+    "license_expression": "PSF-2.0",
+    "local_patches": [],
+    "name": "typing_extensions",
+    "project_urls": {
+      "Bug Tracker": "https://github.com/python/typing_extensions/issues",
+      "Changes": "https://github.com/python/typing_extensions/blob/main/CHANGELOG.md",
+      "Documentation": "https://typing-extensions.readthedocs.io/",
+      "Home": "https://github.com/python/typing_extensions",
+      "Q & A": "https://github.com/python/typing/discussions",
+      "Repository": "https://github.com/python/typing_extensions"
+    },
+    "source_archives": [
+      {
+        "sha256": "dc983d19a509c94dba722ee6abd33940f7c05a89e243c47e907eb4db6f1a43e5",
+        "url": "https://files.pythonhosted.org/packages/f6/cc/6253133b5bb138fc3306cebfbda2c520f545d36b5be2c7255cc528bb45d6/typing_extensions-4.16.0.tar.gz"
+      }
+    ],
+    "version": "4.16.0",
+    "wheel_filename": "typing_extensions-4.16.0-py3-none-any.whl",
+    "wheel_sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+    "wheel_url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache-2.0",
+    "installed_wheel_tags": [
+      "py2-none-any",
+      "py3-none-any"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "tzdata",
+    "project_urls": {
+      "Bug Reports": "https://github.com/python/tzdata/issues",
+      "Documentation": "https://tzdata.python.org",
+      "Homepage": "https://github.com/python/tzdata",
+      "Source": "https://github.com/python/tzdata"
+    },
+    "source_archives": [
+      {
+        "sha256": "8cc73c0a0bfca7dbfa59235d60b2eff82231dee33f53d206db1acd9173cfc0a7",
+        "url": "https://files.pythonhosted.org/packages/d9/68/f1b440335057bfce71b6e50a9d09445aa2ecbd08359a337976627b8409e7/tzdata-2026.5.tar.gz"
+      }
+    ],
+    "version": "2026.5",
+    "wheel_filename": "tzdata-2026.5-py2.py3-none-any.whl",
+    "wheel_sha256": "b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+    "wheel_url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "BSD-2-Clause",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "xxhash",
+    "project_urls": {
+      "Homepage": "https://github.com/ifduyue/python-xxhash"
+    },
+    "source_archives": [
+      {
+        "sha256": "af3d1b3cfa5280e84d8968e9f30c9eca75781db4915eb6d6acb0dd4fc93e0f47",
+        "url": "https://files.pythonhosted.org/packages/39/e6/ed6c428055ffd3f9299db3ec8671fd78b70c24173c040b8faafb6348ebbb/xxhash-4.0.2.tar.gz"
+      }
+    ],
+    "version": "4.0.2",
+    "wheel_filename": "xxhash-4.0.2-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "aeda53dfb6bcae94adb1f5df4246fe13b9c4202f531dd9d39e0d55b36ba8db0e",
+    "wheel_url": "https://files.pythonhosted.org/packages/bf/79/0ad1d456bbfb30761f6fc174dca610dcd46ef1280a708ce1bdb5de8b5368/xxhash-4.0.2-cp312-cp312-macosx_11_0_arm64.whl"
+  },
+  {
+    "archive_hash_verified": true,
+    "declared_license": "Apache-2.0",
+    "installed_wheel_tags": [
+      "cp312-cp312-macosx_11_0_arm64"
+    ],
+    "license_expression": null,
+    "local_patches": [],
+    "name": "yarl",
+    "project_urls": {
+      "CI: GitHub Workflows": "https://github.com/aio-libs/yarl/actions?query=branch:master",
+      "Chat: Matrix": "https://matrix.to/#/#aio-libs:matrix.org",
+      "Chat: Matrix Space": "https://matrix.to/#/#aio-libs-space:matrix.org",
+      "Code of Conduct": "https://github.com/aio-libs/.github/blob/master/CODE_OF_CONDUCT.md",
+      "Coverage: codecov": "https://codecov.io/github/aio-libs/yarl",
+      "Docs: Changelog": "https://yarl.aio-libs.org/en/latest/changes/",
+      "Docs: RTD": "https://yarl.aio-libs.org",
+      "GitHub: issues": "https://github.com/aio-libs/yarl/issues",
+      "GitHub: repo": "https://github.com/aio-libs/yarl",
+      "Homepage": "https://github.com/aio-libs/yarl"
+    },
+    "source_archives": [
+      {
+        "sha256": "03dd38de09bc213e9a8b29761eec33ee1d5318dac0e49d8af36e4d27830e23a7",
+        "url": "https://files.pythonhosted.org/packages/75/16/e8be8e2fb175bbf41a0680381a319f1199fae256588241a2ac8677eafb49/yarl-1.25.1.tar.gz"
+      }
+    ],
+    "version": "1.25.1",
+    "wheel_filename": "yarl-1.25.1-cp312-cp312-macosx_11_0_arm64.whl",
+    "wheel_sha256": "e029648f9c951db30e98a7d7ec90835db88ec4b32820efe2a9bdc2287e032eb6",
+    "wheel_url": "https://files.pythonhosted.org/packages/be/dd/ee38aec8e09fdf957e50d4085453fbe202f56c6c3b4cf07b81cdb4f09ee9/yarl-1.25.1-cp312-cp312-macosx_11_0_arm64.whl"
+  }
+]

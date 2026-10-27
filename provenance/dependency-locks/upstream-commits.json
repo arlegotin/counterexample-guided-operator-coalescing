@@ -1,0 +1,102 @@
+[
+  {
+    "package": "torch",
+    "repository": "https://github.com/pytorch/pytorch.git",
+    "tag": "v2.14.1",
+    "commit": "5c4886908584029761b579af026dcfb627c84070",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "mlx",
+    "repository": "https://github.com/ml-explore/mlx.git",
+    "tag": "v0.32.4",
+    "commit": "36969c094354086e15d2a327a9c50feb20b9cf11",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "mlx-lm",
+    "repository": "https://github.com/ml-explore/mlx-lm.git",
+    "tag": "v0.32.2",
+    "commit": "93e6d4a6447b3080861985947f0820e76fcb957d",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "transformers",
+    "repository": "https://github.com/huggingface/transformers.git",
+    "tag": "v5.21",
+    "commit": "dded62b5e641816d552098b1b8de578d17121740",
+    "reason": null,
+    "local_patches": [],
+    "version_verification": {
+      "source_file": "https://raw.githubusercontent.com/huggingface/transformers/dded62b5e641816d552098b1b8de578d17121740/src/transformers/__init__.py",
+      "declared_version": "5.21.0"
+    }
+  },
+  {
+    "package": "numpy",
+    "repository": "https://github.com/numpy/numpy.git",
+    "tag": "v2.5.4",
+    "commit": "a3d0ef1df045b858e68115001fdabc930bb3b68c",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "scipy",
+    "repository": "https://github.com/scipy/scipy.git",
+    "tag": "v1.18.1",
+    "commit": "e4e854eaa8f18d807cd3496028e257e36caa93cc",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "scikit-learn",
+    "repository": "https://github.com/scikit-learn/scikit-learn.git",
+    "tag": "1.9.1",
+    "commit": "866c0f51e7560ef0303cbcc5f159df5382ea9e3f",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "datasets",
+    "repository": "https://github.com/huggingface/datasets.git",
+    "tag": "5.1.0",
+    "commit": "efe6ea4f88260b1a5066f28a9c90d82365a29f42",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "safetensors",
+    "repository": "https://github.com/huggingface/safetensors.git",
+    "tag": "v0.8.0",
+    "commit": "a406ca3e7a90598be0cd05a50069cb9bf5ef6ba6",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "PyYAML",
+    "repository": "https://github.com/yaml/pyyaml.git",
+    "tag": "6.0.3",
+    "commit": "49790e73684bebad1df05ef8d828fa12f685bffb",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "pytest",
+    "repository": "https://github.com/pytest-dev/pytest.git",
+    "tag": "9.1.1",
+    "commit": "cf470ec0bf7eb89cd97dd56df4859eae5db46447",
+    "reason": null,
+    "local_patches": []
+  },
+  {
+    "package": "psutil",
+    "repository": "https://github.com/giampaolo/psutil.git",
+    "tag": "release-7.2.2",
+    "commit": "9eea97dd6f1d16ea33f5144c8925f1ce7a0688e1",
+    "reason": null,
+    "local_patches": []
+  }
+]

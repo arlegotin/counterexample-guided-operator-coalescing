@@ -11,6 +11,14 @@ dependencies = ["PyYAML>=6.0.2,<7"]
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
+science = [
+    "torch==2.14.1", "transformers==5.21.0", "numpy==2.5.4", "scipy==1.18.1",
+    "scikit-learn==1.9.1", "datasets==5.1.0", "safetensors==0.8.0", "psutil==7.2.2",
+]
+apple = [
+    "mlx==0.32.4; platform_system == 'Darwin' and platform_machine == 'arm64'",
+    "mlx-lm[train]==0.32.2; platform_system == 'Darwin' and platform_machine == 'arm64'",
+]
 
 [project.scripts]
 poc = "poc.cli:main"
@@ -20,4 +28,5 @@ include = ["poc*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+addopts = "-m 'not mps and not mlx'"
 pythonpath = ["."]

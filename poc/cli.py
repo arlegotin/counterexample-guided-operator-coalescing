@@ -14,7 +14,7 @@ class _Parser(argparse.ArgumentParser):
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = _Parser(description="Local CGOC research harness (WP00 not qualified).",
+    parser = _Parser(description="Local CGOC research harness (run doctor for WP00 qualification).",
                      epilog="Exits: 0 completed; 2 invalid config/contract; 3 unmet prerequisite; 4 runtime/integrity failure.")
     subparsers = parser.add_subparsers(dest="command", required=True)
     configured = {"prepare", "baselines", "diagnose", "fit", "compile", "bench", "freeze", "run"}
@@ -51,6 +51,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             args = _parser().parse_args(argv)
         except SystemExit as exc:
             return int(exc.code)
+        if args.command == "doctor":
+            from poc.doctor import run_doctor, write_doctor_report
+            report = run_doctor()
+            write_doctor_report(args.out, report)
+            print(f"doctor: WP00 compute-path {report.compute_path_status}; full gate={report.wp00_status}; scientific backend={report.scientific_backend}; report={args.out}")
+            return 0 if report.compute_path_status == "passed" else 3
         if hasattr(args, "config"):
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)

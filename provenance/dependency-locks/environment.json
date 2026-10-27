@@ -1,0 +1,19 @@
+{
+  "qualification_date": "2026-10-27",
+  "python": "3.12.9",
+  "python_implementation": "CPython",
+  "python_compiler": "Clang 16.0.0 (clang-1600.0.26.6)",
+  "python_architecture": "arm64",
+  "platform": "darwin",
+  "macos": "26.7.1",
+  "sysconfig_platform": "macosx-14.0-arm64",
+  "torch_source_commit_from_installed_wheel": "5c4886908584029761b579af026dcfb627c84070",
+  "sdk_version": "15.5",
+  "sdk_unavailable_reason": null,
+  "lock_sha256": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+  "package_count_excluding_editable_project": 67,
+  "project_install": "editable local checkout; source commit tracked separately in research RunSpec",
+  "local_third_party_patches": [],
+  "rebuild_status": "pending: Task24 must recreate a second isolated environment from this exact lock before WP07/confirmation",
+  "scope": "tested macOS arm64 wheels only; this lock is not portable to Linux/Intel macOS; MLX wheel requires macOS26+"
+}
