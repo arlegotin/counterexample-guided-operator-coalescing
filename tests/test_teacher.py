@@ -135,3 +135,49 @@ def test_device_change_invalidates_model_snapshot_and_prior_cache():
     model.to('mps')
     assert model.manifest().checkpoint_digest!=before
     with pytest.raises(ValueError,match='state'): model.logits(batch(device='mps'),cache=cache)
+
+
+NORM_SITES=('norm',)+tuple(f'layers.{depth}.{site}' for depth in range(3)
+    for site in ('input_layernorm','post_attention_layernorm'))
+
+
+@pytest.mark.parametrize('site',NORM_SITES)
+@pytest.mark.parametrize('invalidate',[False,True])
+def test_actual_norm_epsilon_change_rejects_populated_cache(site,invalidate):
+    from poc.runtime.torch_decoder import TinyConfig,make_tiny_decoder
+    from test_model_parity import batch
+    model=make_tiny_decoder(TinyConfig(),seed=1,dtype=torch.float32)
+    whole=batch([[1,2,3,4,5]])
+    original=model.logits(whole)
+    old_digest=model.manifest().checkpoint_digest
+    cache=model.new_cache()
+    model.logits(batch([[1,2,3]]),cache=cache)
+    norm=model.get_submodule(site); original_epsilon=norm.variance_epsilon
+    norm.variance_epsilon=1.0
+    if invalidate: model.invalidate_state_snapshot()
+    with pytest.raises(ValueError,match='state'):
+        model.logits(batch([[4,5]],offset=3),cache=cache)
+    assert cache.length==3
+    assert model.manifest().checkpoint_digest!=old_digest
+    mutated=model.logits(whole)
+    fresh=model.new_cache()
+    pieces=[model.logits(batch([[1,2,3]]),cache=fresh),
+            model.logits(batch([[4,5]],offset=3),cache=fresh)]
+    torch.testing.assert_close(torch.cat(pieces,1),mutated,atol=1e-6,rtol=0)
+    assert (mutated-original).abs().max().item()>1e-5
+    norm.variance_epsilon=original_epsilon
+    assert model.manifest().checkpoint_digest==old_digest
+    torch.testing.assert_close(model.logits(whole),original,atol=0,rtol=0)
+
+
+@pytest.mark.parametrize('site',['layers.0.input_layernorm','layers.1.post_attention_layernorm','norm'])
+@pytest.mark.parametrize('epsilon',[0.,-1.,float('nan'),float('inf'),True])
+def test_invalid_actual_norm_epsilon_cannot_issue_identity_or_cache(site,epsilon):
+    from poc.runtime.torch_decoder import TinyConfig,make_tiny_decoder
+    model=make_tiny_decoder(TinyConfig(),seed=1,dtype=torch.float32)
+    model.manifest()  # warm snapshot must still validate executable scalars
+    model.get_submodule(site).variance_epsilon=epsilon
+    with pytest.raises(ValueError,match='epsilon'):
+        model.manifest()
+    with pytest.raises(ValueError,match='epsilon'):
+        model.new_cache()

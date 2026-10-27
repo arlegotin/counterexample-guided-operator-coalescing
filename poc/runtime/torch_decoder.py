@@ -104,8 +104,22 @@ class TorchDecoder(nn.Module):
 
     def _digest(self) -> str:
         config = json.dumps(self.config.to_dict(), sort_keys=True, default=str)
+        # RMSNorm executes these mutable module scalars, not config.rms_norm_eps.
+        # Validate them before consulting a warm snapshot and bind their actual
+        # site/value pairs into both the snapshot signature and full identity.
+        norm_sites = [(f'layers.{depth}.{site}', getattr(layer, site))
+                      for depth, layer in enumerate(self.layers)
+                      for site in ('input_layernorm', 'post_attention_layernorm')]
+        norm_sites.append(('norm', self.norm))
+        norm_epsilons = []
+        for site, norm in norm_sites:
+            epsilon = norm.variance_epsilon
+            if type(epsilon) not in (int, float) or not math.isfinite(epsilon) or epsilon <= 0:
+                raise ValueError(f'actual RMSNorm epsilon at {site} must be positive and finite')
+            norm_epsilons.append((site, epsilon))
+        norm_epsilons = tuple(norm_epsilons)
         tensors = list(self.named_parameters(remove_duplicate=False)) + list(self.named_buffers(remove_duplicate=False))
-        signature = (EXECUTION_PROFILE, config, self.head_dim, self.rope_theta,
+        signature = (EXECUTION_PROFILE, config, self.head_dim, self.rope_theta, norm_epsilons,
                      tuple((name, id(t), t.data_ptr(), t._version, str(t.dtype), str(t.device),
                             tuple(t.shape), tuple(t.stride())) for name, t in tensors))
         snapshot = getattr(self, '_state_snapshot', None)
@@ -113,7 +127,7 @@ class TorchDecoder(nn.Module):
             return snapshot[1]
         digest = hashlib.sha256(config.encode())
         digest.update(json.dumps([EXECUTION_PROFILE, self.head_dim,
-                                  self.rope_theta, str(self.device)]).encode())
+                                  self.rope_theta, str(self.device), norm_epsilons]).encode())
         # Hash detached snapshots only; live candidate activations never cross NumPy.
         for name, tensor in self.state_dict().items():
             value = tensor.detach().cpu().contiguous()

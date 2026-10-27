@@ -1,0 +1,110 @@
+{
+  "additional_qualification_cost": {
+    "capability_screen_repeated": false,
+    "dev_or_protected_access": false,
+    "full_teacher_forward_calls": 12,
+    "rejected_stale_cache_calls": 3,
+    "wall_seconds": 5.076354749995517
+  },
+  "base_commit": "001ae32147fdc53c9135b37008b96cf3ce35bca1",
+  "changed_runtime_methods": [
+    "TorchDecoder._digest"
+  ],
+  "checks": {
+    "focused_green": "54 passed,3 hardware deselected;2.86s",
+    "full_cpu": "320 passed,1 skipped(explicit assets),16 hardware deselected;10.70s",
+    "invalid_scalar_cases": "zero,negative,NaN,infinity,bool rejected across input/post-attention/final categories",
+    "norm_sites": "all7 tiny norm sites, with and without explicit invalidation; populated prior cache; changed/fresh/restored normal execution",
+    "red": "29 expected failures,9 deselected;3.36s"
+  },
+  "date": "2026-10-27",
+  "executable_identity_schema_amendment": "actual-rms-epsilons-v1",
+  "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+  "finding": "Executed norm.variance_epsilon was absent from both snapshot signature and full digest; populated stale cache could remain accepted.",
+  "fix": "Validate positive finite actual input/post-attention/final RMSNorm site/epsilon pairs before snapshot reuse; include them in both signature and digest.",
+  "historical_outcomes": {
+    "attribution": "Original task outcomes remain attributed to 001ae32/attempt4. This amendment verifies the new guard with unchanged original teacher logits; it does not relabel the old run as produced by amended source.",
+    "decoder_sha256": "fac5b82f1727f2fe3ae924b9745150f76df1babab225e2218746128cded50a2f",
+    "origin_commit": "001ae32147fdc53c9135b37008b96cf3ce35bca1",
+    "provenance_path": "provenance/teacher-qualification-2026-10-27.json",
+    "provenance_sha256": "6e3c5958c62e013a9136cbf616876f542e5701086789082af22d15016c557e1a",
+    "recomputed": false,
+    "source_bound_attempt": "artifacts/validation/teacher-and-harness-2026-10-27-attempt4/summary.json",
+    "source_bound_attempt_sha256": "15e99b0ca37e2aa7e81e8716efe62c528dc4ba886c715b69683bef07ada9b356"
+  },
+  "limitations": [
+    "No new task outcomes, MPS calibration or compression result claimed.",
+    "Strengthened executable identities differ even at unchanged norm values; old executable/cache identities must not be reused.",
+    "Original raw weights, policies and historical attempt4 evidence remain unchanged."
+  ],
+  "numerical_execution_unchanged": true,
+  "private_artifact_sha256": {
+    "artifacts/validation/task7-review1-full-cpu.log": "cae5f1d9925a4cfebf32d53b37ac88e7bfd2744bc12f3df5a9f5de2e27dae981",
+    "artifacts/validation/task7-review1-norm-green.log": "86c5a9fedc02608a2e03cbfb0facbfcf0636371ddca39aa01cf02c4f09d554b3",
+    "artifacts/validation/task7-review1-norm-red.log": "17cf59556203140be81c85ae9a6a8f02d2053777e9f511bd01f272749d8cd3de",
+    "artifacts/validation/task7-review1-norm-reproduction.json": "afd3c5aaaffcb8a210226a7f26fe660bbe6248dc3f592d5e33862badd299d387",
+    "artifacts/validation/task7-review1/check_real_teacher_guard.py": "c60fd6d52fd99084393927819538d1604100d7d4586712d7860afd8558ff4fce",
+    "artifacts/validation/task7-review1/real-teacher-guard.json": "510bc0dd25a8f102b1a539c3f58cdb0e4c94d87b9affb22c73e4e8bdacc769a3",
+    "artifacts/validation/task7-review1/real-teacher-guard.log": "ff42a36fb604ed79ab83a7123a3159e6c44078b0da2dc463b6f217cce1088235",
+    "artifacts/validation/task7-review1/torch_decoder-before-review1.py": "fac5b82f1727f2fe3ae924b9745150f76df1babab225e2218746128cded50a2f"
+  },
+  "reproduction": {
+    "final_norm_digest_unchanged_after_invalidation": true,
+    "input_norm_digest_unchanged": true,
+    "stale_cache_max_abs_error": 0.03273967280983925
+  },
+  "schema_version": 1,
+  "scope": "Task7 review1 actual RMSNorm epsilon identity guard; no numerical/scoring execution change",
+  "scoped_real_teacher": {
+    "actual_norm_sites": 61,
+    "asset_manifest_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+    "backend": "torch_cpu",
+    "base_commit": "001ae32147fdc53c9135b37008b96cf3ce35bca1",
+    "base_decoder_sha256": "fac5b82f1727f2fe3ae924b9745150f76df1babab225e2218746128cded50a2f",
+    "check_script_sha256": "c60fd6d52fd99084393927819538d1604100d7d4586712d7860afd8558ff4fce",
+    "current_decoder_sha256": "7303ac017b795c5d87023f87a0daa2d1e34a8652f2782f94f1a24e4a3164869c",
+    "dtype": "float32",
+    "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+    "full_teacher_forward_calls": 12,
+    "guarded_checkpoint_digest": "d53d1af649f05b69b93da6bd848c196fc05e1e68fddb0730ed3c2a36e5ffa9ad",
+    "mutated_real_norm_sites_rejected": [
+      "layers.0.input_layernorm",
+      "layers.15.post_attention_layernorm",
+      "norm"
+    ],
+    "numerical_execution_unchanged": true,
+    "original_checkpoint_digest": "3754710776d00dbb4fbcf379717955795b2e1ebd29fc6102e4aaf1efee61f87b",
+    "prior_outcomes_recomputed": false,
+    "rejected_stale_cache_calls": 3,
+    "rows": [
+      {
+        "context_tokens": 16,
+        "hf_max_abs_error": 0.0,
+        "logits_sha256": "97f66e9fa3ffaaf51f2d4a8c2465e7d2d668a87cc7f953229468d95b5a7b10df",
+        "old_new_max_abs_error": 0.0
+      },
+      {
+        "context_tokens": 128,
+        "hf_max_abs_error": 0.0,
+        "logits_sha256": "fc5c723174dc3dcd901c8640911decf423eb88160f9ea365685248ffd8f15f8d",
+        "old_new_max_abs_error": 0.0
+      },
+      {
+        "context_tokens": 512,
+        "hf_max_abs_error": 0.0,
+        "logits_sha256": "0c5a47a1341525de5603b2f8c65bbe6d2aaf3394e061e67adc8fbdd3efeef2a4",
+        "old_new_max_abs_error": 0.0
+      }
+    ],
+    "schema_version": 1,
+    "scope": "guard-only actual teacher; original deterministic tokens, no task/dev/protected inputs",
+    "status": "passed",
+    "test_source_sha256": "ec2681984c51590a213dc8a54a3ae1a5994c7295a2131682032f8d8002ed19bc",
+    "wall_seconds": 5.076354749995517
+  },
+  "source_sha256": {
+    "poc/runtime/torch_decoder.py": "7303ac017b795c5d87023f87a0daa2d1e34a8652f2782f94f1a24e4a3164869c",
+    "tests/test_teacher.py": "ec2681984c51590a213dc8a54a3ae1a5994c7295a2131682032f8d8002ed19bc"
+  },
+  "status": "passed_guard_only"
+}
