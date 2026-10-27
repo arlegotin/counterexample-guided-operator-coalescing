@@ -4,7 +4,7 @@ This local study asks whether counterexamples help choose which nonlinear FFNs i
 
 The 135M teacher and scoring harness are now qualified on the local Apple Silicon machine. Development results are uneven: ARC Easy 56.8%, ARC Challenge 32.4%, and BLiMP 79.7% on the declared subset; synthetic arithmetic and composition score 0/16 each under the frozen exact-match protocol. These outcomes remain part of the evidence. **No actual compression advantage has been demonstrated.**
 
-The next step is deployment packaging and quantization baselines, followed by the single-merge diagnostic. Final training/search budgets, payload size, protected evaluation and preservation tolerances remain unresolved. Protected readers stay denied until the freeze-verifying evaluator exists.
+Complete floating deployment packaging is reviewed: 542 MB for the dense teacher and 389 MB for an untrained shared-bank format fixture. That establishes storage and offline execution, with no quality result or B* anchor yet. Task9 now qualifies native quantization baselines and the prescribed measured payload anchor; the single-merge diagnostic follows. Final training/search budgets, payload size, protected evaluation and preservation tolerances remain unresolved. Protected readers stay denied until the freeze-verifying evaluator exists.
 
 Start with [current progress](PROGRESS.md) and [decisions](DECISIONS.md). The [specification](docs/superpowers/specs/2026-10-27-cgoc-design.md) defines the study; the [implementation plan](docs/superpowers/plans/2026-10-27-cgoc.md) orders its tasks. The [original blueprint](docs/blueprint.md) is unchanged, and the [critical review](docs/analysis/2026-10-27-blueprint-review.md) explains its open questions.
 
