@@ -109,6 +109,30 @@ class PilotRecorder:
         try: return fn()
         finally: self.record(CostRecord(wall_seconds=time.monotonic()-start,**counts))
 
+    def attempt_cost(self):
+        # A run ledger contains every retry; filter by immutable attempt identity.
+        with locked_ledger(self.tracker.path) as stream:
+            rows=[r for r in read_rows(stream) if r['attempt_id']==self.tracker.attempt.attempt_id]
+        return self.tracker._total(rows)
+
+    def finish_attempt(self,result,*,elapsed):
+        result['process_wall_seconds']=elapsed
+        # Include loading/role ledger/snapshot/orchestration overhead without double-counting dispatches.
+        elapsed=result['process_wall_seconds'];accounted=self.attempt_cost().wall_seconds
+        fatal_overrun=None
+        if elapsed>accounted:
+            try: self.record(CostRecord(wall_seconds=elapsed-accounted))
+            except BudgetExceeded as exc:
+                result.update(status='failed',failure_type=type(exc).__name__,failure_reason=str(exc))
+                fatal_overrun=exc
+        result['cost']=self.attempt_cost().to_dict()
+        result['run_cost']=self.tracker.totals.to_dict()
+        result['aggregate_phase_cost']=self.aggregate().to_dict()
+        result['memory_observed_highwaters']=self.memory_highwater
+        result['memory_guard_note']='RSS+driver is a conservative overlapping observation, not a unique physical-memory peak'
+        result['unmeasured_cost_fields']=['unique_tokens','estimated_operations']
+        return fatal_overrun
+
 
 def conditional_entropy(teacher,hidden,position,recorder):
     # Preserve the position axis: DecoderAdapter.readout accepts [...,N,d], N>=1.
@@ -308,20 +332,7 @@ def run(stage,out,*,teacher_cap,student_cap,wall_cap,memory_cap):
         save_row('failure',dict(exception=type(exc).__name__,reason=str(exc)))
         raise
     finally:
-        result['process_wall_seconds']=time.monotonic()-start
-        # Include loading/role ledger/snapshot/orchestration overhead without double-counting dispatches.
-        elapsed=result['process_wall_seconds'];accounted=tracker.totals.wall_seconds
-        fatal_overrun=None
-        if elapsed>accounted:
-            try: recorder.record(CostRecord(wall_seconds=elapsed-accounted))
-            except BudgetExceeded as exc:
-                result.update(status='failed',failure_type=type(exc).__name__,failure_reason=str(exc))
-                fatal_overrun=exc
-        result['cost']=tracker.totals.to_dict()
-        result['aggregate_phase_cost']=recorder.aggregate().to_dict()
-        result['memory_observed_highwaters']=recorder.memory_highwater
-        result['memory_guard_note']='RSS+driver is a conservative overlapping observation, not a unique physical-memory peak'
-        result['unmeasured_cost_fields']=['unique_tokens','estimated_operations']
+        fatal_overrun=recorder.finish_attempt(result,elapsed=time.monotonic()-start)
         _write(attempt.path/'result.json',result)
         append_event(attempt,dict(kind='result',status=result['status'],cost=result['cost']))
         print(json.dumps(result,sort_keys=True))

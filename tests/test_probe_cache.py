@@ -82,3 +82,20 @@ def test_missing_tokenizer_identity_and_changed_norm_or_private_map_fail_closed(
     assert cache.entry_count==0
     c.layers[0].mlp.index=1
     with pytest.raises(ValueError): cache.get(r,teacher=t,candidate=c)
+
+
+@pytest.mark.cpu
+def test_measured_source_binding_is_recomputable_and_rejects_changed_body(tmp_path):
+    import hashlib,json
+    import provenance.verify_probe_source_binding as audit
+    binding_path=audit.ROOT/'provenance/probes-source-binding-2026-10-27.json'
+    assert audit.verify_binding(binding_path)['executable_ast_unchanged']
+    binding=json.loads(binding_path.read_text())
+    text=(audit.ROOT/binding['measured_source']['path']).read_text()
+    changed=tmp_path/'changed-probes.py'
+    changed.write_text(text.replace("    return math.fsum(terms)","    return 0.0"))
+    assert changed.read_text()!=text
+    binding['measured_source'].update(path=str(changed),sha256=hashlib.sha256(changed.read_bytes()).hexdigest())
+    wrong=tmp_path/'binding.json';wrong.write_text(json.dumps(binding))
+    with pytest.raises(ValueError,match='AST|executable'):
+        audit.verify_binding(wrong)

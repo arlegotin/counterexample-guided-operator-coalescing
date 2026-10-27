@@ -400,6 +400,8 @@ class ProbePool:
 
 def filter_pathologies(pool: ProbePool, observations: Mapping[str,tuple[float,float]],
                         thresholds: PathologyThresholds) -> ProbePool:
+    if pool.pathology_threshold_digest is not None and pool.pathology_threshold_digest != thresholds.digest:
+        raise ValueError('already-filtered pool cannot use different pathology thresholds; filter original records')
     exclusions = dict(pool.exclusions)
     for r in pool.records:
         if r.status != 'accepted': continue

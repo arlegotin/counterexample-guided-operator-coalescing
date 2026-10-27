@@ -1,0 +1,15 @@
+{
+  "measured_source": {
+    "path": "provenance/source-snapshots/task10/probes-measured-92c4dcc7.py.txt",
+    "retrieval": "Reconstructed during reviewround1 by exact reverse docstring/import/annotation patch from pinned6b14d77 source; recorded measured SHA verified. No pre-review raw oldsource snapshot had been retained.",
+    "sha256": "92c4dcc7b8145e074f8391551608b038f98d2a8e8d0df66f86faf73ce1b20fc2"
+  },
+  "metadata_source": {
+    "git_commit": "6b14d771009b18351976beabab1fd3bbba2de3ba",
+    "path": "poc/probes.py",
+    "sha256": "99426ddd293b4ea9a5787824e13c3dd3fa3fbdf91f64379d4004924fcc21b9c4"
+  },
+  "normalization": "Remove leading Python docstrings; normalize only collections.abc Iterator import and generate_donors Iterable->Iterator return annotation; compare remaining complete AST",
+  "schema_version": 1,
+  "scope": "Owned source reconstruction and independently repeatable metadata-only AST equivalence; no model execution"
+}

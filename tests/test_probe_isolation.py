@@ -319,3 +319,59 @@ def test_actual_bpe_length_mismatch_with_same_character_length_is_rejected():
     doc=DocumentRecord('d0','fixture','v1','s',0,text='Alice 2')
     rows=list(probes().generate_donors([doc],tokenizer,policy(generated_edits_per_document=1)))
     assert len(rows)==1 and rows[0].rejection_reason=='token_length_mismatch'
+
+
+@pytest.mark.cpu
+@pytest.mark.parametrize('wall_cap',[300,115])
+def test_same_runspec_failure_finalization_persists_current_attempt_wall(tmp_path,monkeypatch,wall_cap):
+    from provenance.measure_probe_pilot import PilotRecorder
+    from poc.budget import BudgetTracker,BudgetExceeded
+    from poc.contracts import CostRecord
+    from poc.records import start_attempt
+    from test_records import spec,budget
+    monkeypatch.setattr(torch.mps,'synchronize',lambda:None)
+    monkeypatch.setattr(PilotRecorder,'memory',lambda self:0)
+    frozen=spec(method_variant='task10_pilot',resolved_config={'plan_sha256':'a'*64},
+        budgets=replace(budget(),wall_seconds=wall_cap))
+    first=start_attempt(frozen,tmp_path/'runs')
+    BudgetTracker(frozen.budgets,first).record(CostRecord(wall_seconds=100))
+    second=start_attempt(frozen,tmp_path/'runs')
+    assert first.run_id==second.run_id and first.attempt_id!=second.attempt_id
+    tracker=BudgetTracker(frozen.budgets,second);recorder=PilotRecorder(tracker,3)
+    tracker.record(CostRecord(wall_seconds=5,teacher_forward_calls=1))
+    result={}
+    def interrupted(): raise RuntimeError('failure after dispatched work')
+    try:
+        recorder.call(interrupted,student_forward_calls=1)
+    except RuntimeError as exc:
+        result.update(status='failed',failure_reason=str(exc))
+    finally:
+        fatal=recorder.finish_attempt(result,elapsed=20)
+        assert (fatal is None) if wall_cap==300 else isinstance(fatal,BudgetExceeded)
+    assert result['status']=='failed'
+    assert result['cost']['wall_seconds']==pytest.approx(20,abs=.001)
+    assert result['cost']['teacher_forward_calls']==result['cost']['student_forward_calls']==1
+    assert result['run_cost']['wall_seconds']==pytest.approx(120,abs=.001)
+    assert result['aggregate_phase_cost']['wall_seconds']==pytest.approx(120,abs=.001)
+    reopened=BudgetTracker(frozen.budgets,second)
+    assert reopened.totals.wall_seconds==pytest.approx(120,abs=.001)
+    third=start_attempt(frozen,tmp_path/'runs')
+    next_recorder=PilotRecorder(BudgetTracker(frozen.budgets,third),3)
+    with pytest.raises(BudgetExceeded): next_recorder.check(CostRecord(wall_seconds=181))
+
+
+@pytest.mark.cpu
+def test_refilter_rejects_different_bounds_instead_of_relabeling_old_exclusions():
+    p=probes(); original=p.ProbePool((record(),));observations={'p':(4.,2.)}
+    a=policy().thresholds
+    b=p.fit_pathology_thresholds([p.PathologyObservation(doc,doc+'_c','fit',v,v,d)
+        for d in range(3) for doc,v in [('fit',0.),('fit2',10.)]],lower_quantile=0.,upper_quantile=1.)
+    rejected=p.filter_pathologies(original,observations,a)
+    assert rejected.exclusions=={'p':('norm_above_fit_threshold',)}
+    fresh=p.filter_pathologies(original,observations,b)
+    assert fresh.exclusions=={} and fresh.pathology_threshold_digest==b.digest
+    with pytest.raises(ValueError,match='different|already|threshold'):
+        p.filter_pathologies(rejected,observations,b)
+    assert rejected.pathology_threshold_digest==a.digest
+    selected=p.mine_probes(fresh,{'p':1.},policy(thresholds=b,selection_count=1,depth_region_balance=(0.,1.,0.)))
+    assert selected.selected_ids==('p',) and selected.selection_status=='complete'

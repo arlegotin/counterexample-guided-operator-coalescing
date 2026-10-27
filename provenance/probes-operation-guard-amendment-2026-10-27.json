@@ -1,0 +1,68 @@
+{
+  "amended_source_sha256": {
+    "poc/probes.py": "a18566a1cae6a313c777dd13932327cbf748387642b5c6ee05853ebe0e262e68",
+    "provenance/measure_probe_pilot.py": "44ced02c2bcb71be828ef63d540f0fd5063ac301eac069f6051590a8fd69272b",
+    "provenance/probes-source-binding-2026-10-27.json": "2a96a2ab11b927bf259c2a863a7e000c5fc0b3a635a6f9503c65fce9fed9bf09",
+    "provenance/source-snapshots/task10/probes-measured-92c4dcc7.py.txt": "92c4dcc7b8145e074f8391551608b038f98d2a8e8d0df66f86faf73ce1b20fc2",
+    "provenance/verify_probe_source_binding.py": "9c2ade673d27dc7e7d46b0456024b094a6205409811995a53efe98b27f8701d1",
+    "tests/test_probe_cache.py": "ca19a48af5b143f2e33c9e3d4226d7099a4791710e34986538cf901521f3005c",
+    "tests/test_probe_isolation.py": "da9866051c9e65c051cf88a82e83450c7cb9b0702a37a857d288527d519d420e"
+  },
+  "changes": [
+    {
+      "finding": "Same-RunSpec retry wall undercount and cumulative costs mislabeled as attempt cost",
+      "regression": "Prior100s/current20s/dispatch5s, failed operation, identical RunSpec/new attemptIDs; persists attempt20/run120 and denies next process at remaining budget; normal300s and fatal115s caps covered",
+      "repair": "Production finish_attempt sums genuine durable ledger rows by immutable attempt_id before current elapsed-time topup; result.cost is attempt-only, run_cost is cumulative RunSpec, aggregate_phase_cost spans source-changed RunSpecs"
+    },
+    {
+      "finding": "Refiltered pool retained old exclusions while replacing threshold digest",
+      "regression": "Observation norm4 fails A[1,3], passes B[0,10]; filtering A-tagged pool under B raises; fresh original+B has no exclusions and can select the probe",
+      "repair": "Reject already-filtered pools when new threshold digest differs; caller must filter original records"
+    }
+  ],
+  "cost_attribution": "Review used only owned CPU test fixtures and local source/hash/AST checks. Historical real pilot spending remains exactly as recorded, including failed work. No real teacher/data forward/backward/update, native artifact, protected source or model download was added.",
+  "historical_artifacts_verified_unchanged": {
+    "artifacts/probes/task10/plan.json": "bce03ad46beba085639bbe900fcebd4ec17837d7bbf12734aa8ea5bd20b4ef3c",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/events.jsonl": "2d23f0604841dc5c96f2399abb7746467aa41e80e7d38dfd7147c80f07cd373c",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/result.json": "51ffb56cf15582e9ed327a34c4a835e3f9782d3d2714fa1e5451e285c3122659",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/thresholds.json": "04d4a6b0bb42d333a68c6e54652607556b8b9c5274307b8f071749fe7cc8c477",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/costs.jsonl": "f225e0e9da4eb64127c8f84aa829a4b716074fc6924979c8a8a3915e1290bcd0",
+    "artifacts/probes/task10/runs/2e671cfe0d4be82f4ae33addff8454e509997800dc6ad92adda9282aa02f1648/attempts/76e60c0e67f44f4f8a6d0f34089e9d45/result.json": "56406c4474a0a450b4c90a71dfe833d70d6c75068d3e583da4f81b3fcf7c8157",
+    "artifacts/probes/task10/runs/a58a38b616344ad32152dde108c5772b07aed9cf6321c359c32fcabfdc881d78/attempts/11d391de3329465a923214ba7dfeaed1/result.json": "e02c733be1d738fe95d34f9f6e67e2a3da497dbef494c536f83b8ffa1057c63a"
+  },
+  "historical_operation_receipt": {
+    "path": "provenance/probes-operation-135m-2026-10-27.json",
+    "sha256": "539877eafc4fcf93993ba0aba613850618205ad98949e8905b54f8f6179d5401",
+    "unchanged": true
+  },
+  "independent_source_verification_command": ".venv/bin/python provenance/verify_probe_source_binding.py",
+  "reviewed_base_commit": "6b14d771009b18351976beabab1fd3bbba2de3ba",
+  "schema_version": 1,
+  "scope": "Task10 reviewround1 accounting/filter guard amendment and retained owned-source reconstruction; no real-model predictions or pilot rerun",
+  "source_binding": {
+    "measured_source": {
+      "path": "provenance/source-snapshots/task10/probes-measured-92c4dcc7.py.txt",
+      "retrieval": "Reconstructed during reviewround1 by exact reverse docstring/import/annotation patch from pinned6b14d77 source; recorded measured SHA verified. No pre-review raw oldsource snapshot had been retained.",
+      "sha256": "92c4dcc7b8145e074f8391551608b038f98d2a8e8d0df66f86faf73ce1b20fc2"
+    },
+    "metadata_source": {
+      "git_commit": "6b14d771009b18351976beabab1fd3bbba2de3ba",
+      "path": "poc/probes.py",
+      "sha256": "99426ddd293b4ea9a5787824e13c3dd3fa3fbdf91f64379d4004924fcc21b9c4"
+    },
+    "normalization": "Remove leading Python docstrings; normalize only collections.abc Iterator import and generate_donors Iterable->Iterator return annotation; compare remaining complete AST",
+    "schema_version": 1,
+    "scope": "Owned source reconstruction and independently repeatable metadata-only AST equivalence; no model execution"
+  },
+  "source_verification": "Retained reconstructed measured SHA92c4dcc7... matches original measured hash; immutable6b14d77 metadata-source SHA99426ddd... and complete normalized AST verified; changed executable body rejected even with recomputed input hash",
+  "status": "passed",
+  "verification": {
+    "diff_check": "clean",
+    "focused": ".venv/bin/python -m pytest tests/test_probe_isolation.py tests/test_patching.py tests/test_probe_cache.py -q:40passed/1hardwaredeselected in4.74s",
+    "full": ".venv/bin/python -m pytest -q:417passed/1explicit-local-assets-skip/35hardwaredeselected in15.13s",
+    "green": "Same focused command:3passed/20deselected in0.60s, covering normal and fatal finalization",
+    "red": ".venv/bin/python -m pytest tests/test_probe_isolation.py -k \"same_runspec_failure or refilter_rejects\" -q:2failed/20deselected in0.54s; actual105.000001s reported versus expected20s and different-threshold refilter did not raise",
+    "source_audit_cli": "executable_ast_unchanged:true; measured92c4dcc7...; metadata99426ddd... at6b14d771009b18351976beabab1fd3bbba2de3ba",
+    "source_audit_red": "Measured-source audit regression initially failed for missing verifier"
+  }
+}
