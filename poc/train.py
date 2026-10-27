@@ -210,12 +210,17 @@ def _optimizer(owners,config):
     return torch.optim.AdamW(groups,betas=(.9,.95),weight_decay=config.weight_decay,foreach=False)
 
 
-def _schedule(optimizer,step,max_updates):
+def _schedule_state(step,max_updates):
     warmup=max(1,math.ceil(.05*max_updates))
     # The upcoming update has a nonzero warmup LR. The last update reaches cosine zero.
     factor=(step+1)/warmup if step<warmup else .5*(1+math.cos(math.pi*(step-warmup)/max(1,max_updates-warmup)))
-    for g in optimizer.param_groups:g['lr']=g['base_lr']*factor
     return dict(completed_updates=step,planned_updates=max_updates,warmup_updates=warmup,next_factor=factor)
+
+
+def _schedule(optimizer,step,max_updates):
+    state=_schedule_state(step,max_updates)
+    for group in optimizer.param_groups:group['lr']=group['base_lr']*state['next_factor']
+    return state
 
 
 class _Guard:
@@ -418,7 +423,7 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
             or state.step and state.visited[-1]!=state.candidate_digest):raise ValueError('recovery visited history mismatch')
     updates=[e for e in state.events if e.get('kind')=='update']
     if [e.get('step') for e in updates]!=list(range(1,state.step+1)) or sum(e.get('valid_targets',0) for e in updates)!=state.target_cursor:raise ValueError('recovery event cursor mismatch')
-    if state.scheduler!=_schedule(optimizer,state.step,config.max_updates):raise ValueError('recovery scheduler mismatch')
+    if state.scheduler!=_schedule_state(state.step,config.max_updates):raise ValueError('recovery scheduler mismatch')
     CostRecord(**state.budget_totals)
     parameters=dict(student.named_parameters())
     if parameters.keys()!=state.model.keys():raise ValueError('resume owner set mismatch')
@@ -432,27 +437,42 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
         if set(group)-{'params'}!=set(saved):raise ValueError('optimizer fields mismatch')
         for key in set(saved)-{'lr','owner_ids'}:
             if saved[key]!=group[key]:raise ValueError('optimizer hyperparameter mismatch')
-        if saved['lr']!=group['lr']:raise ValueError('optimizer scheduler LR mismatch')
+        if saved['lr']!=group['base_lr']*state.scheduler['next_factor']:raise ValueError('optimizer scheduler LR mismatch')
         for n,p in zip(group['owner_ids'],group['params'],strict=True):
             moments=state.optimizer['state'][n]
+            if not moments and config.phase=='global' and state.step:raise ValueError('missing optimizer moments for used global owner')
             if moments and set(moments)!={'step','exp_avg','exp_avg_sq'}:raise ValueError('optimizer moment fields mismatch')
             for key,v in moments.items():
                 if not isinstance(v,torch.Tensor) or not torch.isfinite(v).all().item():raise ValueError('invalid optimizer tensor')
                 if key=='step':
-                    if v.numel()!=1 or v.item()<0:raise ValueError('invalid optimizer step')
+                    if v.ndim!=0 or v.dtype not in (torch.float32,torch.float64):raise ValueError('invalid optimizer step scalar')
+                    count=v.item()
+                    if not float(count).is_integer() or not 1<=count<=state.step or config.phase=='global' and count!=state.step:
+                        raise ValueError('optimizer step count disagrees with completed updates')
                 elif v.shape!=p.shape or v.dtype!=p.dtype:raise ValueError('optimizer moment schema mismatch')
+                elif key=='exp_avg_sq' and (v<0).any().item():raise ValueError('optimizer second moment must be nonnegative')
     for n,p in parameters.items():
         v=state.model[n]
         if v.shape!=p.shape or v.dtype!=p.dtype or not torch.isfinite(v).all().item():raise ValueError('invalid checkpoint owner')
     if _saved_digest(student,state.model)!=state.candidate_digest:raise ValueError('restored candidate digest mismatch')
+    required_rng={'python','numpy','torch'}
+    if (not isinstance(state.rng,Mapping) or not required_rng<=state.rng.keys()
+            or state.rng.keys()-required_rng-{'mps'} or student.device.type=='mps' and 'mps' not in state.rng):
+        raise ValueError('incomplete or unsupported recovery RNG schema')
     import random,numpy as np
-    random.Random().setstate(state.rng['python']);np.random.RandomState().set_state(state.rng['numpy'])
-    torch.Generator().set_state(state.rng['torch'])
-    if 'mps' in state.rng:
-        if not torch.backends.mps.is_available() or state.rng['mps'].dtype!=torch.uint8:raise ValueError('invalid saved MPS RNG')
-        previous_rng=torch.mps.get_rng_state()
-        try:torch.mps.set_rng_state(state.rng['mps'])
-        finally:torch.mps.set_rng_state(previous_rng)
+    try:
+        random.Random().setstate(state.rng['python']);np.random.RandomState().set_state(state.rng['numpy'])
+        torch.Generator().set_state(state.rng['torch'])
+        if 'mps' in state.rng:
+            saved_rng=state.rng['mps']
+            if (not torch.backends.mps.is_available() or not isinstance(saved_rng,torch.Tensor)
+                    or saved_rng.dtype!=torch.uint8 or saved_rng.device.type!='cpu'):
+                raise ValueError('invalid saved MPS RNG')
+            previous_rng=torch.mps.get_rng_state()
+            try:torch.mps.set_rng_state(saved_rng)
+            finally:torch.mps.set_rng_state(previous_rng)
+    except (TypeError,ValueError,RuntimeError,KeyError,IndexError,OverflowError) as exc:
+        raise ValueError('invalid recovery RNG state') from exc
     with torch.no_grad():
         for n,p in parameters.items():p.copy_(state.model[n].to(p.device))
     for group,saved in zip(optimizer.param_groups,state.optimizer['groups'],strict=True):

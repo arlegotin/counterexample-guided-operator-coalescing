@@ -1,0 +1,169 @@
+{
+  "amended_source_sha256": {
+    "poc/train.py": "33344d497a392ad4c20a521319f523538ae5a46c48ecbc0434516a5a30c951d0",
+    "tests/test_resume.py": "e1cbd8bf1c2261c28a4bcdd69682d0632c86a62c94eb757febc3596d6f52edda",
+    "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+  },
+  "base_source_sha256": {
+    "poc/train.py": "4b1887a73efd2244fff19c9a6a4e75c764e5877481fac456494b52f757ca51a1",
+    "tests/test_resume.py": "967d373dc0ff7a175af38e8968c2ea5d3497729806e001225191d14a0822084f",
+    "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+  },
+  "changes": [
+    {
+      "finding": "Impossible Adam second moments and invalid owner counts accepted before caller restoration",
+      "pre_mutation_guarantee": "Scheduler identity/LR validation is pure. Rejection fixtures preserve caller parameter tensors, requires_grad flags, module modes, an existing populated optimizer including its distinct LR, all captured RNGs and the saved TrainingState.",
+      "repair": "Reject negative exp_avg_sq, nonscalar/nonfloating/nonintegral/zero/negative/future Adam counts, stale global counts, and missing used-global-owner moments before restoration. Local unused owners may retain empty state; local used counts may be less than completed updates."
+    },
+    {
+      "finding": "MPS recovery accepted an omitted backend RNG",
+      "repair": "Require Python, NumPy and torch keys; require mps for MPS recovery; reject unsupported keys. Validate backend RNG before restoration; retain optional MPS state in CPU-on-MPS-host checkpoints. Native RNG setter validation restores the caller backend RNG in finally."
+    }
+  ],
+  "cost_attribution": "No pretrained teacher/data/model experiment, prediction, learning curve, source snapshot or result was rerun or relabeled. The nine actual attempts and their scientific costs/identities remain attributed to the unchanged historical receipt. Owned software fixture verification is separate.",
+  "historical_operation_receipt": {
+    "path": "provenance/training-135m-2026-10-27.json",
+    "sha256": "2fc5b53cf46b0a7a6ca8fe11555ec488a8d4729afc9cdd957eec8bda72a18dae",
+    "unchanged_from_reviewed_base": true
+  },
+  "historical_verification_preserved": {
+    "controller_global_audit": ".superpowers/sdd/2026-10-27-cgoc/task-11-controller-global-evidence.json",
+    "cpu": "461 passed,1explicit-assets skip,37hardware deselected",
+    "owned_mps": "2passed; exactnext-update replay and explicit/legacyportable reconstruction"
+  },
+  "limits": [
+    "Only the two Important review findings and their covering training/recovery paths were reverified; no full-suite rerun.",
+    "Historical 461 CPU / 2 MPS results describe earlier source, not this guard amendment.",
+    "The inherited macOS Torch redirect notice is environment noise, not a numerical regression.",
+    "Independent scoped re-review belongs to controller."
+  ],
+  "reviewed_base_commit": "28ff2d2422a1133d7a31f3e86a39ffc7a0f3b327",
+  "schema_version": 1,
+  "scope": "Task11 review round1 R24 recovery guards; owned CPU/MPS fixtures only",
+  "source_attribution_limits": [
+    "adam-red and rng-cpu-red metadata did not record source hashes; no exact source hashes were reconstructed or retroactively claimed for these executions.",
+    "rng-mps-red retains its original intermediate train.py SHA16082ed9 and exit1. It is pre-RNG-fix evidence, not a rerun against final source.",
+    "Intermediate adam-green source is preserved in its receipt; only covering-cpu-green and mps-green bind the final amended source."
+  ],
+  "status": "passed_scoped_verification_pending_controller_review",
+  "verification": {
+    "adam-green": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py::test_adam_semantic_rejection_preserves_all_caller_and_saved_state",
+        "tests/test_resume.py::test_local_probe_cursor_and_live_candidate_provenance_replay",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log_path": "artifacts/training/task11/review1/adam-green.log",
+      "log_sha256": "988dcade72fe1596259c0d10da53c97540791905cf9e4bf14b109cc5ee8819db",
+      "metadata_path": "artifacts/training/task11/review1/adam-green.json",
+      "metadata_sha256": "ab4076e036f11e5ca15f7ddcf3ad380b0ae4bfc6c7cb68d11165247a70a81387",
+      "source_sha256": {
+        "poc/train.py": "16082ed9d64bed862a266706ecafb81ccbebd69d2705d7f2cd1b7fc5ac75d78b",
+        "tests/test_resume.py": "3e3a1a4573abbfd80e646a4837bf680e4db87d4bad8e91b5f5aa6045bc3ad6e5",
+        "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+      },
+      "summary": "8 passed in 4.15s"
+    },
+    "adam-red": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py::test_adam_semantic_rejection_preserves_all_caller_and_saved_state",
+        "-q"
+      ],
+      "exit_code": 1,
+      "log_path": "artifacts/training/task11/review1/adam-red.log",
+      "log_sha256": "30bc639739f0f7635992862409f4501d53b3a2253f338a451a96f4394f3d30b4",
+      "metadata_path": "artifacts/training/task11/review1/adam-red.json",
+      "metadata_sha256": "1e26b44c523f5697adab64257887bf0c0a69c9922f0522d062bf2da3730e440b",
+      "summary": "7 failed in 4.92s"
+    },
+    "covering-cpu-green": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py",
+        "tests/test_training.py",
+        "-q"
+      ],
+      "exit_code": 0,
+      "log_path": "artifacts/training/task11/review1/covering-cpu-green.log",
+      "log_sha256": "ceeb5895d8a12115fcca7fbf319f8053babdec5a0742ba9d9252ea895e52fd54",
+      "metadata_path": "artifacts/training/task11/review1/covering-cpu-green.json",
+      "metadata_sha256": "66fec3241b5d99389976cdf0304b5852bbf0f7180143af78319db6bc2aaace9d",
+      "reuse": "Pre-restart result retained; current source and stdout SHA-256 independently matched. No repeat execution.",
+      "source_sha256": {
+        "poc/train.py": "33344d497a392ad4c20a521319f523538ae5a46c48ecbc0434516a5a30c951d0",
+        "tests/test_resume.py": "e1cbd8bf1c2261c28a4bcdd69682d0632c86a62c94eb757febc3596d6f52edda",
+        "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+      },
+      "summary": "44 passed, 4 deselected in 4.71s"
+    },
+    "mps-green": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py",
+        "-m",
+        "mps",
+        "-q"
+      ],
+      "execution": "Native Metal outside sandbox; four owned tiny tests only.",
+      "exit_code": 0,
+      "log_path": "artifacts/training/task11/review1/mps-green.log",
+      "log_sha256": "6c5595c452341ae16e6575f8284f2ac6cb0fb2d1eb50725e7f2ab1f4dc7f92ce",
+      "metadata_path": "artifacts/training/task11/review1/mps-green.json",
+      "metadata_sha256": "7127db487f660ad86ad786a5665d109196fb391034cbe7d0c9c8a7e9ff3d9fbe",
+      "source_sha256": {
+        "poc/train.py": "33344d497a392ad4c20a521319f523538ae5a46c48ecbc0434516a5a30c951d0",
+        "tests/test_resume.py": "e1cbd8bf1c2261c28a4bcdd69682d0632c86a62c94eb757febc3596d6f52edda",
+        "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+      },
+      "summary": "4 passed, 32 deselected in 5.37s"
+    },
+    "rng-cpu-red": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py::test_complete_rng_schema_rejection_preserves_all_state",
+        "-q"
+      ],
+      "exit_code": 1,
+      "log_path": "artifacts/training/task11/review1/rng-cpu-red.log",
+      "log_sha256": "c5d3fed96cbbd4ca2634950928245a9675d3d174fbe3d1d82b4563b9c1bc1019",
+      "metadata_path": "artifacts/training/task11/review1/rng-cpu-red.json",
+      "metadata_sha256": "b652d577da6be9776853bf88f2e00f2dbee8b977e02e7de25e3338ff396a5920",
+      "summary": "4 failed in 2.79s"
+    },
+    "rng-mps-red": {
+      "command": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_resume.py::test_mps_recovery_requires_backend_rng_before_any_caller_mutation",
+        "-m",
+        "mps",
+        "-q"
+      ],
+      "exit_code": 1,
+      "log_path": "artifacts/training/task11/review1/rng-mps-red.log",
+      "log_sha256": "28c33c2378f1be72d8797c2e34a4ad7a82058f95ce3ed67d6273470a4f77bb70",
+      "metadata_path": "artifacts/training/task11/review1/rng-mps-red.json",
+      "metadata_sha256": "44a478c26efcba54857678c07a9cd9f74cdee2402c30cce509e45e4f49975050",
+      "source_sha256": {
+        "poc/train.py": "16082ed9d64bed862a266706ecafb81ccbebd69d2705d7f2cd1b7fc5ac75d78b",
+        "tests/test_resume.py": "e1cbd8bf1c2261c28a4bcdd69682d0632c86a62c94eb757febc3596d6f52edda",
+        "tests/test_training.py": "6c5dd487ad50b9a48a28e1e0a446e6e4f321994944968186b3a1f5feb6034447"
+      },
+      "summary": "1 failed in 2.92s"
+    }
+  }
+}

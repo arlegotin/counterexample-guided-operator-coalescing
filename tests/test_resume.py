@@ -237,3 +237,127 @@ def test_mps_checkpoint_reconstructs_portably_and_preserves_exact_source_identit
     assert reconstructed.to('mps').manifest().checkpoint_digest==state.candidate_digest
     legacy=replace(state,model_schema={k:v for k,v in state.model_schema.items() if k!='device'})
     assert c.checkpoint_decoder(legacy).to('mps').manifest().checkpoint_digest==state.candidate_digest
+
+
+def assert_recovery_tree_equal(actual, expected):
+    """Compare protected recovery values, including backend and NumPy RNGs."""
+    if isinstance(expected,torch.Tensor):
+        assert actual.dtype==expected.dtype and actual.device==expected.device
+        assert torch.equal(actual,expected)
+    elif isinstance(expected,np.ndarray):
+        assert actual.dtype==expected.dtype
+        np.testing.assert_array_equal(actual,expected)
+    elif isinstance(expected,dict):
+        assert actual.keys()==expected.keys()
+        for key in expected:assert_recovery_tree_equal(actual[key],expected[key])
+    elif isinstance(expected,(tuple,list)):
+        assert type(actual) is type(expected) and len(actual)==len(expected)
+        for a,b in zip(actual,expected,strict=True):assert_recovery_tree_equal(a,b)
+    else:assert actual==expected
+
+
+def recovery_rejection_fixture(*,device='cpu',phase='global'):
+    """Real caller optimizer/history deliberately differ from the saved state."""
+    from copy import deepcopy
+    from test_training import local_sources
+    t=api();teacher,student=models()
+    if device=='mps':teacher=teacher.float().to(device);student=student.float().to(device)
+    b=batch()
+    if device=='mps':b=replace(b,**{n:getattr(b,n).to(device) for n in ('input_ids','attention_mask','target_mask','positions')})
+    kwargs={} if phase=='global' else dict(phase='local',affected_depths=(0,1),mixture_weights={'natural':.5,'student':.25,'donor':.25})
+    cfg=bound_config(max_updates=3,epochs=3,run_spec=spec(budgets=budget()),
+        **kwargs,**({} if device=='cpu' else dict(kl_floor_per_target=1e-6,numerical_profile='owned_tiny_mps_fp32')))
+    sources=t.TrainingSources(natural=(b,)) if phase=='global' else local_sources(teacher,student)
+    saved=t.fit_model(student,teacher,sources,replace(cfg,stop_after_updates=1),budget(),MemoryRecorder()).state
+    _,caller=models()
+    if device=='mps':caller=caller.float().to(device)
+    owners=t.configure_trainable_owners(caller,cfg,apply=False);optimizer=t._optimizer(owners,cfg)
+    caller.logits(b).square().sum().backward();optimizer.step();optimizer.zero_grad(set_to_none=True)
+    for group in optimizer.param_groups:group['lr']*=.37
+    caller.train();caller.layers[0].eval()
+    next(iter(owners.values())).requires_grad_(False)
+    return t,teacher,caller,optimizer,cfg,sources,saved
+
+
+def assert_recovery_rejection_preserves_caller(fixture,bad,*,match):
+    from copy import deepcopy
+    from dataclasses import fields
+    t,teacher,caller,optimizer,cfg,sources,_=fixture
+    before_parameters={n:p.detach().clone() for n,p in caller.named_parameters()}
+    before_flags={n:p.requires_grad for n,p in caller.named_parameters()}
+    before_modes={n:m.training for n,m in caller.named_modules()}
+    before_optimizer=deepcopy(optimizer.state_dict());before_rng=deepcopy(t._rng())
+    def saved_values():
+        return {f.name:(bad.spec.to_dict() if f.name=='spec' else getattr(bad,f.name)) for f in fields(bad)}
+    before_saved=deepcopy(saved_values())
+    with pytest.raises(ValueError,match=match):
+        t._restore(bad,caller,optimizer,cfg,sources,teacher.manifest().checkpoint_digest)
+    assert_recovery_tree_equal({n:p.detach() for n,p in caller.named_parameters()},before_parameters)
+    assert {n:p.requires_grad for n,p in caller.named_parameters()}==before_flags
+    assert {n:m.training for n,m in caller.named_modules()}==before_modes
+    assert_recovery_tree_equal(optimizer.state_dict(),before_optimizer)
+    assert_recovery_tree_equal(t._rng(),before_rng)
+    assert_recovery_tree_equal(saved_values(),before_saved)
+
+
+@pytest.mark.parametrize('corruption',['negative_second_moment','step_zero','step_negative','step_fractional','step_future','step_stale_global','missing_global_moments'])
+def test_adam_semantic_rejection_preserves_all_caller_and_saved_state(corruption):
+    from copy import deepcopy
+    fixture=recovery_rejection_fixture()
+    t,teacher,student,_,cfg,sources,saved=fixture
+    # The stale-count case needs two completed global updates.
+    if corruption=='step_stale_global':
+        _,trained=models()
+        saved=t.fit_model(trained,teacher,sources,replace(cfg,stop_after_updates=2),budget(),MemoryRecorder()).state
+    bad=replace(saved,optimizer=deepcopy(saved.optimizer))
+    name=next(n for n,m in bad.optimizer['state'].items() if m)
+    moments=bad.optimizer['state'][name]
+    if corruption=='negative_second_moment':moments['exp_avg_sq'].fill_(-1)
+    elif corruption=='missing_global_moments':bad.optimizer['state'][name]={}
+    else:
+        values={'step_zero':0,'step_negative':-1,'step_fractional':.5,'step_future':saved.step+1,'step_stale_global':1}
+        moments['step'].fill_(values[corruption])
+    assert_recovery_rejection_preserves_caller(fixture,bad,match='optimizer')
+
+
+def test_local_recovery_keeps_legitimate_unused_owner_empty_state():
+    from test_training import local_sources
+    t=api();teacher,student=models();sources=local_sources(teacher,student)
+    cfg=bound_config(max_updates=3,epochs=3,phase='local',affected_depths=(0,1),
+        mixture_weights={'natural':.5,'student':.25,'donor':.25},run_spec=spec(budgets=budget()))
+    first=t.fit_model(student,teacher,sources,replace(cfg,stop_after_updates=1),budget(),MemoryRecorder())
+    unused={n for n,m in first.state.optimizer['state'].items() if not m}
+    assert unused and all(n.startswith('layers.0.mlp.residuals.') for n in unused)
+    _,resumed=models()
+    result=t.fit_model(resumed,teacher,local_sources(teacher,resumed),replace(cfg,resume=first.state),budget(),MemoryRecorder(first.state.budget_totals))
+    assert result.state.step==3
+    assert all(result.state.optimizer['state'][n]=={} for n in unused)
+
+
+@pytest.mark.parametrize('mutation',['missing_python','missing_numpy','missing_torch','unexpected_backend'])
+def test_complete_rng_schema_rejection_preserves_all_state(mutation):
+    from copy import deepcopy
+    fixture=recovery_rejection_fixture();saved=fixture[-1];rng=deepcopy(saved.rng)
+    if mutation.startswith('missing_'):rng.pop(mutation.removeprefix('missing_'))
+    else:rng['cuda']=torch.zeros(1,dtype=torch.uint8)
+    assert_recovery_rejection_preserves_caller(fixture,replace(saved,rng=rng),match='RNG')
+
+
+@pytest.mark.mps
+def test_mps_recovery_requires_backend_rng_before_any_caller_mutation():
+    from copy import deepcopy
+    assert torch.backends.mps.is_available()
+    fixture=recovery_rejection_fixture(device='mps');saved=fixture[-1]
+    rng=deepcopy(saved.rng);assert 'mps' in rng;rng.pop('mps')
+    assert_recovery_rejection_preserves_caller(fixture,replace(saved,rng=rng),match='RNG')
+
+
+@pytest.mark.mps
+def test_cpu_recovery_on_mps_host_preserves_optional_captured_mps_rng():
+    assert torch.backends.mps.is_available()
+    fixture=recovery_rejection_fixture();t,teacher,caller,_,cfg,sources,saved=fixture
+    assert saved.model_schema['backend']=='torch_cpu' and 'mps' in saved.rng
+    torch.mps.manual_seed(918)
+    result=t.fit_model(caller,teacher,sources,replace(cfg,resume=saved,stop_after_updates=1),budget(),MemoryRecorder(saved.budget_totals))
+    assert torch.equal(result.state.rng['mps'],saved.rng['mps'])
+    assert result.state.step==2
