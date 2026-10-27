@@ -1,6 +1,6 @@
 """One fixed fresh-component repeat, with strictly charged exact-state replay."""
 from dataclasses import asdict,replace
-import argparse,gc,hashlib,json,subprocess,time
+import argparse,gc,hashlib,json,os,subprocess,time
 from pathlib import Path
 import numpy as np
 import psutil,torch
@@ -40,9 +40,17 @@ def logical_position_count(*,score_documents,damage_documents,depths,donor_targe
     return (score_documents+damage_documents+2*score_documents*depths)*511+sum(donor_target_counts)+len(donor_target_counts)
 
 
+def effective_phase_limits(plan,amendment):
+    old=plan['phase_caps'];new=dict(amendment['effective_phase_caps']) if amendment else dict(old)
+    if set(new)!=set(old) or any(new[k]!=old[k] for k in old if k!='wall_seconds'):raise ValueError('phase work caps cannot change')
+    if not old['wall_seconds']<=new['wall_seconds']<=plan['overall_budgets']['wall_seconds']:raise ValueError('invalid phase wall amendment')
+    return new
+
+
 class PrecisionRecorder(TrainingPilotRecorder):
     def __init__(self,tracker,p):
         self.plan=p;self._pinned={};self.recovery=tracker.attempt.spec.resolved_config.get('recovery_authorization')
+        self.effective_caps=tracker.attempt.spec.resolved_config.get('effective_phase_caps',p['phase_caps'])
         super().__init__(tracker,p['overall_student_forward_calls'])
         self.followup_wall_at_start=self.phase_totals().wall_seconds
     def memory(self,label=None):
@@ -70,7 +78,7 @@ class PrecisionRecorder(TrainingPilotRecorder):
         return total
     def phase_totals(self):
         total=self._total_paths(sorted((self.phase_root/'runs').glob('*/spec.json')))
-        if self.recovery:total=BudgetTracker.combine(total,CostRecord(wall_seconds=self.recovery['diagnosis_wall_seconds']))
+        if self.recovery:total=BudgetTracker.combine(total,CostRecord(wall_seconds=self.recovery['diagnosis_wall_seconds'],disk_bytes=self.recovery.get('accounting_amendment',{}).get('diagnosis_disk_peak_bound_bytes',0)))
         return replace(total,memory_unavailable_reason=None) if total.memory_bytes is not None else total
     def aggregate(self):
         parent_paths=[]
@@ -93,8 +101,16 @@ class PrecisionRecorder(TrainingPilotRecorder):
             if value is not None and value>limit:raise BudgetExceeded('Task12 overall ceiling: '+name)
         if combined.student_forward_calls>self.plan['overall_student_forward_calls']:raise BudgetExceeded('Task12 overall student ceiling')
         phase_values=BudgetTracker.combine(phase,cost).to_dict();phase_values['wall_seconds']=phase_wall
-        enforce_phase_caps(phase_values,self.plan['phase_caps'])
-    def disk(self):return sum(p.stat().st_size for p in ORIGINAL.rglob('*') if p.is_file())
+        enforce_phase_caps(phase_values,self.effective_caps)
+    def disk(self):
+        # Exact census on every call: file symlinks follow; directory symlinks do not.
+        total=0;directories=[ORIGINAL]
+        while directories:
+            with os.scandir(directories.pop()) as entries:
+                for entry in entries:
+                    if entry.is_dir(follow_symlinks=False):directories.append(entry.path)
+                    elif entry.is_file():total+=entry.stat().st_size
+        return total
 
 
 def make_plan(config):
@@ -148,7 +164,7 @@ def _start(stage,p,config):
         if sha256_file(ROOT/name)!=digest:raise ValueError('original numerical/helper source changed: '+name)
     parent_ids=tuple(sorted({Path(x['spec_path']).parent.name for x in p['parent_runs']}|{f.parent.name for f in (OUT/'runs').glob('*/spec.json')}))
     recovery=load_recovery_authorization()
-    spec=RunSpec(method_id='M',method_variant='task12_precision_'+stage,resolved_config={'plan_sha256':sha256_file(OUT/'plan.json'),'source_sha256':hashes,'carry_in':p['carry_in'],'stage':stage,'original_candidate_training_updates':1,'replay_does_not_add_learning':True,'recovery_authorization':recovery},
+    spec=RunSpec(method_id='M',method_variant='task12_precision_'+stage,resolved_config={'plan_sha256':sha256_file(OUT/'plan.json'),'source_sha256':hashes,'carry_in':p['carry_in'],'stage':stage,'original_candidate_training_updates':1,'replay_does_not_add_learning':True,'recovery_authorization':recovery,'effective_phase_caps':effective_phase_limits(p,recovery.get('accounting_amendment') if recovery else None)},
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),dirty_patch_sha256=hashlib.sha256(subprocess.check_output(['git','diff','--binary','HEAD'])).hexdigest(),dependency_lock_sha256=sha256_file(ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),input_manifests={'data':p['data_manifest_sha256'],'teacher':p['teacher_asset_sha256'],'parent_original_receipt':p['parent_result_sha256']},hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'data_order':19,'model_and_probes':17,'bootstrap':17},parent_run_ids=parent_ids,budgets=config.budgets.resolve())
     attempt=start_attempt(spec,OUT/'runs');rec=PrecisionRecorder(BudgetTracker(spec.budgets,attempt),p)
     for f in sources:
@@ -247,6 +263,13 @@ def load_recovery_authorization():
     if value['plan_sha256']!=sha256_file(OUT/'plan.json'):raise ValueError('recovery plan binding changed')
     for name,digest in (value['authorized_failures']|value['reused_artifact_sha256']).items():
         if sha256_file(ROOT/name)!=digest:raise ValueError('recovery artifact binding changed: '+name)
+    amendment_path=OUT/'accounting-authorization.json'
+    if amendment_path.exists():
+        amendment=json.loads(amendment_path.read_text())
+        if amendment['parent_recovery_sha256']!=sha256_file(path):raise ValueError('accounting amendment parent mismatch')
+        for name,digest in amendment['diagnostic_artifact_sha256'].items():
+            if sha256_file(ROOT/name)!=digest:raise ValueError('accounting diagnosis artifact changed')
+        value=dict(value,diagnosis_wall_seconds=value['diagnosis_wall_seconds']+amendment['additional_diagnosis_wall_seconds'],accounting_amendment=amendment,accounting_amendment_sha256=sha256_file(amendment_path))
     return value
 
 
@@ -346,7 +369,7 @@ def evaluate(stage,p,config,rec,attempt):
         cleanup_memory=rec.memory(label='after_trial_cleanup');rec.record(CostRecord())
         completed[-1].update(memory_before_restore=baseline_memory,memory_after_cleanup=cleanup_memory,cleanup_growth_bytes=cleanup_memory-baseline_memory)
         append_event(attempt,{'kind':'trial_cleanup_memory','pair':pair,'before_restore':baseline_memory,'after_cleanup':cleanup_memory})
-        if stage=='evaluate_first':break
+        if stage in ('evaluate_first','evaluate_next'):break
     return {'completed':completed,'logical_positions_charged':_eval_total()}
 
 
@@ -393,5 +416,5 @@ def run(stage,config):
     return 0 if result['status']=='complete' else 4
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--stage',required=True,choices=['plan','replay_first','replay_remaining','prepare','prepare_resume','evaluate_first','evaluate_remaining','analyze']);parser.add_argument('--config',type=Path,default=ROOT/'configs/pilot-precision.yaml');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--stage',required=True,choices=['plan','replay_first','replay_remaining','prepare','prepare_resume','evaluate_first','evaluate_next','evaluate_remaining','analyze']);parser.add_argument('--config',type=Path,default=ROOT/'configs/pilot-precision.yaml');args=parser.parse_args()
     raise SystemExit(run(args.stage,load_config(args.config,phase='exploratory')))

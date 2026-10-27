@@ -1,0 +1,85 @@
+{
+  "task-12-controller-original-evidence.json": {
+    "evidence": {
+      "artifact_hashes_verified": 40,
+      "original_cost_rows_checked": 260449,
+      "owned_source_bodies_verified": 171,
+      "receipt_sha256": "0c375d81aa8c22e8fab1dbb984500866bd197ac801ccf5e61088071e7362c359",
+      "result_attempts": 4,
+      "scope": "read-only recorded evidence audit, no suite/model rerun; unknown legacy zero counters remain unavailable",
+      "separate_cpu_analysis_wall_seconds": 3.5713387089796966,
+      "source_versions": {
+        "0a9b9057d99afd25271bb0df4eb74928c53bb083": 43,
+        "ed6193cfaabc32521ed9baf7862957e8eba717fe": 42
+      },
+      "status": "passed",
+      "totals_from_unique_original_attempts_plus_preflight": {
+        "disk_bytes": 605744585,
+        "estimated_operations": 0,
+        "memory_bytes": 6712950784,
+        "processed_inputs": 5616,
+        "processed_tokens": 3044094,
+        "search_proposals": 184,
+        "search_seconds": 3.611937706009485,
+        "student_backward_calls": 374,
+        "student_forward_calls": 17820,
+        "suffix_backward_calls": 374,
+        "teacher_forward_calls": 114534,
+        "unique_tokens": 0,
+        "updates": 22,
+        "valid_target_presentations": 180224,
+        "wall_seconds": 2121.507430833997
+      }
+    },
+    "sha256": "0cd106726231776b91cd75c4b23799e92c05a074373f570270249ed9131ed44e"
+  },
+  "task-12-controller-precision-input-evidence.json": {
+    "evidence": {
+      "damage_components": 32,
+      "damage_eligibility_checks": 33,
+      "data_sha256": "c02da5257fc85bd347edafe3fd1ad69a6f6acb17918d8af55e608aa8524ade27",
+      "disjoint_from_all_original_selected_components": true,
+      "one_rejection_preserved": true,
+      "original_identity_matched_states": 20,
+      "plan_sha256": "f0d8309c09e9d04b34fc527fc8b8655d2bb4812194342cd7f281efa9732f0363",
+      "pool_sha256": "9b9c8556408f7e4c841c477975ff66212db42e11fea19a3da74db923475061ac",
+      "protected_roles_present": false,
+      "reused_artifact_hashes_verified": 48,
+      "scope": "read-only file/metadata audit, no model predictions or role-reader calls",
+      "score_components": 16,
+      "state_file_hashes_verified": 40,
+      "status": "passed",
+      "windows_sha256": "eed5705d7c29a6466abe0cb726471183dfc6255e0bb820742575ebf32add3703"
+    },
+    "sha256": "318cc47dffa0ffe71eedc96b7d37b807e7d1b9c9bb733cce86c3f6d7daa94c7c"
+  },
+  "task-12-controller-profile-evidence.json": {
+    "evidence": {
+      "changed_sources": [
+        "poc/diagnostics.py",
+        "provenance/measure_single_merge.py",
+        "provenance/measure_single_merge_sensitivity.py"
+      ],
+      "diagnostics_ast_added_definitions": [
+        "shortlist_misses"
+      ],
+      "diagnostics_ast_changed_definitions": [
+        "run_single_merge"
+      ],
+      "diagnostics_ast_removed_definitions": [],
+      "new_current_source_blobs_verified": 43,
+      "old_committed_source_blobs_verified": 42,
+      "profile_artifact_hashes_verified": 7,
+      "profile_receipt_sha256": "ab6d73a3f0028871d823483a359c490b3a40b0bc2f48445f737d6d3b5fedda30",
+      "profile_score_methods_same_component_population": {
+        "components": 8,
+        "matched": true,
+        "methods": 7
+      },
+      "reused_artifact_hashes_verified": 10,
+      "scope": "closed profile and immutable source/artifact metadata only; no predictions or active-run data reads",
+      "source_amendment_sha256": "f139ec9583e8049680a99335a11eee8fdb8236d2978699aff76413fe0507f3ab"
+    },
+    "sha256": "d29fb2102971dc52f2ee16b35d0b21c955ea8af0479a42a47b18efd3c72eb678"
+  }
+}

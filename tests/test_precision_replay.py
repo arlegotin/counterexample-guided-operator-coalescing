@@ -91,3 +91,36 @@ def test_evaluation_memory_samples_preserve_separate_overlapping_counters(tmp_pa
     row=json.loads((tmp_path/'memory-samples.jsonl').read_text().splitlines()[0])
     assert row['rss_bytes']==100 and row['mps_allocated_bytes']==20 and row['mps_driver_bytes']==30
     assert row['overlapping_rss_plus_driver']==130
+
+
+def test_exact_disk_census_matches_pathlib_after_mutations_and_symlinks(tmp_path,monkeypatch):
+    import inspect
+    from poc.contracts import Budget,CostRecord
+    from poc.budget import BudgetExceeded
+    m=api();root=tmp_path/'root';root.mkdir();outside=tmp_path/'outside';outside.mkdir();(outside/'x').write_bytes(b'x'*17)
+    (root/'nested').mkdir();(root/'nested/.hidden').write_bytes(b'h'*7);(root/'.dot').write_bytes(b'd'*3)
+    (root/'file-link').symlink_to(outside/'x');(root/'directory-link').symlink_to(outside,target_is_directory=True);(root/'broken').symlink_to(outside/'absent')
+    monkeypatch.setattr(m,'ORIGINAL',root);rec=m.PrecisionRecorder.__new__(m.PrecisionRecorder)
+    assert 'scandir' in inspect.getsource(m.PrecisionRecorder.disk), 'exact uncached scandir census missing'
+    expected=lambda:sum(p.stat().st_size for p in root.rglob('*') if p.is_file())
+    assert rec.disk()==expected()==27
+    (root/'nested/.hidden').write_bytes(b'h'*19);(root/'new').write_bytes(b'n'*23)
+    assert rec.disk()==expected()==62
+    from types import SimpleNamespace
+    from poc.budget import BudgetTracker
+    tracker=BudgetTracker.__new__(BudgetTracker);tracker.budget=SimpleNamespace()
+    # Same disk value reaches the actual budget checker; no estimator/cache waiver.
+    from dataclasses import replace
+    budget=m.load_config(m.ROOT/'configs/pilot-precision.yaml',phase='exploratory').budgets.resolve()
+    tracker.budget=replace(budget,disk_bytes=61)
+    with pytest.raises(BudgetExceeded,match='disk_bytes'):tracker._check_total(CostRecord(disk_bytes=rec.disk()))
+
+
+def test_versioned_phase_wall_amendment_preserves_original_and_work_caps():
+    m=api();plan={'phase_caps':{'wall_seconds':3600,'teacher_forward_calls':160000,'student_forward_calls':24000},'overall_budgets':{'wall_seconds':7200}}
+    amended={'effective_phase_caps':{'wall_seconds':4800,'teacher_forward_calls':160000,'student_forward_calls':24000}}
+    assert m.effective_phase_limits(plan,amended)['wall_seconds']==4800
+    assert plan['phase_caps']['wall_seconds']==3600
+    assert m.effective_phase_limits(plan,None)==plan['phase_caps']
+    amended['effective_phase_caps']['student_forward_calls']=24001
+    with pytest.raises(ValueError,match='work caps'):m.effective_phase_limits(plan,amended)
