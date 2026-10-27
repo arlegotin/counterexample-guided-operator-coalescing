@@ -1,0 +1,57 @@
+{
+  "authority": "controller fixed precision repeat and strict charged reconstruction ruling",
+  "cap_history": {
+    "charged_training_targets": [
+      180224,
+      327680
+    ],
+    "followup_wall_seconds": [
+      2400,
+      3600
+    ],
+    "optimizer_operations": [
+      22,
+      40
+    ],
+    "student_forward_calls": [
+      30000,
+      50000
+    ]
+  },
+  "failure_policy": "stop on first initialized or fitted digest mismatch without retry",
+  "first_replay": [
+    12,
+    20
+  ],
+  "fresh_available_memory_bytes": 18470584320,
+  "no_fresh_predictions_until_all20_exact_states_verified": true,
+  "original_source_preserved": true,
+  "parent_original_receipt_sha256": "0c375d81aa8c22e8fab1dbb984500866bd197ac801ccf5e61088071e7362c359",
+  "phase_caps": {
+    "search_proposals": 2000,
+    "search_seconds": 300,
+    "student_forward_calls": 24000,
+    "teacher_forward_calls": 160000,
+    "updates": 18,
+    "valid_target_presentations": 147456,
+    "wall_seconds": 3600
+  },
+  "plan_path": "artifacts/diagnostics/task12/precision-v1/plan.json",
+  "plan_sha256": "f0d8309c09e9d04b34fc527fc8b8655d2bb4812194342cd7f281efa9732f0363",
+  "primary_candidate_updates": 1,
+  "replay_is_reconstruction_not_extra_learning": true,
+  "schema_version": 1,
+  "source_sha256": {
+    "configs/pilot-precision.yaml": "75da491b68ecfd4cd368949f803c34a1f86cb55b1c39dab782456fbf32d5d80b",
+    "provenance/measure_single_merge_precision.py": "1c57faed40d23a2db6178ee6581ae90cf156d37bcc9f0f5707f1c2f84e88a181",
+    "tests/test_precision_replay.py": "03a290e01ece1dba066f61d5e93ebbb73ddc455c7397cc71c8e1357c9743f402"
+  },
+  "unchanged_overall_caps": {
+    "disk_bytes": 2147483648,
+    "memory_bytes": 8589934592,
+    "student_backward_calls": 1000,
+    "suffix_backward_calls": 1000,
+    "teacher_forward_calls": 350000,
+    "wall_seconds": 7200
+  }
+}
