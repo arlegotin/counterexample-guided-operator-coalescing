@@ -9,6 +9,12 @@ OLD=ROOT/'artifacts/diagnostics/task12'
 OUT=OLD/'precision-v1'
 
 
+def prior_components(row):
+    result=set(row['secondary_scores'])|set(row['natural_damage'])|set(row['intervention_damage'])
+    for values in row['scores'].values():result.update(values)
+    return result
+
+
 def main():
     started=time.monotonic();plan=json.loads((OUT/'plan.json').read_text());data=json.loads((OUT/'data.json').read_text())
     states=json.loads((OUT/'verified-states.json').read_text());analysis=json.loads((OUT/'analysis.json').read_text())
@@ -16,9 +22,7 @@ def main():
     old_components=set()
     for path in (OLD/'trials-final').glob('*.json'):
         row=json.loads(path.read_text())
-        for key in ('scores','secondary_scores'):
-            for values in row[key].values():old_components.update(values)
-        old_components.update(row['natural_damage']);old_components.update(row['intervention_damage'])
+        old_components.update(prior_components(row))
     attempts=[];sources=0;hashes={};latest=json.loads((OUT/'latest.json').read_text());final=json.loads((ROOT/latest['attempt']/'result.json').read_text())
     assert final['status']=='complete' and final['stage']=='analyze'
     for path in sorted((OUT/'runs').glob('*/attempts/*/result.json')):

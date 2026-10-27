@@ -70,3 +70,9 @@ def test_saved_eligibility_recovery_keeps_rejections_and_fixed_order(tmp_path):
     (saved/'1.json').unlink()
     with pytest.raises(ValueError,match='missing frozen candidate'):
         m.reuse_eligibility_pool(entries,saved,tmp_path/'missing.json',wanted=2)
+
+
+def test_precision_audit_excludes_flat_secondary_dev_components():
+    from provenance import summarize_single_merge_precision as summary
+    row={'scores':{'natural_kl':{'score':1.}},'secondary_scores':{'dev-secondary':2.},'natural_damage':{'damage':3.},'intervention_damage':{'intervention':4.}}
+    assert summary.prior_components(row)=={'score','dev-secondary','damage','intervention'}
