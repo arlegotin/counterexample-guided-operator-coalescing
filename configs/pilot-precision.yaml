@@ -68,5 +68,5 @@ budgets:
   search_seconds: 900
   wall_seconds: 7200
   disk_bytes: 2147483648
-  memory_bytes: 8589934592
+  memory_bytes: 9663676416
 preparation: null

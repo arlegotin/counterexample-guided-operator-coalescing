@@ -55,3 +55,18 @@ def test_precision_run_rejects_budget_drift_before_starting_attempt():
     m=api();config=SimpleNamespace(budgets=SimpleNamespace(resolve=lambda:SimpleNamespace(to_dict=lambda:{'updates':41})))
     with pytest.raises(ValueError,match='frozen overall budgets'):
         m._start('replay_first',{'overall_budgets':{'updates':40}},config)
+
+
+def test_saved_eligibility_recovery_keeps_rejections_and_fixed_order(tmp_path):
+    import json
+    m=api();entries=[{'document_id':str(i),'component_id':str(i),'role':'probe_score'} for i in range(3)]
+    saved=tmp_path/'saved';saved.mkdir()
+    for i,entry in enumerate(entries):
+        (saved/f'{i}.json').write_text(json.dumps({'entry':entry,'check':{'eligible':i!=0,'document_id':str(i)},'rows':[{'status':'rejected' if i==0 else 'accepted','document_id':str(i)}]}))
+    checks,selected=m.reuse_eligibility_pool(entries,saved,tmp_path/'pool.json',wanted=2)
+    assert selected==entries[1:]
+    assert len(checks)==3 and not checks[0]['eligible']
+    assert [r['document_id'] for r in json.loads((tmp_path/'pool.json').read_text())]==['0','1','2']
+    (saved/'1.json').unlink()
+    with pytest.raises(ValueError,match='missing frozen candidate'):
+        m.reuse_eligibility_pool(entries,saved,tmp_path/'missing.json',wanted=2)

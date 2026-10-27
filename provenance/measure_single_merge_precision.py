@@ -42,7 +42,7 @@ def logical_position_count(*,score_documents,damage_documents,depths,donor_targe
 
 class PrecisionRecorder(TrainingPilotRecorder):
     def __init__(self,tracker,p):
-        self.plan=p;self._pinned={}
+        self.plan=p;self._pinned={};self.recovery=tracker.attempt.spec.resolved_config.get('recovery_authorization')
         super().__init__(tracker,p['overall_student_forward_calls'])
         self.followup_wall_at_start=self.phase_totals().wall_seconds
     def _pin(self,path,digest):
@@ -62,6 +62,7 @@ class PrecisionRecorder(TrainingPilotRecorder):
         return total
     def phase_totals(self):
         total=self._total_paths(sorted((self.phase_root/'runs').glob('*/spec.json')))
+        if self.recovery:total=BudgetTracker.combine(total,CostRecord(wall_seconds=self.recovery['diagnosis_wall_seconds']))
         return replace(total,memory_unavailable_reason=None) if total.memory_bytes is not None else total
     def aggregate(self):
         parent_paths=[]
@@ -74,6 +75,7 @@ class PrecisionRecorder(TrainingPilotRecorder):
     def check_aggregate(self,cost=None):
         cost=cost or CostRecord();total=self.aggregate();phase=self.phase_totals()
         live=time.monotonic()-self.started
+        if self.phase_key=='task12_precision_prepare_resume' and live+cost.wall_seconds>300:raise BudgetExceeded('isolated preparation300s ceiling')
         if max(total.wall_seconds,self.phase_wall_at_start+live)+cost.wall_seconds>self.tracker.budget.wall_seconds:raise BudgetExceeded('Task12 overall live wall ceiling')
         phase_wall=max(phase.wall_seconds,getattr(self,'followup_wall_at_start',phase.wall_seconds)+live)+cost.wall_seconds
         combined=BudgetTracker.combine(total,cost)
@@ -127,14 +129,17 @@ def make_plan(config):
 
 
 def _start(stage,p,config):
-    if config.budgets.resolve().to_dict()!=p['overall_budgets']:raise ValueError('frozen overall budgets changed')
+    recovery=load_recovery_authorization()
+    expected=recovery['amended_overall_budgets'] if recovery else p['overall_budgets']
+    if config.budgets.resolve().to_dict()!=expected:raise ValueError('frozen overall budgets changed')
     sources=sorted([*ROOT.glob('poc/**/*.py'),*[(ROOT/'provenance'/name) for name in ('measure_single_merge.py','measure_single_merge_sensitivity.py','measure_training_pilot.py','measure_probe_pilot.py','prepare_single_merge.py','measure_single_merge_precision.py')]])
     hashes={str(f.relative_to(ROOT)):sha256_file(f) for f in sources}
     original=json.loads((ORIGINAL/'source-amendment.json').read_text())['new_source_sha256']
     for name,digest in original.items():
         if sha256_file(ROOT/name)!=digest:raise ValueError('original numerical/helper source changed: '+name)
-    parent_ids=tuple(Path(x['spec_path']).parent.name for x in p['parent_runs'])
-    spec=RunSpec(method_id='M',method_variant='task12_precision_'+stage,resolved_config={'plan_sha256':sha256_file(OUT/'plan.json'),'source_sha256':hashes,'carry_in':p['carry_in'],'stage':stage,'original_candidate_training_updates':1,'replay_does_not_add_learning':True},
+    parent_ids=tuple(sorted({Path(x['spec_path']).parent.name for x in p['parent_runs']}|{f.parent.name for f in (OUT/'runs').glob('*/spec.json')}))
+    recovery=load_recovery_authorization()
+    spec=RunSpec(method_id='M',method_variant='task12_precision_'+stage,resolved_config={'plan_sha256':sha256_file(OUT/'plan.json'),'source_sha256':hashes,'carry_in':p['carry_in'],'stage':stage,'original_candidate_training_updates':1,'replay_does_not_add_learning':True,'recovery_authorization':recovery},
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),dirty_patch_sha256=hashlib.sha256(subprocess.check_output(['git','diff','--binary','HEAD'])).hexdigest(),dependency_lock_sha256=sha256_file(ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),input_manifests={'data':p['data_manifest_sha256'],'teacher':p['teacher_asset_sha256'],'parent_original_receipt':p['parent_result_sha256']},hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'data_order':19,'model_and_probes':17,'bootstrap':17},parent_run_ids=parent_ids,budgets=config.budgets.resolve())
     attempt=start_attempt(spec,OUT/'runs');rec=PrecisionRecorder(BudgetTracker(spec.budgets,attempt),p)
     for f in sources:
@@ -144,7 +149,8 @@ def _start(stage,p,config):
 
 
 def _load_models(p,config,rec):
-    if psutil.virtual_memory().available<10*1024**3:raise ValueError('fresh available memory below approved8GiB policy')
+    required=12 if config.budgets.resolve().memory_bytes>8*1024**3 else 10
+    if psutil.virtual_memory().available<required*1024**3:raise ValueError('fresh available memory below approved reserve policy')
     asset=AssetManifest.load(ROOT/'data/prepared-135m-v2/teacher-assets.json',expected_sha256=p['teacher_asset_sha256'])
     teacher=rec.call(lambda:load_teacher(asset,config).to('mps'));current=rec.call(lambda:make_bank(teacher,canonicalize_partition([[i] for i in range(30)],30),8,17))
     return teacher,current
@@ -225,6 +231,74 @@ def prepare(p,rec,attempt):
     _write(OUT/'data.json',data);return {'data':data}
 
 
+def load_recovery_authorization():
+    path=OUT/'recovery-authorization.json'
+    if not path.exists():return None
+    value=json.loads(path.read_text())
+    if value['plan_sha256']!=sha256_file(OUT/'plan.json'):raise ValueError('recovery plan binding changed')
+    for name,digest in (value['authorized_failures']|value['reused_artifact_sha256']).items():
+        if sha256_file(ROOT/name)!=digest:raise ValueError('recovery artifact binding changed: '+name)
+    return value
+
+
+def reuse_eligibility_pool(entries,directory,destination,*,wanted):
+    """Stream exact saved rows, preserving failures without a second edit search."""
+    checks=[];selected=[];first=True
+    with destination.open('x') as stream:
+        stream.write('[')
+        for entry in entries:
+            path=directory/(entry['document_id']+'.json')
+            if not path.exists():raise ValueError('missing frozen candidate evidence')
+            saved=json.loads(path.read_text())
+            if saved['entry']!=entry:raise ValueError('saved eligibility candidate identity changed')
+            checks.append(saved['check'])
+            if saved['check']['eligible']:selected.append(entry)
+            for row in saved['rows']:
+                if not first:stream.write(',')
+                json.dump(row,stream,sort_keys=True);first=False
+            del saved;gc.collect()
+            if len(selected)==wanted:break
+        stream.write(']\n');stream.flush();__import__('os').fsync(stream.fileno())
+    if len(selected)!=wanted:raise ValueError('saved eligibility population underfilled')
+    return checks,selected
+
+
+def resume_preparation(p,rec,attempt):
+    if not rec.recovery:raise ValueError('explicit failed-preparation recovery required')
+    if (OUT/'data.json').exists():raise ValueError('fixed data preparation already complete')
+    # Reuse all saved edits and windows; never regenerate or alter their order.
+    eligibility,selected=reuse_eligibility_pool(p['candidate_order']['score_candidates'],OUT/'eligibility-score',OUT/'pool.json',wanted=16)
+    manifest=load_manifest(ROOT/'data/prepared-135m-v2/data-manifest.json',expected_sha256=p['data_manifest_sha256'],roles={'dev'})
+    windows=[];damage_checks=[]
+    for entry in p['candidate_order']['damage_candidates']:
+        path=OUT/'eligibility-damage'/f"{entry['document_id']}.json"
+        if path.exists():
+            saved=json.loads(path.read_text())
+            if saved['entry']!=entry:raise ValueError('saved damage candidate identity changed')
+            damage_checks.append(saved['check'])
+            if saved['check']['eligible']:windows.append({'entry':entry,'window':saved['window']})
+        else:
+            gc.collect();rec.check(CostRecord())
+            memory=rec.memory()
+            with (OUT/'preparation-memory.jsonl').open('a') as log:log.write(json.dumps({'document_id':entry['document_id'],'before_read_bytes':memory,'seconds':time.monotonic()-rec.started})+'\n')
+            if memory>4*1024**3:raise BudgetExceeded('isolated preparation4GiB growth stop')
+            doc=_documents(manifest,[entry],rec)[0];raw=Path(doc.token_path).read_bytes()
+            if hashlib.sha256(raw).hexdigest()!=doc.token_sha256:raise ValueError('fresh canonical token hash mismatch')
+            tokens=json.loads(raw)['fields']['text'];check={'document_id':doc.document_id,'eligible':len(tokens)>=512}
+            if not check['eligible']:check.update(reason='verified_token_length_below512',length=len(tokens));saved={'entry':entry,'check':check}
+            else:
+                batch,w=_canonical(doc,entry['component_id'],rec);saved={'entry':entry,'check':check,'window':asdict(w)};windows.append({'entry':entry,'window':asdict(w)});del batch,w
+            _write(path,saved);damage_checks.append(check);del doc,raw,tokens,saved;gc.collect();rec.record(CostRecord())
+            memory=rec.memory()
+            with (OUT/'preparation-memory.jsonl').open('a') as log:log.write(json.dumps({'document_id':entry['document_id'],'after_gc_bytes':memory,'seconds':time.monotonic()-rec.started})+'\n')
+            if memory>4*1024**3:raise BudgetExceeded('isolated preparation4GiB growth stop')
+        if len(windows)==32:break
+    if len(windows)!=32:raise ValueError('fixed fresh damage reserve underfilled')
+    _write(OUT/'windows.json',windows)
+    data={'plan_sha256':sha256_file(OUT/'plan.json'),'score_entries':selected,'score_eligibility':eligibility,'damage_eligibility':damage_checks,'pool_sha256':sha256_file(OUT/'pool.json'),'windows_sha256':sha256_file(OUT/'windows.json'),'no_candidate_predictions':True,'recovery_authorization_sha256':sha256_file(OUT/'recovery-authorization.json')}
+    _write(OUT/'data.json',data);return {'data':data,'reused_score_candidates':len(selected),'no_edit_regeneration':True}
+
+
 def _eval_total():
     path=OUT/'logical-positions.jsonl'
     return sum(json.loads(x)['positions'] for x in path.read_text().splitlines()) if path.exists() else 0
@@ -282,13 +356,16 @@ def analyze(p):
 
 
 def run(stage,config):
-    p=make_plan(config)
+    started=time.monotonic();p=make_plan(config)
     if stage=='plan':print(json.dumps({'plan':str(OUT/'plan.json'),'forecast':p['forecast'],'new_score_components':16,'new_damage_components':32}));return 0
-    if any(json.loads(path.read_text()).get('status')=='failed' for path in (OUT/'runs').glob('*/attempts/*/result.json')):raise ValueError('a precision/replay failure exists; no retries without controller ruling')
-    started=time.monotonic();attempt,rec,spec=_start(stage,p,config);result={'status':'running','stage':stage,'attempt':str(attempt.path.relative_to(ROOT)),'source_commit':spec.source_commit,'source_sha256':dict(spec.resolved_config['source_sha256'])}
+    recovery=load_recovery_authorization();allowed=recovery['authorized_failures'] if recovery else {}
+    if any(json.loads(path.read_text()).get('status')=='failed' and allowed.get(str(path.relative_to(ROOT)))!=sha256_file(path) for path in (OUT/'runs').glob('*/attempts/*/result.json')):raise ValueError('a precision/replay failure exists; no retries without controller ruling')
+    attempt,rec,spec=_start(stage,p,config);result={'status':'running','stage':stage,'attempt':str(attempt.path.relative_to(ROOT)),'source_commit':spec.source_commit,'source_sha256':dict(spec.resolved_config['source_sha256'])}
     try:
+        if config.budgets.resolve().memory_bytes>8*1024**3 and psutil.virtual_memory().available<12*1024**3:raise ValueError('fresh available RAM below12GiB reserve')
         if stage.startswith('replay_'):result.update(reconstruct(stage,p,config,rec,attempt))
         elif stage=='prepare':result.update(prepare(p,rec,attempt))
+        elif stage=='prepare_resume':result.update(resume_preparation(p,rec,attempt))
         elif stage.startswith('evaluate_'):result.update(evaluate(stage,p,config,rec,attempt))
         elif stage=='analyze':result.update(analyze(p))
         else:raise ValueError('unknown precision stage')
@@ -302,5 +379,5 @@ def run(stage,config):
     return 0 if result['status']=='complete' else 4
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser();parser.add_argument('--stage',required=True,choices=['plan','replay_first','replay_remaining','prepare','evaluate_first','evaluate_remaining','analyze']);parser.add_argument('--config',type=Path,default=ROOT/'configs/pilot-precision.yaml');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--stage',required=True,choices=['plan','replay_first','replay_remaining','prepare','prepare_resume','evaluate_first','evaluate_remaining','analyze']);parser.add_argument('--config',type=Path,default=ROOT/'configs/pilot-precision.yaml');args=parser.parse_args()
     raise SystemExit(run(args.stage,load_config(args.config,phase='exploratory')))
