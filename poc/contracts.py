@@ -476,3 +476,126 @@ class Recorder(Protocol):
     """Preflight and append actual expenditure, including failed operations."""
     def check(self, next_cost: CostRecord) -> None: ...
     def record(self, actual_cost: CostRecord) -> None: ...
+
+
+@dataclass(frozen=True)
+class ProbeRecord:
+    """Compact intervention reference, including rejected edits; never activations.
+
+    positions are absolute model-context positions; source_span/donor_span are
+    character offsets in the original/edited document. A patched hidden index j
+    scores target j (the next input token), including real EOS when valid.
+    """
+    probe_id: str
+    recipient_id: str
+    donor_id: str
+    recipient_component: str
+    donor_component: str
+    recipient_role: str
+    donor_role: str
+    use: str
+    source: str
+    recipient_tokens: tuple[int, ...]
+    donor_tokens: tuple[int, ...]
+    attention_mask: tuple[bool, ...]
+    positions: tuple[int, ...]
+    donor_positions: tuple[int, ...]
+    target_mask: tuple[bool, ...]
+    patch_positions: tuple[int, ...]
+    patch_mode: str
+    channel_quarter: int | None
+    depth: int
+    teacher_digest: str
+    candidate_digest: str
+    tokenizer_digest: str
+    dtype: str
+    backend: str
+    boundary_version: str
+    execution_profile: str
+    seed: int
+    edit_kind: str
+    source_span: tuple[int, int]
+    donor_span: tuple[int, int]
+    replacement: str
+    prefix_source: str
+    source_window: tuple[int, int]
+    recipient_length_before_crop: int
+    donor_length_before_crop: int
+    recipient_full_tokens_digest: str
+    donor_full_tokens_digest: str
+    context_policy: str
+    selection_score: float | None = None
+    status: str = 'accepted'
+    rejection_reason: str | None = None
+
+    def __post_init__(self):
+        allowed = {'fit': {'fit', 'probe_fit'}, 'rank': {'probe_score'}}
+        if (self.use not in allowed or self.recipient_role not in allowed[self.use]
+                or self.donor_role != self.recipient_role or self.donor_component != self.recipient_component):
+            raise ValueError('probe component/role violates use isolation')
+        for name in ('probe_id', 'recipient_id', 'donor_id', 'recipient_component', 'donor_component',
+                     'dtype', 'backend', 'boundary_version', 'execution_profile'):
+            if type(getattr(self, name)) is not str or not getattr(self, name).strip():
+                raise ValueError(f'{name} requires an explicit identity')
+        for name in ('teacher_digest', 'candidate_digest', 'tokenizer_digest', 'recipient_full_tokens_digest', 'donor_full_tokens_digest'):
+            if not re.fullmatch('[0-9a-f]{64}', getattr(self, name)):
+                raise ValueError(f'{name} requires SHA-256')
+        if self.source not in ('natural', 'student', 'donor') or self.prefix_source not in ('teacher', 'candidate'):
+            raise ValueError('unknown probe source/prefix producer')
+        if self.source == 'student' and self.prefix_source != 'candidate':
+            raise ValueError('student states must identify the candidate prefix producer')
+        for name in ('depth', 'seed'):
+            _number(name, getattr(self, name), integer=True)
+        for name in ('recipient_tokens', 'donor_tokens', 'positions', 'donor_positions', 'patch_positions',
+                     'attention_mask', 'target_mask', 'source_span', 'donor_span'):
+            object.__setattr__(self, name, tuple(getattr(self, name)))
+        for name in ('recipient_tokens', 'donor_tokens', 'positions', 'donor_positions', 'patch_positions'):
+            if any(type(x) is not int or x < 0 for x in getattr(self, name)):
+                raise ValueError('probe tokens/positions must be nonnegative integers')
+        n = len(self.recipient_tokens)
+        if n < 2 or len(self.attention_mask) != n or len(self.positions) != n or len(self.target_mask) != n-1:
+            raise ValueError('recipient tokens/masks/positions must align and have a target')
+        if len(self.donor_positions) != len(self.donor_tokens):
+            raise ValueError('donor positions must align with tokens')
+        if any(type(x) is not bool for x in (*self.attention_mask, *self.target_mask)):
+            raise ValueError('probe masks must be boolean')
+        if any(not self.attention_mask[i] and any(self.attention_mask[i:]) for i in range(n)):
+            raise ValueError('probe attention mask must right-pad')
+        if self.positions != tuple(range(self.positions[0], self.positions[0]+n)):
+            raise ValueError('model-context positions must be contiguous')
+        if self.patch_mode not in ('full', 'span', 'quarter'):
+            raise ValueError('unknown patch mode')
+        if self.patch_mode == 'quarter':
+            if type(self.channel_quarter) is not int or not 0 <= self.channel_quarter < 4:
+                raise ValueError('channel mask requires one of four fixed quarters')
+        elif self.channel_quarter is not None:
+            raise ValueError('full/span patches use all channels')
+        pp = self.patch_positions
+        if tuple(sorted(set(pp))) != pp or any(i >= n or not self.attention_mask[i] for i in pp):
+            raise ValueError('patch positions must be sorted unique valid nonpadding indices')
+        if pp and (self.patch_mode != 'span' and len(pp) != 1 or pp != tuple(range(pp[0], pp[-1]+1))):
+            raise ValueError('patch must be a token or contiguous span')
+        if self.status not in ('accepted', 'rejected') or (self.status == 'rejected') != bool(self.rejection_reason):
+            raise ValueError('rejected probes require an explicit reason')
+        if self.status == 'accepted':
+            if len(self.donor_tokens) != n or self.donor_positions != self.positions:
+                raise ValueError('aligned donor requires identical positions; future-to-past copying is forbidden')
+        earliest = pp[0] if pp else 0
+        expected = tuple(i >= earliest and self.attention_mask[i] and self.attention_mask[i+1] for i in range(n-1))
+        if self.target_mask != expected:
+            raise ValueError('target mask must begin at earliest patched index and preserve valid targets')
+        object.__setattr__(self, 'source_window', tuple(self.source_window))
+        if (len(self.source_window) != 2 or self.source_window != (0,n)
+                or self.context_policy != 'first_tokens_reset_0_v1' or self.positions != tuple(range(n))):
+            raise ValueError('explicit first-token source window and reset context policy required')
+        for name in ('recipient_length_before_crop','donor_length_before_crop'):
+            _number(name, getattr(self,name), integer=True)
+        if self.recipient_length_before_crop < n or self.donor_length_before_crop < len(self.donor_tokens):
+            raise ValueError('pre-crop token lengths cannot be smaller than context')
+        if self.status == 'accepted' and self.recipient_length_before_crop != self.donor_length_before_crop:
+            raise ValueError('pre-crop BPE token lengths must align')
+        for span in (self.source_span, self.donor_span):
+            if len(span) != 2 or any(type(x) is not int or x < 0 for x in span) or span[1] < span[0]:
+                raise ValueError('source spans must be ordered character offsets')
+        if self.selection_score is not None and (type(self.selection_score) not in (int,float) or not math.isfinite(self.selection_score)):
+            raise ValueError('selection score must be finite or unmeasured')

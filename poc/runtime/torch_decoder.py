@@ -139,7 +139,7 @@ class TorchDecoder(nn.Module):
             digest.update(name.encode())
             digest.update(str(value.dtype).encode())
             digest.update(str(tuple(value.shape)).encode())
-            digest.update(value.view(torch.uint8).numpy().tobytes())
+            digest.update(value.reshape(-1).clone(memory_format=torch.contiguous_format).view(torch.uint8).numpy().tobytes())
         # Equal values with different sharing are different executable ownership.
         owners = {}
         for name, parameter in self.named_parameters(remove_duplicate=False):

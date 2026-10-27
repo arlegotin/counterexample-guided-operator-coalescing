@@ -1,0 +1,437 @@
+{
+  "artifact_sha256": {
+    "artifacts/probes/task10/plan.json": "bce03ad46beba085639bbe900fcebd4ec17837d7bbf12734aa8ea5bd20b4ef3c",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/events.jsonl": "2d23f0604841dc5c96f2399abb7746467aa41e80e7d38dfd7147c80f07cd373c",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/result.json": "51ffb56cf15582e9ed327a34c4a835e3f9782d3d2714fa1e5451e285c3122659",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09/thresholds.json": "04d4a6b0bb42d333a68c6e54652607556b8b9c5274307b8f071749fe7cc8c477",
+    "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/costs.jsonl": "f225e0e9da4eb64127c8f84aa829a4b716074fc6924979c8a8a3915e1290bcd0",
+    "artifacts/probes/task10/runs/2e671cfe0d4be82f4ae33addff8454e509997800dc6ad92adda9282aa02f1648/attempts/76e60c0e67f44f4f8a6d0f34089e9d45/result.json": "56406c4474a0a450b4c90a71dfe833d70d6c75068d3e583da4f81b3fcf7c8157",
+    "artifacts/probes/task10/runs/a58a38b616344ad32152dde108c5772b07aed9cf6321c359c32fcabfdc881d78/attempts/11d391de3329465a923214ba7dfeaed1/result.json": "e02c733be1d738fe95d34f9f6e67e2a3da497dbef494c536f83b8ffa1057c63a"
+  },
+  "current_operation_result": {
+    "accepted": 48,
+    "aggregate_phase_cost": {
+      "disk_bytes": 10276719,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 2463236096,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 210,
+      "processed_tokens": 183544,
+      "search_proposals": 224,
+      "search_seconds": 0.2847318709245883,
+      "student_backward_calls": 0,
+      "student_forward_calls": 52,
+      "suffix_backward_calls": 0,
+      "teacher_forward_calls": 2323,
+      "unique_tokens": 0,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 161.2146052090684
+    },
+    "all_identity_kl_zero": true,
+    "attempt": "artifacts/probes/task10/runs/165db8ee19d0e319c7bc342410b5db6ecdd8d496c1855ff786f844b38f4d4ba5/attempts/b69fc751f8424243b686cc7b1e683a09",
+    "backend": "torch_mps",
+    "cache_final_bytes": 9510904,
+    "cache_final_entries": 8,
+    "calibration": {
+      "by_depth": {
+        "0": {
+          "entropy": [
+            0.014472626894712447,
+            7.012511339187622
+          ],
+          "norm": [
+            2.4411307096481325,
+            4.093302536010742
+          ],
+          "valid_positions": 4088
+        },
+        "14": {
+          "entropy": [
+            0.014472626894712447,
+            7.012511339187622
+          ],
+          "norm": [
+            108.82240188598632,
+            189.33240310668947
+          ],
+          "valid_positions": 4088
+        },
+        "29": {
+          "entropy": [
+            0.014472626894712447,
+            7.012511339187622
+          ],
+          "norm": [
+            574.3272741699219,
+            926.5665100097656
+          ],
+          "valid_positions": 4088
+        }
+      },
+      "identity_proofs": [
+        {
+          "depth": 0,
+          "full_sequence_hidden_exact": true,
+          "valid_targets": 511
+        },
+        {
+          "depth": 14,
+          "full_sequence_hidden_exact": true,
+          "valid_targets": 511
+        },
+        {
+          "depth": 29,
+          "full_sequence_hidden_exact": true,
+          "valid_targets": 511
+        }
+      ],
+      "independent_documents": 8,
+      "independent_entropy_positions": 4088,
+      "threshold_digest": "0404b288675de463e5c0fe246d4aaddcc69debab8cc7784865a1219dc57d75c0"
+    },
+    "cost": {
+      "disk_bytes": 10276719,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 2463236096,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 152,
+      "processed_tokens": 115836,
+      "search_proposals": 208,
+      "search_seconds": 0.21151399915106595,
+      "student_backward_calls": 0,
+      "student_forward_calls": 51,
+      "suffix_backward_calls": 0,
+      "teacher_forward_calls": 2119,
+      "unique_tokens": 0,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 153.22632295906078
+    },
+    "depths": [
+      0,
+      14,
+      29
+    ],
+    "donor_attempt_rows": 48,
+    "dtype": "float32",
+    "exclusions": {
+      "979c9ffa9242740911812aea7f50f6aff897cffa333056ce46124ac074ab95a1": [
+        "norm_above_fit_threshold"
+      ]
+    },
+    "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+    "future_prefix_proofs": 48,
+    "identical_state_cache_hits": 48,
+    "memory_guard_note": "RSS+driver is a conservative overlapping observation, not a unique physical-memory peak",
+    "memory_observed_highwaters": {
+      "mps_allocated_bytes": 599326464,
+      "mps_driver_bytes": 1129005056,
+      "rss_bytes": 1334231040
+    },
+    "null_equal_controls": [
+      {
+        "depth": 0,
+        "equal_patch_exact": true,
+        "suffix_future_leakage": false,
+        "zero_mask_kl": 0.0
+      },
+      {
+        "depth": 14,
+        "equal_patch_exact": true,
+        "suffix_future_leakage": false,
+        "zero_mask_kl": 0.0
+      },
+      {
+        "depth": 29,
+        "equal_patch_exact": true,
+        "suffix_future_leakage": false,
+        "zero_mask_kl": 0.0
+      }
+    ],
+    "patch_modes": {
+      "full": 8,
+      "quarter": 32,
+      "span": 8
+    },
+    "plan_sha256": "bce03ad46beba085639bbe900fcebd4ec17837d7bbf12734aa8ea5bd20b4ef3c",
+    "process_wall_seconds": 153.2263170000515,
+    "rejected_reasons": {},
+    "scientific_scope": "identity real-teacher operation proof; no active-selection advantage measurement",
+    "selections": {
+      "filtered_active": {
+        "ids": [
+          "9254bb3325109f60d66681530964945dfed56b977b04ff39d9309c355d0b9ed6",
+          "0e4bc82de185a197f011bb26aaa6c314770e1dbef2d9d110ecc49acf96cce61b",
+          "10255b579859693d3a257df01330715fd7d26f0a9199971e423520506eb8bb5c",
+          "1a3b33ee600a94d606c5a8ff82b245c8fbfa931dde67a4c895215fa4ba6d7c0d",
+          "487e47c76ef4d9d8d6901814ec1d115c1d62bba685b63860ab888caa1c7f8d22",
+          "00ee2939c3cc7c7f2f9aab2f5962bf17c7e503737d9b7df2b5a03c278179ee5b",
+          "0c350694685ffadc11851585137bc95ec0cbb64eab3567e9a7d81833448a9941",
+          "111954cf2229bb6fccd430c048ed1688f7d5122f0739566ae2de5cfa0b310fa8",
+          "c3d81320d009c600442b29723ecceac2d1f22c488a72904d088efee956dda643",
+          "03349ee2a82c1611820b37c60f64e6fb2d75ac201b84942c23c7df083e050593",
+          "3a8b316cc7fb3d816c1bd8359981f6509cb53b4eaa60748ed74140d6897c0463",
+          "610cc8e83fb48f30c6ac1c4aad2947e4f40a3c2767ce4cf1bdfba6e71c3b1d57"
+        ],
+        "mean_kl": 0.0,
+        "reason": null,
+        "status": "complete"
+      },
+      "filtered_seeded_random": {
+        "ids": [
+          "9254bb3325109f60d66681530964945dfed56b977b04ff39d9309c355d0b9ed6",
+          "c5fffb7204a6ca21e5e771cbe95ed6c75c5b59551812ad6e22d9ad9fd4dbb98d",
+          "eafaca94104d7a5b5c689fe4a59ecdf74967758b61cbf30e2b99db3e614e524c",
+          "a7e126cee80c75a054c4cf61fd5723810f1b4cdb83e80b7871eae8e675d6a312",
+          "487e47c76ef4d9d8d6901814ec1d115c1d62bba685b63860ab888caa1c7f8d22",
+          "0b287fff6622fbf23422f94a587f72ce7241b5f4133d625637ad70aa97ec208b",
+          "20bfea110b751d39d6de6cd9addb356248746f7a92461290f76ccb8d7db2bffd",
+          "fde35a81e6b714e62982d894dda3c79a670d1d75f5af83c3581863227ec5fb5b",
+          "c3d81320d009c600442b29723ecceac2d1f22c488a72904d088efee956dda643",
+          "e9c8c92577e6aea1926283a44e2c6b0b6565a13aa570f05a5eeb95abe2ce58fe",
+          "47d4bd58a749c374548e6d9e59cf19b46117a3aa839db64db5be2724509a7296",
+          "c50ec4ccb5c29da4c0aed297341bfaf7f37f4d3c8ff71268b6f5d80670ded2aa"
+        ],
+        "mean_kl": 0.0,
+        "reason": null,
+        "status": "complete"
+      },
+      "unfiltered_active": {
+        "ids": [
+          "9254bb3325109f60d66681530964945dfed56b977b04ff39d9309c355d0b9ed6",
+          "0e4bc82de185a197f011bb26aaa6c314770e1dbef2d9d110ecc49acf96cce61b",
+          "10255b579859693d3a257df01330715fd7d26f0a9199971e423520506eb8bb5c",
+          "1a3b33ee600a94d606c5a8ff82b245c8fbfa931dde67a4c895215fa4ba6d7c0d",
+          "487e47c76ef4d9d8d6901814ec1d115c1d62bba685b63860ab888caa1c7f8d22",
+          "00ee2939c3cc7c7f2f9aab2f5962bf17c7e503737d9b7df2b5a03c278179ee5b",
+          "0c350694685ffadc11851585137bc95ec0cbb64eab3567e9a7d81833448a9941",
+          "111954cf2229bb6fccd430c048ed1688f7d5122f0739566ae2de5cfa0b310fa8",
+          "991ad3b32ca2fc10d6148315d229feca8c0fd0f248c84e88f38805ae4931a261",
+          "03349ee2a82c1611820b37c60f64e6fb2d75ac201b84942c23c7df083e050593",
+          "3a8b316cc7fb3d816c1bd8359981f6509cb53b4eaa60748ed74140d6897c0463",
+          "4f6ee7a09994897d81386865ba6e8979cc4ffea3bde13a4902825e89a9191681"
+        ],
+        "mean_kl": 0.0,
+        "reason": null,
+        "status": "complete"
+      },
+      "unfiltered_seeded_random": {
+        "ids": [
+          "9254bb3325109f60d66681530964945dfed56b977b04ff39d9309c355d0b9ed6",
+          "c5fffb7204a6ca21e5e771cbe95ed6c75c5b59551812ad6e22d9ad9fd4dbb98d",
+          "eafaca94104d7a5b5c689fe4a59ecdf74967758b61cbf30e2b99db3e614e524c",
+          "a7e126cee80c75a054c4cf61fd5723810f1b4cdb83e80b7871eae8e675d6a312",
+          "487e47c76ef4d9d8d6901814ec1d115c1d62bba685b63860ab888caa1c7f8d22",
+          "0b287fff6622fbf23422f94a587f72ce7241b5f4133d625637ad70aa97ec208b",
+          "20bfea110b751d39d6de6cd9addb356248746f7a92461290f76ccb8d7db2bffd",
+          "fde35a81e6b714e62982d894dda3c79a670d1d75f5af83c3581863227ec5fb5b",
+          "991ad3b32ca2fc10d6148315d229feca8c0fd0f248c84e88f38805ae4931a261",
+          "249587b7029c65907d2e940cd91ce09c967f2aabe99dace5a8d34961746f3f1d",
+          "47d4bd58a749c374548e6d9e59cf19b46117a3aa839db64db5be2724509a7296",
+          "c50ec4ccb5c29da4c0aed297341bfaf7f37f4d3c8ff71268b6f5d80670ded2aa"
+        ],
+        "mean_kl": 0.0,
+        "reason": null,
+        "status": "complete"
+      }
+    },
+    "source_sha256": {
+      "poc/contracts.py": "6c38b7af18c4d9fc789b4297010653e922add9d5e7e51aa69b4fd5e48fa20655",
+      "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+      "poc/probes.py": "92c4dcc7b8145e074f8391551608b038f98d2a8e8d0df66f86faf73ce1b20fc2",
+      "poc/runtime/torch_decoder.py": "726458296828b23e30cd6cabdd7b7ac98c618deea82ffbe6c6255b139c894dee",
+      "provenance/measure_probe_pilot.py": "c1d92367e2bf3fe81c1e7cfb69dc55473aaad7678163f0c012e80f91049e0342"
+    },
+    "stage": "pilot",
+    "status": "passed",
+    "teacher_asset_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+    "teacher_digest": "d3a3eda05494f3f010cad1b582322b9071b881b7fcb14ef05e18345d1de2b606",
+    "unmeasured_cost_fields": [
+      "unique_tokens",
+      "estimated_operations"
+    ]
+  },
+  "donor_edit_tokenization_cost": {
+    "attempts": 16,
+    "processed_inputs": 16,
+    "processed_tokens": 28338,
+    "real_alignment_rejects": 0,
+    "synthetic_rejected_alignment_cost_test": "40 tokens / 3 input tokenizations / 2 attempted edits; failure/interrupt persistence tested",
+    "wall_seconds": 0.0764801652985625
+  },
+  "donor_generation_cost": {
+    "edit_attempts": 16,
+    "original_tokenizations": 8,
+    "processed_inputs": 24,
+    "processed_tokens": 42507,
+    "rejected_alignments": 0,
+    "wall_seconds": 0.09435387328267097
+  },
+  "failed_attempt": {
+    "cost": {
+      "disk_bytes": 4599124,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 2416541696,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 58,
+      "processed_tokens": 67708,
+      "search_proposals": 16,
+      "search_seconds": 0.07321787177352235,
+      "student_backward_calls": 0,
+      "student_forward_calls": 1,
+      "suffix_backward_calls": 0,
+      "teacher_forward_calls": 204,
+      "unique_tokens": 0,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 7.9882822500076145
+    },
+    "failure_reason": "hidden tensor must end in model hidden width",
+    "failure_type": "ValueError",
+    "note": "Measurement passed rank1 hidden vector to rank>=2 readout; fixed one-position matrix slice, focused regression added. All work retained.",
+    "path": "artifacts/probes/task10/runs/2e671cfe0d4be82f4ae33addff8454e509997800dc6ad92adda9282aa02f1648/attempts/76e60c0e67f44f4f8a6d0f34089e9d45/result.json",
+    "sha256": "56406c4474a0a450b4c90a71dfe833d70d6c75068d3e583da4f81b3fcf7c8157",
+    "status": "failed"
+  },
+  "final_source_sha256": {
+    "poc/contracts.py": "6c38b7af18c4d9fc789b4297010653e922add9d5e7e51aa69b4fd5e48fa20655",
+    "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+    "poc/probes.py": "99426ddd293b4ea9a5787824e13c3dd3fa3fbdf91f64379d4004924fcc21b9c4",
+    "poc/runtime/torch_decoder.py": "726458296828b23e30cd6cabdd7b7ac98c618deea82ffbe6c6255b139c894dee",
+    "provenance/measure_probe_pilot.py": "c1d92367e2bf3fe81c1e7cfb69dc55473aaad7678163f0c012e80f91049e0342"
+  },
+  "known_operation_total_including_costcheck": {
+    "student_forward_calls": 53,
+    "teacher_forward_calls": 2359,
+    "wall_seconds": 165.62483541714028
+  },
+  "limitations": [
+    "Three representative depths only; calibrate full affected-depth set before Task12.",
+    "Teacher and candidate FFN are identical in the real pilot; all loss scores zero and no active advantage follows.",
+    "First512-token context reset policy; exact full pre-crop token hashes/lengths retained in ignored donor rows.",
+    "RSS, MPS driver and allocated highs overlap; RSS+driver is a conservative observed guard, not unique physical peak.",
+    "Scientific candidate gradients qualified on owned tiny CPU FP64/MPS FP32 fixtures; no real teacher/data backward or update.",
+    "Unmeasured unique-token deduplication and operation estimates remain explicitly unmeasured; zero defaults are not such measurements.",
+    "Protected confirmation construction remains denied until the future freeze-verifying permit workflow."
+  ],
+  "main_caps": {
+    "budget": {
+      "disk_bytes": 268435456,
+      "memory_bytes": 4294967296,
+      "search_proposals": 512,
+      "search_seconds": 60,
+      "student_backward_calls": 0,
+      "suffix_backward_calls": 0,
+      "teacher_forward_calls": 3200,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 300.0
+    },
+    "plan_sha256": "bce03ad46beba085639bbe900fcebd4ec17837d7bbf12734aa8ea5bd20b4ef3c",
+    "student_forward_calls": 96
+  },
+  "metadata_only_source_amendment": {
+    "after_sha256": "99426ddd293b4ea9a5787824e13c3dd3fa3fbdf91f64379d4004924fcc21b9c4",
+    "before_sha256": "92c4dcc7b8145e074f8391551608b038f98d2a8e8d0df66f86faf73ce1b20fc2",
+    "executable_ast_unchanged": true,
+    "scope": "Only corrected donor-generation docstring and Iterable -> Iterator return annotation/import; all executable AST otherwise identical"
+  },
+  "resolved_pilot_plan": {
+    "context_policy": "first_tokens_reset_0_v1",
+    "context_tokens": 512,
+    "data_manifest_sha256": "aa1e4e65f4b9b6170d74fea68bb57a11848bafb8767a2aca432b486fa12b2026",
+    "depth_region_balance": [
+      0.3333333333333333,
+      0.3333333333333333,
+      0.3333333333333333
+    ],
+    "generated_edits_per_document": 2,
+    "mask_policy": "cycle full,span,quarter0..3 by saved seed and emitted record count; one mask per edit-depth",
+    "max_cache_bytes": 33554432,
+    "max_cache_entries": 8,
+    "max_pool_records": 96,
+    "pathology": {
+      "donor_filter": "norm and conditional teacher entropy at earliest patched position",
+      "entropy": "full-vocabulary teacher natural entropy per valid target; reused depth labels are not independent",
+      "lower_quantile": 0.01,
+      "norm": "L2 per valid hidden target position, per depth",
+      "source": "fit only",
+      "upper_quantile": 0.99
+    },
+    "random_component_fraction": 0.25,
+    "representative_depth_policy": "0,floor((L-1)/2),L-1",
+    "schema_version": 1,
+    "scope": "Task10 operation validation; no active advantage, full-depth diagnostic or final budget",
+    "seed": 17,
+    "selected_ids": {
+      "fit": [
+        "c37054dd24f689baef2b68ada174cc4daa716315ba5bd40cb74abb566146eb04",
+        "b2ea72149ff830f7ffdb97bc63b4acadddc32ff23489e6c974b2ae2a86788973",
+        "dc65110fd5de4e65e7a7be7d4501cdd8347d6575721ad90a5b6779a4cf7978e5",
+        "5926c1b1c79f29216d166007172a20261212e164409f30c3eef0e227bdfe873c",
+        "bf8182cbcd8deaeed4cba812b3d08b73c75b662d8ec5a066bfb28a85f1ce0fa7",
+        "84bce2cd399199ff6ffda1f39ff9571f9ccc47df9e1efe6687351773e30c9d38",
+        "5c451d3db513fec10ee25ff87af2e2bcaaaed48620cbdb9c3ddccfd74a5e37e6",
+        "4bdbe69b50e20b397df3771ee91372467fe363b16044b144aa1b28486856de67"
+      ],
+      "probe_score": [
+        "5bf298d9aa3dcdb106a46c8ee44ac0a62fb756eaa7992ce06064ab1a60b3851b",
+        "fda33b8c37d2c8a4b455f27b28a0e74b46b05f3e3bf17fb4ce6958310bf2165b",
+        "7447449fcad67be89a9902b1b41b2a03316ac5dafeeb3ddc0d0affabccec41da",
+        "c78793213e8a4187e631e9904e06871cb31887294075728f20ba741f21a700f2",
+        "af746d72760d7bb74bcc98a64108a08918e9c0f6a494053fd4a721c9acf0e914",
+        "40a06aa5463de9c5d90905764994bbd002193f716ef051df84ea827bdddae40a",
+        "684e75d59be51a2ba8ee38ea96bb327818fa045412e5c628dc86439e33538e0e",
+        "fed866600caf46677818f54eccdab73f852672f64831db4ea7d14af6b60df876"
+      ]
+    },
+    "selected_per_document_cap": 2,
+    "selection": "sha256(task10-v1:document_id), eight distinct components/role, FineWeb metadata token_count>=512",
+    "selection_count": 12,
+    "teacher_asset_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083"
+  },
+  "schema_version": 1,
+  "scope": "Task10 bounded operation/identity validation only; no real training or active advantage",
+  "status": "passed",
+  "tiny_costcheck": {
+    "cost": {
+      "disk_bytes": 0,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 2132180992,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 2,
+      "processed_tokens": 512,
+      "search_proposals": 0,
+      "search_seconds": 0,
+      "student_backward_calls": 0,
+      "student_forward_calls": 1,
+      "suffix_backward_calls": 0,
+      "teacher_forward_calls": 36,
+      "unique_tokens": 0,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 4.41023020807188
+    },
+    "metric": {
+      "disagreements": 0,
+      "kl": 0.0,
+      "nll": 1426.6086654663086,
+      "reason": null,
+      "status": "ok",
+      "valid_targets": 511
+    },
+    "path": "artifacts/probes/task10/runs/a58a38b616344ad32152dde108c5772b07aed9cf6321c359c32fcabfdc881d78/attempts/11d391de3329465a923214ba7dfeaed1/result.json",
+    "sha256": "e02c733be1d738fe95d34f9f6e67e2a3da497dbef494c536f83b8ffa1057c63a"
+  },
+  "verification": {
+    "digest_logical_byte_compatibility": "Old/new digests equal for CPU FP32/FP64 ordinary + transposed buffer layouts; scalar hashing supported; rank1 regression passed",
+    "focused": "36 passed, 1 deselected in 2.28s",
+    "full_cpu_suite": "413 passed, 1 explicit local-assets skip, 35 hardware deselected in14.03s",
+    "mps_owned_tiny_gradient": "1 passed, 18 deselected in 3.25s; CPU FP64 reference + MPS FP32; separate fixture, not main RunSpec work"
+  }
+}
