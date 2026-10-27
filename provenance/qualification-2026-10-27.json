@@ -474,12 +474,14 @@
       "backend": "mlx",
       "checksum_sha256": "162f4b4f9d0175f8b2bb07ef1ee342d4cf1f66fa5301f2bfad4f50c8d4d5987b",
       "details": {
+        "differentiation_forward_calls": 2,
         "execution_device": "mlx_gpu",
-        "recomputed_forward_calls": 3,
+        "output_evaluation_forward_calls": 1,
+        "recomputed_forward_calls": 1,
         "reduced_precision_policy": "scientific candidate"
       },
       "dtype": "float32",
-      "elapsed_seconds": 0.0015710410079918802,
+      "elapsed_seconds": 0.001283874997170642,
       "forward_max_abs_error": 2.9370231871550523e-09,
       "forward_tolerance": 7.62939453125e-06,
       "gradient_max_abs_error": 7.094653614592161e-10,
@@ -688,7 +690,7 @@
       "value": "/Applications/Xcode.app/Contents/Developer"
     }
   },
-  "ignored_full_doctor_sha256": "e4b6704ab58384cc6d5ab53ebfe1026374a1cfb89c8c9685c6aec31b1736e7f2",
+  "ignored_full_doctor_sha256": "b3d443ed9dc11aeafcf27a670ff8adf3af16981f15dfe9d1478835bfe15dec64",
   "integrations": {
     "cpu_float64_analysis": {
       "cholesky_error": 0.0,
@@ -909,7 +911,7 @@
     }
   ],
   "probe_source_sha256": {
-    "poc/_probe_mlx.py": "36510f767f9f7b552ebd1b44bd5e4ff7aeabcb4efe822cab722778920fd637e7",
+    "poc/_probe_mlx.py": "2c7936426be34d1876fe72b0a1e311e0c00598ccf381d9790e45bc4243b49016",
     "poc/_probe_torch.py": "b6418d15c2e92f39e7ee3a124f234e5da78fc6a3c6e3282cf10ae6a6b28939d8",
     "poc/doctor.py": "baff1d8337acd49ecd348ad1f68df773c5409e6f607e937ef34071a09672876d"
   },
@@ -923,6 +925,127 @@
     "reason": "tiny operation timings do not calibrate actual teacher/context512/training; WP07 must measure these",
     "tiny_tensor_cap_bytes": 67108864
   },
+  "review_amendments": [
+    {
+      "date": "2026-10-27",
+      "disabled_checkpoint": [
+        {
+          "backend": "mlx",
+          "checksum_sha256": null,
+          "details": {},
+          "dtype": "float32",
+          "elapsed_seconds": null,
+          "forward_max_abs_error": null,
+          "forward_tolerance": null,
+          "gradient_max_abs_error": null,
+          "gradient_tolerance": null,
+          "operation": "checkpoint",
+          "reason": "AssertionError: MLX checkpoint did not recompute during differentiation",
+          "repeat_max_abs_error": null,
+          "status": "failed"
+        },
+        {
+          "backend": "mlx",
+          "checksum_sha256": null,
+          "details": {},
+          "dtype": "float16",
+          "elapsed_seconds": null,
+          "forward_max_abs_error": null,
+          "forward_tolerance": null,
+          "gradient_max_abs_error": null,
+          "gradient_tolerance": null,
+          "operation": "checkpoint",
+          "reason": "AssertionError: MLX checkpoint did not recompute during differentiation",
+          "repeat_max_abs_error": null,
+          "status": "failed"
+        },
+        {
+          "backend": "mlx",
+          "checksum_sha256": null,
+          "details": {},
+          "dtype": "bfloat16",
+          "elapsed_seconds": null,
+          "forward_max_abs_error": null,
+          "forward_tolerance": null,
+          "gradient_max_abs_error": null,
+          "gradient_tolerance": null,
+          "operation": "checkpoint",
+          "reason": "AssertionError: MLX checkpoint did not recompute during differentiation",
+          "repeat_max_abs_error": null,
+          "status": "failed"
+        }
+      ],
+      "finding": "Checkpoint acceptance previously counted an independent output invocation; disabled checkpointing could pass",
+      "fix": "Measure block calls within differentiation only and require more than one; record recomputed calls excluding differentiated forward",
+      "ignored_amendment_evidence_sha256": "97d5a05c06a953adee062622fa130539f3602c1a0664c480dc3835bee1982a55",
+      "native_checkpoint": [
+        {
+          "backend": "mlx",
+          "checksum_sha256": "162f4b4f9d0175f8b2bb07ef1ee342d4cf1f66fa5301f2bfad4f50c8d4d5987b",
+          "details": {
+            "differentiation_forward_calls": 2,
+            "execution_device": "mlx_gpu",
+            "output_evaluation_forward_calls": 1,
+            "recomputed_forward_calls": 1,
+            "reduced_precision_policy": "scientific candidate"
+          },
+          "dtype": "float32",
+          "elapsed_seconds": 0.001283874997170642,
+          "forward_max_abs_error": 2.9370231871550523e-09,
+          "forward_tolerance": 7.62939453125e-06,
+          "gradient_max_abs_error": 7.094653614592161e-10,
+          "gradient_tolerance": 7.62939453125e-06,
+          "operation": "checkpoint",
+          "reason": null,
+          "repeat_max_abs_error": 0.0,
+          "status": "passed"
+        },
+        {
+          "backend": "mlx",
+          "checksum_sha256": "93321362a0d992ca9ec8cd3afa8b74aeb229bd91e385c4d52eae90154cfbc150",
+          "details": {
+            "differentiation_forward_calls": 2,
+            "execution_device": "mlx_gpu",
+            "output_evaluation_forward_calls": 1,
+            "recomputed_forward_calls": 1,
+            "reduced_precision_policy": "screening only; FP32 remains scientific policy"
+          },
+          "dtype": "float16",
+          "elapsed_seconds": 0.0010691669886000454,
+          "forward_max_abs_error": 5.07832828047089e-06,
+          "forward_tolerance": 0.0625,
+          "gradient_max_abs_error": 2.5560901842063694e-06,
+          "gradient_tolerance": 0.0625,
+          "operation": "checkpoint",
+          "reason": null,
+          "repeat_max_abs_error": 0.0,
+          "status": "passed"
+        },
+        {
+          "backend": "mlx",
+          "checksum_sha256": "3f4531d20cacb22a13109aa40e75937fc98dab093c6eb1cbf6349a542d063db4",
+          "details": {
+            "differentiation_forward_calls": 2,
+            "execution_device": "mlx_gpu",
+            "output_evaluation_forward_calls": 1,
+            "recomputed_forward_calls": 1,
+            "reduced_precision_policy": "screening only; FP32 remains scientific policy"
+          },
+          "dtype": "bfloat16",
+          "elapsed_seconds": 0.0016713750082999468,
+          "forward_max_abs_error": 0.0003369330927772765,
+          "forward_tolerance": 0.5,
+          "gradient_max_abs_error": 4.0565180858746384e-05,
+          "gradient_tolerance": 0.5,
+          "operation": "checkpoint",
+          "reason": null,
+          "repeat_max_abs_error": 0.0,
+          "status": "passed"
+        }
+      ],
+      "unchanged_evidence": "All noncheckpoint rows, calibrations, dependency-lock/archive/source hashes retained from original qualification; checkpoint output/gradient checksums unchanged"
+    }
+  ],
   "scientific_backend": "torch_mps",
   "sources": [
     {
@@ -938,8 +1061,9 @@
   ],
   "verification": {
     "explicit_hardware": "2 passed, 6 deselected; final explicit MPS/MLX run after device-label/subprocess-isolation changes",
+    "explicit_mlx_review_round1": "2 passed, 7 deselected; native checkpoint pass and identity-wrapper rejection",
     "focused_cpu": "12 passed, 2 deselected",
-    "full_default_cpu": "103 passed, 2 hardware tests deselected",
+    "full_default_cpu": "103 passed, 3 hardware tests deselected; review round1",
     "uv_pip_check": "68 installed distributions compatible"
   },
   "wp00_status": "pending_asset_provenance"

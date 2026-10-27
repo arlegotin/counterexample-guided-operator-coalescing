@@ -95,6 +95,9 @@ def test_real_mlx_operations():
     report = doctor().probe_operations(["mlx"])
     assert report.operations
     assert all(row.status == "passed" for row in report.operations if row.dtype == "float32"), [(r.operation, r.reason) for r in report.operations]
+    checkpoint = next(row for row in report.operations if row.operation == "checkpoint" and row.dtype == "float32")
+    assert checkpoint.details["differentiation_forward_calls"] > 1
+    assert checkpoint.details["recomputed_forward_calls"] >= 1
 
 
 @pytest.mark.cpu
@@ -105,3 +108,16 @@ def test_mlx_native_abort_is_reported_as_limitation_in_parent_process(monkeypatc
     rows = module.probe_operations(["mlx"]).operations
     assert all(row.status == "unavailable" for row in rows)
     assert all("-6" in row.reason and "Metal initialization aborted" in row.reason for row in rows)
+
+
+@pytest.mark.mlx
+def test_mlx_checkpoint_probe_rejects_identity_wrapper(monkeypatch):
+    """Disabling checkpointing must fail even when outputs/gradients stay correct."""
+    if importlib.util.find_spec("mlx") is None:
+        pytest.skip("MLX not installed; not a qualification pass")
+    import mlx.core as mx
+    monkeypatch.setattr(mx, "checkpoint", lambda block: block)
+    rows = doctor()._probe_backend("mlx")
+    checkpoint = next(row for row in rows if row.operation == "checkpoint" and row.dtype == "float32")
+    assert checkpoint.status == "failed", checkpoint
+    assert "did not recompute" in checkpoint.reason

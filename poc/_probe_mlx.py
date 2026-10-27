@@ -97,12 +97,16 @@ def execute(operation, dtype, _device):
     else:
         raise ValueError(f"unknown operation {operation}")
     y = fn(arrays)
+    calls_before_differentiation = len(calls) if operation == "checkpoint" else 0
     grads = mx.grad(lambda a: mx.mean(mx.square(fn(a))))(arrays)
     mx.eval(y, grads)
     mx.synchronize()
     if operation == "checkpoint":
-        details["recomputed_forward_calls"] = len(calls)
-        assert len(calls) > 1, "MLX checkpoint did not recompute"
+        differentiation_calls = len(calls) - calls_before_differentiation
+        details["output_evaluation_forward_calls"] = calls_before_differentiation
+        details["differentiation_forward_calls"] = differentiation_calls
+        details["recomputed_forward_calls"] = differentiation_calls - 1
+        assert differentiation_calls > 1, "MLX checkpoint did not recompute during differentiation"
     if operation == "frozen_suffix":
         details["input_gradient_norm"] = mx.sqrt(mx.sum(mx.square(grads[0]))).item()
         assert details["input_gradient_norm"] > 0
