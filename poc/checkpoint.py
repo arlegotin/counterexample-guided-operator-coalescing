@@ -236,5 +236,9 @@ def checkpoint_decoder(state):
                 or v.dtype not in (torch.float32,torch.float64) or not torch.isfinite(v).all().item()):raise ValueError('invalid checkpoint owner')
     if len({v.dtype for v in state.model.values()})!=1:raise ValueError('checkpoint owner dtypes differ')
     decoder=_load_scientific(Path('.'),SimpleNamespace(metadata=raw),values=state.model)
-    if _saved_digest(decoder,state.model,device_override=schema['backend'].removeprefix('torch_'))!=state.candidate_digest:raise ValueError('checkpoint candidate digest mismatch')
+    # Legacy owned v1 recorded the backend but omitted PyTorch's explicit MPS
+    # index. Its only supported Metal device is0; verify that exact old digest.
+    device=schema.get('device','mps:0' if schema['backend']=='torch_mps' else 'cpu')
+    if torch.device(device).type!=schema['backend'].removeprefix('torch_'):raise ValueError('checkpoint source device/backend mismatch')
+    if _saved_digest(decoder,state.model,device_override=device)!=state.candidate_digest:raise ValueError('checkpoint candidate digest mismatch')
     return decoder

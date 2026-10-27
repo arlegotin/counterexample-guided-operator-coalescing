@@ -331,7 +331,7 @@ def _model_schema(student):
     cfg=json.loads(json.dumps(cfg))
     return dict(config=cfg,head_dim=student.head_dim,rope_theta=student.rope_theta,tokenizer_digest=student.tokenizer_digest,
         groups=[list(g) for g in student.partition.groups],rank=student.rank,base_digest=student.base_digest,
-        execution_profile=EXECUTION_PROFILE,backend='torch_'+student.device.type,
+        execution_profile=EXECUTION_PROFILE,backend='torch_'+student.device.type,device=str(student.device),
         norm_epsilons={'norm':student.norm.variance_epsilon}|{f'layers.{i}.{s}':getattr(layer,s).variance_epsilon for i,layer in enumerate(student.layers) for s in ('input_layernorm','post_attention_layernorm')},
         owners=[dict(name=r.name,shape=list(r.shape),trainable=r.trainable,category=r.category,use_sites=list(r.use_sites)) for r in owner_census(student)],
         tied=student.lm_head.weight is student.embed_tokens.weight)
@@ -405,6 +405,7 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
     if state.spec!=config.run_spec or state.config_hash!=hashlib.sha256(canonical_json(config.identity())).hexdigest() or state.source_hash!=sources.digest():raise ValueError('resume lineage mismatch: config/data/source')
     if state.partition!=student.partition.groups or state.teacher_digest!=teacher_digest:raise ValueError('resume lineage mismatch: map/teacher')
     expected_schema=_model_schema(student)
+    if 'device' not in state.model_schema:expected_schema.pop('device') # legacy owned v1
     desired={n for group in optimizer.param_groups for n in group['owner_ids']}
     for owner in expected_schema['owners']:owner['trainable']=owner['name'] in desired
     if state.model_schema!=expected_schema:raise ValueError('resume owner/schema mismatch')

@@ -222,3 +222,18 @@ def test_resume_rejects_inconsistent_recovery_metadata_before_tensor_mutation(fi
     with pytest.raises(ValueError,match='recovery|scheduler|cursor|order|visited|step'):
         t.fit_model(fresh,teacher,sources,replace(cfg,resume=bad),budget(),MemoryRecorder(first.state.budget_totals))
     assert all(torch.equal(p,before[n]) for n,p in fresh.named_parameters())
+
+
+@pytest.mark.mps
+def test_mps_checkpoint_reconstructs_portably_and_preserves_exact_source_identity(tmp_path):
+    t=api();c=checkpoint();teacher,student=models();teacher=teacher.float().to('mps');student=student.float().to('mps')
+    b=batch();b=replace(b,**{n:getattr(b,n).to('mps') for n in ('input_ids','attention_mask','target_mask','positions')})
+    cfg=bound_config(max_updates=1,run_spec=spec(budgets=budget()),kl_floor_per_target=1e-6,numerical_profile='owned_tiny_mps_fp32')
+    fitted=t.fit_model(student,teacher,t.TrainingSources(natural=(b,)),cfg,budget(),MemoryRecorder())
+    ref=c.save_checkpoint(fitted.state,tmp_path);state=c.load_checkpoint(ref,cfg.run_spec)
+    reconstructed=c.checkpoint_decoder(state)
+    assert reconstructed.device.type=='cpu'
+    for name,p in student.named_parameters():assert torch.equal(p.cpu(),dict(reconstructed.named_parameters())[name])
+    assert reconstructed.to('mps').manifest().checkpoint_digest==state.candidate_digest
+    legacy=replace(state,model_schema={k:v for k,v in state.model_schema.items() if k!='device'})
+    assert c.checkpoint_decoder(legacy).to('mps').manifest().checkpoint_digest==state.candidate_digest
