@@ -61,6 +61,29 @@ def test_invalid_types_ranges_and_unknown_fields_fail(tmp_path, changes):
         load_config(write_config(tmp_path, changes), phase="exploratory")
 
 
+@pytest.mark.parametrize("section,field,value", [
+    ("numerics", "loss_temperature", 2.0),
+    ("evaluation", "primary_context_tokens", 1024),
+    ("model", "residual_scale", 0.5),
+])
+def test_loading_rejects_deviations_from_binding_primary_settings(tmp_path, section, field, value):
+    with pytest.raises(ConfigError, match=field):
+        load_config(write_config(tmp_path, {section: {field: value}}), phase="exploratory")
+
+
+@pytest.mark.parametrize("phase", ["exploratory", "confirmatory", "replication"])
+@pytest.mark.parametrize("section,field,value", [
+    ("numerics", "loss_temperature", 2.0),
+    ("evaluation", "primary_context_tokens", 1024),
+    ("model", "residual_scale", 0.5),
+])
+def test_prepare_rejects_primary_setting_deviations_through_python_api(phase, section, field, value):
+    config = load_config(PILOT, phase="exploratory")
+    changed = replace(getattr(config, section), **{field: value})
+    with pytest.raises(ConfigError, match=field):
+        validate_config(replace(config, phase=phase, **{section: changed}), command="prepare")
+
+
 def test_missing_and_duplicate_keys_fail(tmp_path):
     path = tmp_path / "bad.yaml"
     path.write_text("schema_version: 1\nschema_version: 1\n")

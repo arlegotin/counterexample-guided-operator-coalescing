@@ -42,6 +42,7 @@ class NumericsConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
+    """Study settings; loaded-shape compatibility is checked by model adapters."""
     preserve_original_depth: bool
     share_attention: bool
     initial_target_bank_count: int
@@ -208,8 +209,14 @@ def _shape(config):
         raise ConfigError("unsupported scientific/reference/deployment numerical policy")
     if not model.preserve_original_depth or model.share_attention or not model.tied_embedding or not quant.preserve_canonical_sharing:
         raise ConfigError("primary track must preserve depth, attention, tying and canonical sharing")
+    for name, actual, required in [
+        ("numerics.loss_temperature", numerics.loss_temperature, 1.0),
+        ("evaluation.primary_context_tokens", evaluation.primary_context_tokens, 512),
+        ("model.residual_scale", model.residual_scale, 1.0),
+    ]:
+        if actual != required:
+            raise ConfigError(f"{name} must be {required} for the primary study")
     positive = {"numerics.head_position_chunk": numerics.head_position_chunk,
-                "numerics.loss_temperature": numerics.loss_temperature,
                 "model.initial_target_bank_count": model.initial_target_bank_count,
                 "training.context_tokens": training.context_tokens,
                 "training.microbatch_sequences": training.microbatch_sequences,
@@ -218,14 +225,13 @@ def _shape(config):
                 "training.residual_learning_rate": training.residual_learning_rate,
                 "training.gradient_clip_norm": training.gradient_clip_norm,
                 "training.final_target_presentations": training.final_target_presentations,
-                "evaluation.primary_context_tokens": evaluation.primary_context_tokens,
                 "evaluation.payload_budget_bytes": evaluation.payload_budget_bytes,
                 "evaluation.independent_cluster_count": evaluation.independent_cluster_count,
                 "evaluation.timing_pair_count": evaluation.timing_pair_count,
                 "quantization.initial_group_size": quant.initial_group_size}
     for name, value in positive.items():
         _range(name, value, inclusive=False)
-    for name, value in [("model.ff_residual_rank", model.ff_residual_rank), ("model.residual_scale", model.residual_scale),
+    for name, value in [("model.ff_residual_rank", model.ff_residual_rank),
                         ("training.nll_weight", training.nll_weight), ("search.seed", search.seed),
                         ("search.teacher_query_budget", search.teacher_query_budget), ("search.total_search_seconds", search.total_search_seconds)]:
         _range(name, value)
