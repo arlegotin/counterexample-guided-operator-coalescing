@@ -90,7 +90,7 @@ def plan(out,stage,wall,updates):
     memory=min(6*GiB,int(.8*available))
     p=dict(schema_version=1,stage=stage,selection='sha256(task11-v1:document_id),512 distinct fit components excluding fixed3fitchecks,metadata token_count>=512',
         fit_ids=fit_ids,observation_ids=observations,dev_ids=development,
-        observation_steps=[0]+[k for k in (2,8,16,31) if k<=updates],context_tokens=512,window='first512 reset0 appendEOS only if short (short input rejected)',
+        observation_steps=[0]+[k for k in (2,8,16,31) if k<=updates],context_tokens=512,window='prepared convention: tokenizeplain+oneEOS, first512/reset0, rejectshort',
         head_chunk=32,bank_count=15,rank=8,seed=17,alpha=.1,lr_bank=1e-4,lr_residual=3e-4,
         max_updates=updates,wall_cap=wall,teacher_cap=2048 if stage=='profile' else 12000,
         student_cap=2048 if stage=='profile' else 12000,memory_cap=memory,headroom_at_plan_bytes=available,
@@ -154,7 +154,7 @@ def run(stage,out,wall,updates):
             docs.extend(measured('development_role_reader',lambda:list(open_records(_restricted(manifest,dev_records),purpose='selection'))))
         by_id={d.document_id:d for d in docs};batches={}
         for identity in p['fit_ids']+p['observation_ids']+(p['dev_ids'] if stage!='profile' else []):
-            ids=tokenizer(by_id[identity].text,add_special_tokens=False)['input_ids'][:512]
+            ids=(tokenizer(by_id[identity].text,add_special_tokens=False)['input_ids']+[tokenizer.eos_token_id])[:512]
             if len(ids)!=512:raise ValueError('predeclared context512 source too short; no replacement')
             batches[identity]=_batch(ids,device='mps',document_id=identity,cluster_id=manifest.membership[identity])
         # Full fit stream and independent fit/dev observation windows are fixed

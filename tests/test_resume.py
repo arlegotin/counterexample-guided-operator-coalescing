@@ -174,3 +174,36 @@ def test_global_reference_replay_matches_uninterrupted_four_updates(tmp_path):
     for n,p in whole.named_parameters():assert torch.equal(p,dict(resumed.named_parameters())[n])
     assert full.state.events==after.state.events and full.state.visited==after.state.visited
     assert full.state.scheduler==after.state.scheduler
+
+
+@pytest.mark.mps
+def test_owned_mps_fp32_next_update_checkpoint_replay(tmp_path):
+    assert torch.backends.mps.is_available()
+    t=api();c=checkpoint();teacher,student=models();teacher=teacher.float().to('mps');student=student.float().to('mps')
+    b=batch();b=replace(b,**{n:getattr(b,n).to('mps') for n in ('input_ids','attention_mask','target_mask','positions')})
+    sources=t.TrainingSources(natural=(b,))
+    cfg=bound_config(max_updates=4,epochs=4,run_spec=spec(budgets=budget()),kl_floor_per_target=1e-6,numerical_profile='owned_tiny_mps_fp32')
+    first=t.fit_model(student,teacher,sources,replace(cfg,stop_after_updates=2),budget(),MemoryRecorder())
+    ref=c.save_checkpoint(first.state,tmp_path)
+    continued=t.fit_model(student,teacher,sources,replace(cfg,resume=first.state),budget(),MemoryRecorder(first.state.budget_totals))
+    _,other=models();other=other.float().to('mps')
+    replayed=t.fit_model(other,teacher,sources,replace(cfg,resume=c.load_checkpoint(ref,cfg.run_spec)),budget(),MemoryRecorder(first.state.budget_totals))
+    for n,p in student.named_parameters():torch.testing.assert_close(p,dict(other.named_parameters())[n],rtol=0,atol=0)
+    assert continued.state.events==replayed.state.events and continued.state.target_cursor==replayed.state.target_cursor==32
+    assert continued.state.scheduler==replayed.state.scheduler
+    assert torch.equal(continued.state.rng['mps'],replayed.state.rng['mps'])
+    for n,moments in continued.state.optimizer['state'].items():
+        for k,v in moments.items():
+            other_value=replayed.state.optimizer['state'][n][k]
+            assert torch.equal(v,other_value) if isinstance(v,torch.Tensor) else v==other_value
+
+
+def test_pointer_previous_cannot_escape_checkpoint_root_during_pruning(tmp_path):
+    from pathlib import Path
+    t=api();c=checkpoint();teacher,student=models();cfg=bound_config(max_updates=1,run_spec=spec(budgets=budget()))
+    state=t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),cfg,budget(),MemoryRecorder()).state
+    victim=c.save_checkpoint(state,tmp_path/'outside');c.save_checkpoint(state,tmp_path/'root')
+    pointer=tmp_path/'root'/'current.json';raw=json.loads(pointer.read_text())
+    raw['previous']={'generation':'../outside/'+Path(victim.directory).name,'manifest_sha256':victim.manifest_sha256};pointer.write_text(json.dumps(raw))
+    with pytest.raises(ValueError,match='pointer'):c.save_checkpoint(state,tmp_path/'root')
+    assert Path(victim.directory).exists()

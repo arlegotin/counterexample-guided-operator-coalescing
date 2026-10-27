@@ -191,3 +191,33 @@ def test_observation_callbacks_run_only_at_complete_checkpoint_boundaries(tmp_pa
     cfg=t.TrainingConfig(max_updates=4,epochs=4,observation_steps=(2,4),on_update=observe)
     result=t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),cfg,budget(),MemoryRecorder())
     assert seen==[2,4] and result.state.step==4
+
+
+def test_observer_restores_rng_and_modes_without_changing_training_trajectory():
+    import random,numpy as np
+    t=api();teacher,plain=models();_,observed=models();source=t.TrainingSources(natural=(batch(),))
+    cfg=t.TrainingConfig(max_updates=4,epochs=4,observation_steps=(2,4))
+    random.seed(51);np.random.seed(51);torch.manual_seed(51)
+    baseline=t.fit_model(plain,teacher,source,cfg,budget(),MemoryRecorder())
+    random.seed(51);np.random.seed(51);torch.manual_seed(51)
+    def observe(step):
+        random.random();np.random.random();torch.rand(5)
+        observed.train();teacher.train()
+        assert not torch.is_grad_enabled()
+    actual=t.fit_model(observed,teacher,source,replace(cfg,on_update=observe),budget(),MemoryRecorder())
+    assert actual.state.rng['python']==baseline.state.rng['python']
+    np.testing.assert_array_equal(actual.state.rng['numpy'][1],baseline.state.rng['numpy'][1])
+    assert torch.equal(actual.state.rng['torch'],baseline.state.rng['torch'])
+    assert not observed.training and not teacher.training
+    assert actual.state.target_cursor==baseline.state.target_cursor and actual.state.scheduler==baseline.state.scheduler
+    for n,p in plain.named_parameters():assert torch.equal(p,dict(observed.named_parameters())[n])
+
+
+def test_fitter_steps_exact8192_then_actual8_target_tail_and_charges_context_recompute():
+    t=api();teacher,student=models();recorder=MemoryRecorder()
+    result=t.fit_model(student,teacher,t.TrainingSources(natural=tuple(batch(101) for _ in range(82))),
+        t.TrainingConfig(max_updates=2),budget(),recorder)
+    assert [row['valid_targets'] for row in result.metrics]==[8192,8]
+    assert result.state.target_cursor==8200 and result.state.step==2
+    assert recorder.totals.valid_target_presentations==8200 and recorder.totals.processed_inputs==83
+    assert recorder.totals.processed_tokens==83*101 and recorder.totals.updates==2

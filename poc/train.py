@@ -420,6 +420,23 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
     _restore_rng(state.rng)
 
 
+def _observe(callback,step,student,teacher):
+    """Read-only observation restores RNG/modes even when the observer fails."""
+    rng=_rng()
+    modules=tuple(student.modules())+tuple(teacher.modules())
+    modes=tuple(module.training for module in modules)
+    flags=tuple((p,p.requires_grad) for model in (student,teacher) for p in model.parameters())
+    before=(student.manifest().checkpoint_digest,teacher.manifest().checkpoint_digest)
+    try:
+        with torch.no_grad():callback(step)
+    finally:
+        _restore_rng(rng)
+        for module,mode in zip(modules,modes,strict=True):module.training=mode
+        for parameter,flag in flags:parameter.requires_grad_(flag)
+    if before!=(student.manifest().checkpoint_digest,teacher.manifest().checkpoint_digest):
+        raise ValueError('observation mutated model state; fitting invalidated')
+
+
 def finish_attempt_cost(recorder,*,elapsed):
     """Top up the current attempt only; prior same-RunSpec attempts stay charged."""
     if isinstance(recorder,BudgetTracker):
@@ -491,7 +508,7 @@ def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSourc
                     state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited)
                     checkpoint_ref=save_checkpoint(state,config.checkpoint_root,recorder=guard)
                     del state
-                if step in config.observation_steps and config.on_update is not None:config.on_update(step)
+                if step in config.observation_steps and config.on_update is not None:_observe(config.on_update,step,student,teacher)
                 guard.check(CostRecord())
             if step>=config.max_updates or (config.stop_after_updates is not None and step-initial_step>=config.stop_after_updates):break
     finally:

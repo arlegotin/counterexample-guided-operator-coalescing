@@ -130,6 +130,9 @@ def save_checkpoint(state,root: Path,*,recorder=None) -> CheckpointRef:
 def _save_generation(state,root):
     previous=resolve_checkpoint(root) if (root/'current.json').exists() else None
     old_pointer=_read_json(root/'current.json') if previous else None
+    obsolete=old_pointer['previous'] if old_pointer else None
+    if obsolete is not None and (not isinstance(obsolete,dict) or set(obsolete)!={'generation','manifest_sha256'} or not re.fullmatch('generation-[0-9a-f]{32}',obsolete['generation'])):
+        raise ValueError('unsafe previous checkpoint generation pointer')
     generation='generation-'+uuid4().hex
     temporary=root/('.staging-'+generation);temporary.mkdir()
     tensors={}
@@ -159,7 +162,6 @@ def _save_generation(state,root):
     _publication_boundary('after_pointer_replace')
     # Prune only the explicitly published old previous generation. Staging and
     # crash-orphan generations remain diagnostic evidence and count toward disk.
-    obsolete=old_pointer['previous'] if old_pointer else None
     if obsolete is not None:
         candidate=root/obsolete['generation']
         old_ref=CheckpointRef(str(candidate),obsolete['manifest_sha256'])
