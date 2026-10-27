@@ -9,7 +9,7 @@ import random
 import shutil
 import time
 
-from poc.assets import (AssetError, AssetRequest, RangeAsset, TransferBudget, fetch_asset,
+from poc.assets import (AssetError, AssetRequest, LogicalDiskBudget, RangeAsset, TransferBudget, fetch_asset,
                         fetch_git_blob, file_sha256, resolve_asset)
 from poc.config import ConfigError, PROJECT_ROOT
 from poc.data.benchmarks import blimp_roles, official_role
@@ -89,11 +89,13 @@ def _execution_identity(config):
             'dependency_lock_sha256':file_sha256(PROJECT_ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),
             'qualification_sha256':file_sha256(PROJECT_ROOT/'provenance/qualification-2026-10-27.json')}
 
-def _write(path, value):
+def _write(path, value, *, disk_budget: LogicalDiskBudget | None = None):
     path.parent.mkdir(parents=True,exist_ok=True)
     encoded=canonical_json(value)
     if path.exists():
         if path.read_bytes()!=encoded: raise AssetError(f'immutable output changed: {path}')
+    elif disk_budget is not None:
+        disk_budget.write_bytes(path,encoded)
     else:
         with path.open('xb') as stream: stream.write(encoded)
     return hashlib.sha256(encoded).hexdigest()
@@ -120,6 +122,7 @@ def run_prepare(config):
     lineage=(check_parent_lineage(prep.parent_preparation_manifest,prep.parent_manifest_sha256)
              if prep.parent_preparation_manifest is not None else {'parent_manifest_sha256':None,'parent_exploratory_exposures':0})
     out=prep.output_dir
+    disk_budget=LogicalDiskBudget(out,prep.max_disk_bytes)
     final=out/'preparation.json'
     if final.exists():
         summary=json.loads(final.read_text())
@@ -132,7 +135,7 @@ def run_prepare(config):
         import uuid
         verification={'schema_version':1,'status':'integrity_verified','preparation_manifest_sha256':file_sha256(final),
                       'verified_file_count':len(summary['output_files']),'execution_identity':_execution_identity(config)}
-        _write(PROJECT_ROOT/'artifacts/preparation-verifications'/f'{uuid.uuid4().hex}.json',verification)
+        _write(PROJECT_ROOT/'artifacts/preparation-verifications'/f'{uuid.uuid4().hex}.json',verification,disk_budget=disk_budget)
         return summary
     # Reject rebuilding after any exploratory access, even in a different output directory.
     check_exposure_history(PROJECT_ROOT)
@@ -151,16 +154,16 @@ def run_prepare(config):
         source=sources[repo]; local=out/'assets'/repo.replace('/','--')/entry['path']
         if not local.exists(): budget.reserve(entry['bytes'])
         if entry['sha256']:
-            m=fetch_asset(_request(repo,source,entry,prep.max_download_bytes),local)
+            m=fetch_asset(_request(repo,source,entry,prep.max_download_bytes),local,disk_budget=disk_budget)
         else:
             m=fetch_git_blob(repo,source['revision'],entry['path'],entry['git_blob_sha1'],entry['bytes'],local,
-                             license=source['license'],terms_url=source['terms_url'],max_bytes=min(prep.max_download_bytes,8*1024**2))
+                             license=source['license'],terms_url=source['terms_url'],max_bytes=min(prep.max_download_bytes,8*1024**2),disk_budget=disk_budget)
         assets.append(asdict(m)); return local
     print('prepare: source/terms and compute/component prerequisites passed; fetching pinned teacher assets',flush=True)
     model_dir=out/'assets'/TEACHER.replace('/','--')
     for entry in sources[TEACHER]['files']: fetch(TEACHER,entry)
     teacher_assets=[m for m in assets if m['source']['repository']==TEACHER]
-    teacher_sha=_write(out/'teacher-assets.json',{'schema_version':1,'assets':[{**m,'local_path':str(Path(m['local_path']).relative_to(out))} for m in teacher_assets]})
+    teacher_sha=_write(out/'teacher-assets.json',{'schema_version':1,'assets':[{**m,'local_path':str(Path(m['local_path']).relative_to(out))} for m in teacher_assets]},disk_budget=disk_budget)
     if config.teacher.weights_sha256 is not None and config.teacher.weights_sha256!=teacher_sha:
         raise AssetError('teacher asset manifest disagrees with configured hash')
     # Tokenizer is Rust tokenizers only. It has no remote-code import or model path.
@@ -188,12 +191,12 @@ def run_prepare(config):
         text_path.parent.mkdir(parents=True,exist_ok=True)
         if text_path.exists():
             if text_path.read_bytes()!=encoded: raise AssetError('record content changed')
-        else: text_path.write_bytes(encoded)
+        else: disk_budget.write_bytes(text_path,encoded)
         fields={'text':text} if token_fields is None else token_fields
         tokens={k:tokenizer.encode(v,add_special_tokens=False).ids+[eos_id] for k,v in fields.items()}
         token_ids_count+=sum(map(len,tokens.values()))
         if token_ids_count>prep.max_token_ids: raise AssetError('token ID ceiling exceeded')
-        th=_write(token_path,{'document_id':identity,'fields':tokens})
+        th=_write(token_path,{'document_id':identity,'fields':tokens},disk_budget=disk_budget)
         output_files[str(text_path.relative_to(out))]=hashlib.sha256(encoded).hexdigest()
         output_files[str(token_path.relative_to(out))]=th
         record=DocumentRecord(identity,repo,sources[repo]['revision'],entry['path'],row,text_path=str(text_path),
@@ -208,7 +211,7 @@ def run_prepare(config):
     import pyarrow.parquet as pq
     for index,entry in enumerate(shards):
         range_reader=RangeAsset(_request(FINEWEB,sources[FINEWEB],entry,entry['bytes']),out/'ranges'/Path(entry['path']).stem,
-                                 ranges_budget,max_request_bytes=prep.max_range_request_bytes)
+                                 ranges_budget,max_request_bytes=prep.max_range_request_bytes,global_budget=budget,disk_budget=disk_budget)
         parquet=pq.ParquetFile(range_reader)
         sizes=[parquet.metadata.row_group(g).num_rows for g in range(parquet.num_row_groups)]
         choices=sampled_rows(sizes,seed=prep.seed+index+1,group_count=prep.row_groups_per_shard,rows_per_group=prep.rows_per_group)
@@ -226,7 +229,6 @@ def run_prepare(config):
                 windows.extend(asdict(w) for w in make_windows(TokenDocument(r.document_id,tuple(t['text'])),WindowPolicy(seed=prep.seed)))
         sampling.append({'shard':entry['path'],'revision':sources[FINEWEB]['revision'],'parent_sha256':entry['sha256'],
                          'parent_full_hash_locally_verified':False,'group_sizes':sizes,'selected_rows':choices,'range_files':range_reader.ranges})
-        budget.reserve(range_reader.budget.bytes-sum(x['bytes'] for s in sampling[:-1] for x in s['range_files']))
         range_reader.close()
         print(f'prepare: FineWeb shard {index+1}/{len(shards)}; records={len(natural)} range_bytes={ranges_budget.bytes}',flush=True)
     # Hash exact retained range bytes in each document's local-source evidence.
@@ -292,7 +294,7 @@ def run_prepare(config):
              'windows.json':{'schema_version':1,'natural_policy':asdict(WindowPolicy(seed=prep.seed)),'wikitext_policy':{'context':512,'stride':256},'windows':windows},
              'sampling.json':{'schema_version':1,'seed':prep.seed,'shards':sampling,'exclusions':exclusions},
              'assets.json':{'schema_version':1,'assets':assets},'sensitivity.json':{'thresholds':sensitivities,'screen':'64 seeded MinHash permutations;32 bands of2; exact Jaccard verified candidates; approximate recall; exact cross-source inverted-index screening'}}
-    for filename,value in outputs.items(): output_files[filename]=_write(out/filename,value)
+    for filename,value in outputs.items(): output_files[filename]=_write(out/filename,value,disk_budget=disk_budget)
     output_files['teacher-assets.json']=file_sha256(out/'teacher-assets.json')
     for asset in assets: output_files[str(Path(asset['local_path']).relative_to(out))]=asset['sha256']
     for sample in sampling:
@@ -309,5 +311,5 @@ def run_prepare(config):
        'dedup_sensitivity':sensitivities,'wall_seconds':time.monotonic()-started,'protected_predictions':0,'training_updates':0,
        'final_study_budget_status':'unresolved; routine preparation ceilings only','output_files':output_files}
     # The final receipt is written last: partial failures cannot resemble completed preparation.
-    _write(final,summary)
+    _write(final,summary,disk_budget=disk_budget)
     return summary

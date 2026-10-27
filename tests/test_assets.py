@@ -88,3 +88,54 @@ def test_git_blob_verification_for_non_lfs_public_files(tmp_path):
         fetch_git_blob('alexwarstadt/blimp','a'*40,'data/owned.jsonl','b'*40,len(data),tmp_path/'bad',
                        license='owned',terms_url='https://example.invalid/terms',max_bytes=100,
                        opener=lambda *_a,**_k:io.BytesIO(data))
+
+
+@pytest.mark.parametrize('range_cap,global_cap', [(4,100),(100,4)])
+def test_each_range_reserves_both_transfer_budgets_before_http(tmp_path,range_cap,global_cap):
+    from poc.assets import RangeAsset,TransferBudget
+    calls=[]
+    def opener(req,**_kwargs):
+        calls.append(req)
+        result=io.BytesIO(b'012');result.status=206;result.headers={'Content-Range':'bytes 0-2/10'}
+        return result
+    ranges,overall=TransferBudget(range_cap),TransferBudget(global_cap)
+    stream=RangeAsset(resolve_asset(request(b'0123456789')),tmp_path,ranges,global_budget=overall,opener=opener)
+    assert stream.read(3)==b'012'
+    assert ranges.bytes==overall.bytes==3
+    with pytest.raises(AssetError,match='cap'):stream.read(2)
+    assert len(calls)==1
+    assert ranges.bytes==overall.bytes==3  # failed joint reservation mutates neither
+
+
+def test_asset_disk_cap_preflights_partial_and_publish_hardlink_before_http(tmp_path):
+    from poc.assets import LogicalDiskBudget
+    calls=[]
+    def opener(*_a,**_k):calls.append(1);return io.BytesIO(b'owned fixture')
+    source=resolve_asset(request())
+    # Publishing creates a temporary second logical path before removing .part.
+    with pytest.raises(AssetError,match='disk'):
+        fetch_asset(source,tmp_path/'asset',opener=opener,disk_budget=LogicalDiskBudget(tmp_path,25))
+    assert calls==[] and list(tmp_path.iterdir())==[]
+    disk=LogicalDiskBudget(tmp_path,26)
+    fetch_asset(source,tmp_path/'asset',opener=opener,disk_budget=disk)
+    assert disk.bytes==13 and (tmp_path/'asset').read_bytes()==b'owned fixture'
+    assert not (tmp_path/'asset.part').exists()
+
+
+def test_git_asset_disk_preflight_precedes_public_get(tmp_path):
+    from poc.assets import LogicalDiskBudget,fetch_git_blob
+    data=b'owned fixture';oid=hashlib.sha1(b'blob 13\0'+data).hexdigest()
+    with pytest.raises(AssetError,match='disk'):
+        fetch_git_blob('alexwarstadt/blimp','a'*40,'data/owned.jsonl',oid,13,tmp_path/'asset',
+                       license='owned',terms_url='https://example.invalid/terms',max_bytes=100,
+                       disk_budget=LogicalDiskBudget(tmp_path,25),opener=lambda *_a,**_k:pytest.fail('HTTP started before disk preflight'))
+    assert list(tmp_path.iterdir())==[]
+
+
+def test_range_disk_cap_preflights_before_http(tmp_path):
+    from poc.assets import LogicalDiskBudget,RangeAsset,TransferBudget
+    stream=RangeAsset(resolve_asset(request(b'0123456789')),tmp_path,TransferBudget(100),
+        global_budget=TransferBudget(100),disk_budget=LogicalDiskBudget(tmp_path,4),
+        opener=lambda *_a,**_k:pytest.fail('HTTP started before disk preflight'))
+    with pytest.raises(AssetError,match='disk'):stream.read(5)
+    assert stream.budget.bytes==stream.global_budget.bytes==0

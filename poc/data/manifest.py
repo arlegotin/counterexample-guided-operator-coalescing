@@ -118,12 +118,13 @@ class ExposureLedger:
         selected = set(ids)
         exposed_components = {manifest.membership[i] for i in selected}
         rows = [r for r in manifest.records if manifest.membership[r.document_id] in exposed_components]
+        manifest_sha256 = manifest.digest()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with locked_ledger(self.path) as stream:
             existing = read_rows(stream)
             for r in rows:
                 write_row(stream, {'event_id':len(existing)+1, 'timestamp':timestamp(), 'purpose':purpose,
-                                   'manifest_sha256':manifest.digest(), 'document_id':r.document_id,
+                                   'manifest_sha256':manifest_sha256, 'document_id':r.document_id,
                                    'component_id':manifest.membership[r.document_id], **fingerprint(r)})
                 existing.append({})
 

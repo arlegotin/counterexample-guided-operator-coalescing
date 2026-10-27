@@ -42,6 +42,46 @@ class AssetManifest:
     bytes: int
 
 
+
+class LogicalDiskBudget:
+    """Single-writer logical bytes: existing output paths plus reserved writes.
+
+    Hardlinked paths count separately. Reservations precede file creation, and
+    partial/publish aliases are both charged until the partial is removed.
+    Additional audit receipt paths written by this invocation are charged too.
+    """
+    def __init__(self, root: Path, max_bytes: int):
+        self.max_bytes=max_bytes
+        self._sizes={p.absolute():p.stat().st_size for p in Path(root).rglob('*') if p.is_file()}
+        self.bytes=sum(self._sizes.values())
+        self.check(0)
+
+    def check(self, additional: int):
+        if additional < 0 or self.bytes+additional > self.max_bytes:
+            raise AssetError('logical disk byte cap exceeded')
+
+    def reserve(self, path: Path, count: int):
+        key=Path(path).absolute()
+        if key in self._sizes:
+            if self._sizes[key]!=count: raise AssetError('existing logical disk reservation size mismatch')
+            return
+        self.check(count)
+        self._sizes[key]=count
+        self.bytes+=count
+
+    def forget_missing(self, path: Path):
+        key=Path(path).absolute()
+        if not key.exists(): self.bytes-=self._sizes.pop(key,0)
+
+    def write_bytes(self, path: Path, data: bytes):
+        path=Path(path)
+        if path.exists():
+            if path.read_bytes()!=data: raise AssetError(f'immutable output changed: {path}')
+            return
+        self.reserve(path,len(data))
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open('xb') as stream: stream.write(data)
+
 def file_sha256(path: Path) -> str:
     h = hashlib.sha256()
     with Path(path).open('rb') as stream:
@@ -63,15 +103,18 @@ def resolve_asset(request: AssetRequest) -> SourceRecord:
     return SourceRecord(**asdict(request))
 
 
-def fetch_asset(source: SourceRecord, destination: Path, *, opener=urlopen) -> AssetManifest:
+def fetch_asset(source: SourceRecord, destination: Path, *, opener=urlopen, disk_budget: LogicalDiskBudget | None = None) -> AssetManifest:
     source = resolve_asset(source)
     destination = Path(destination)
     if destination.exists():
         if destination.stat().st_size != source.bytes or file_sha256(destination) != source.sha256:
             raise AssetError('existing asset has changed size/hash')
         return AssetManifest(source, str(destination), source.sha256, source.bytes)
-    destination.parent.mkdir(parents=True, exist_ok=True)
     part = destination.with_name(destination.name + '.part')
+    if disk_budget is not None:
+        disk_budget.check(2*source.bytes)  # partial plus temporary publish hardlink
+        disk_budget.reserve(part,source.bytes)
+    destination.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive partial: interrupted attempts leave no publishable file; no unsafe resume.
     created = False
     try:
@@ -90,11 +133,16 @@ def fetch_asset(source: SourceRecord, destination: Path, *, opener=urlopen) -> A
             output.flush()
             os.fsync(output.fileno())
         # Refuse replacing a concurrently published file.
+        if disk_budget is not None: disk_budget.reserve(destination,source.bytes)
         os.link(part, destination)
         part.unlink()
+        if disk_budget is not None: disk_budget.forget_missing(part)
     except BaseException:
         if created:
             part.unlink(missing_ok=True)
+        if disk_budget is not None:
+            disk_budget.forget_missing(part)
+            disk_budget.forget_missing(destination)
         raise
     return AssetManifest(source, str(destination), h.hexdigest(), size)
 
@@ -104,10 +152,20 @@ class TransferBudget:
     max_bytes: int
     bytes: int = 0
 
-    def reserve(self, count: int):
+    def check(self, count: int):
         if count < 0 or self.bytes + count > self.max_bytes:
             raise AssetError('transfer byte cap exceeded')
+
+    def reserve(self, count: int):
+        self.check(count)
         self.bytes += count
+
+
+def reserve_transfer_budgets(count: int, *budgets):
+    """Atomic joint preflight: a rejected request consumes no budget."""
+    unique={id(b):b for b in budgets if b is not None}.values()
+    for budget in unique: budget.check(count)
+    for budget in unique: budget.reserve(count)
 
 
 class RangeAsset:
@@ -116,8 +174,9 @@ class RangeAsset:
     Every actual range is retained with SHA-256. The parent object's pinned
     SHA-256 identifies provenance; it is NOT claimed locally verified in full.
     """
-    def __init__(self, source: SourceRecord, directory: Path, budget: TransferBudget, *, max_request_bytes=64*1024**2, opener=urlopen):
-        import io
+    def __init__(self, source: SourceRecord, directory: Path, budget: TransferBudget, *, max_request_bytes=64*1024**2, opener=urlopen,
+                 global_budget: TransferBudget | None = None, disk_budget: LogicalDiskBudget | None = None):
+        self.global_budget,self.disk_budget=global_budget,disk_budget
         self.source = resolve_asset(source)
         self.directory, self.budget = Path(directory),budget
         self.max_request_bytes,self.opener = max_request_bytes,opener
@@ -141,7 +200,8 @@ class RangeAsset:
         size = self.source.bytes-self.position if size < 0 else min(size,self.source.bytes-self.position)
         if size == 0: return b''
         if size > self.max_request_bytes: raise AssetError('range request byte cap exceeded')
-        self.budget.reserve(size)
+        if self.disk_budget is not None: self.disk_budget.check(size)
+        reserve_transfer_budgets(size,self.budget,self.global_budget)
         start,end=self.position,self.position+size-1
         req=Request(self.source.url,headers={'Range':f'bytes={start}-{end}','Accept-Encoding':'identity'})
         with self.opener(req,timeout=60) as response:
@@ -153,6 +213,8 @@ class RangeAsset:
         path=self.directory/f'{start}-{end}-{digest}.range'
         if path.exists():
             if file_sha256(path) != digest: raise AssetError('existing range hash mismatch')
+        elif self.disk_budget is not None:
+            self.disk_budget.write_bytes(path,data)
         else:
             with path.open('xb') as stream: stream.write(data)
         self.ranges.append({'start':start,'end_inclusive':end,'bytes':size,'sha256':digest,'local_path':str(path)})
@@ -161,7 +223,7 @@ class RangeAsset:
 
 
 def fetch_git_blob(repository: str, revision: str, path: str, blob_sha1: str, expected_bytes: int,
-                   destination: Path, *, license: str, terms_url: str, max_bytes: int, opener=urlopen) -> AssetManifest:
+                   destination: Path, *, license: str, terms_url: str, max_bytes: int, opener=urlopen, disk_budget: LogicalDiskBudget | None = None) -> AssetManifest:
     """Verify pinned upstream Git object, then record SHA-256 of actual bytes.
 
     Small Git-tracked tokenizer/benchmark files lack upstream SHA-256 metadata.
@@ -178,8 +240,9 @@ def fetch_git_blob(repository: str, revision: str, path: str, blob_sha1: str, ex
     destination=Path(destination)
     if destination.exists(): data=destination.read_bytes()
     else:
+        if disk_budget is not None: disk_budget.check(2*expected_bytes)
         with opener(url,timeout=60) as response: data=response.read(max_bytes+1)
     if len(data) != expected_bytes or hashlib.sha1(f'blob {len(data)}\0'.encode()+data).hexdigest() != blob_sha1:
         raise AssetError('Git blob size/hash mismatch')
     source=resolve_asset(AssetRequest(repository,revision,path,url,hashlib.sha256(data).hexdigest(),len(data),license,terms_url,True,max_bytes))
-    return fetch_asset(source,destination,opener=lambda *_a,**_k: __import__('io').BytesIO(data))
+    return fetch_asset(source,destination,opener=lambda *_a,**_k: __import__('io').BytesIO(data),disk_budget=disk_budget)

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "reviewed_commit": "b4fe12b",
+  "status": "guard_fixes_verified",
+  "scope": "Review round1 guard-only amendment. Historical generation, source pins, receipts, original text/token arrays, assets and role/window populations unchanged. No downloads, model inference, benchmark scoring or training performed.",
+  "historical_generation_provenance": {
+    "path": "provenance/preparation-135m-2026-10-27.json",
+    "sha256": "834db481cd01e25a14aa85d25de3b51d73a102671c80bcea90eeefe07977bbb7",
+    "attribution": "Historical generation belongs to its recorded source identity; new guards are demonstrated by owned offline regressions and integrity-only verification, not retroactively attributed to generation."
+  },
+  "fixes": {
+    "global_transfer": "Jointly preflight and reserve global and FineWeb range ceilings before every range HTTP request. Failed joint reservations mutate neither ceiling.",
+    "logical_disk": "Snapshot all existing logical paths (hardlinks counted separately), reserve each write before creation, and account partial/publish hardlink aliases until unlink. Range and Git/LFS retrieval check disk headroom before HTTP. Original/token/manifest/audit writes and encoded final receipt all preflight. No self-size/hash recursion.",
+    "exposure_digest": "Hash the immutable DataManifest snapshot once per ExposureLedger.record call; reuse the same digest for every emitted row."
+  },
+  "red": {
+    "focused_command": ".venv/bin/python -m pytest tests/test_assets.py tests/test_prepare.py tests/test_data_splits.py -q",
+    "failed": 10,
+    "passed": 25,
+    "log": "/tmp/cgoc-task6-review1-red.txt",
+    "integration_mutation_check": "Removing only prepare-to-RangeAsset global-budget wiring makes the owned valid-config regression fail: second request would raise transfer from24 to29 under25-byte ceiling. Restored before GREEN/full suite."
+  },
+  "green": {
+    "focused": {
+      "command": ".venv/bin/python -m pytest tests/test_assets.py tests/test_prepare.py tests/test_data_splits.py tests/test_data_access.py tests/test_windows.py -q",
+      "passed": 51
+    },
+    "full_cpu": {
+      "command": ".venv/bin/python -m pytest -q",
+      "passed": 262,
+      "hardware_deselected": 15,
+      "wall_seconds": 12.4,
+      "log": "/tmp/cgoc-task6-review1-full-cpu.txt"
+    },
+    "guard_examples": {
+      "valid_config_global_cap": 25,
+      "teacher_bytes": 19,
+      "first_range_bytes": 5,
+      "actual_fake_http_bytes_before_rejection": 24,
+      "rejected_second_range_bytes": 5,
+      "exposure_manifest_digest_calls_for_three_rows": 1,
+      "final_receipt": "Exact combined encoded data+receipt size succeeds; one byte less rejects receipt before creation.",
+      "asset_publish": "13-byte asset needs26-byte transient logical headroom for partial/publish hardlink aliases;25-byte cap denies before HTTP and26allows publication leaving13logical bytes."
+    }
+  },
+  "integrity_only_verification": {
+    "v1": {
+      "preparation_manifest_sha256": "54204aff9cec204f4b7f86576790974b8c8f973098c77fd425ea413e950f2f3a",
+      "verification_status": "integrity_verified",
+      "verified_output_file_count": 150304,
+      "verification_receipt": "artifacts/preparation-verifications/540681240cc94c06a20efab733bc04b5.json",
+      "verification_receipt_sha256": "a2a1e8106dd790524417d36c432f929d64b6fb66825bc70b343519e7ece7188e",
+      "verification_source_commit": "b4fe12bd3fdef2adabe1b7b7939cd12c560148f5",
+      "guard_code_sha256": {
+        "poc/assets.py": "d7eed7c2a41df1d9ed9d4c50a8129db76cf022ecd3d3227c892e105bb9e1cc38",
+        "poc/data/prepare.py": "7846db53d21390a69b1a67cd75ec7da1a246c9860ec9898a9995787624cf8a97",
+        "poc/data/manifest.py": "b0144e05b0a3c71e9756050e2a05dec8cdc1c4ffa49d88f354698f4d84949aea"
+      },
+      "no_exposure_ledger": true
+    },
+    "v2": {
+      "preparation_manifest_sha256": "3f5ea4bcafcf408608a4f7f61ea84a11052cb67f34a2a2891765acb3d27a6e15",
+      "verification_status": "integrity_verified",
+      "verified_output_file_count": 156064,
+      "verification_receipt": "artifacts/preparation-verifications/834aec586a7d48fa939d5436d4a80051.json",
+      "verification_receipt_sha256": "858ec33cec7fe2573def5fa5adec329e431d6ccc2c317ddc4fcbde98a135264d",
+      "verification_source_commit": "b4fe12bd3fdef2adabe1b7b7939cd12c560148f5",
+      "guard_code_sha256": {
+        "poc/assets.py": "d7eed7c2a41df1d9ed9d4c50a8129db76cf022ecd3d3227c892e105bb9e1cc38",
+        "poc/data/prepare.py": "7846db53d21390a69b1a67cd75ec7da1a246c9860ec9898a9995787624cf8a97",
+        "poc/data/manifest.py": "b0144e05b0a3c71e9756050e2a05dec8cdc1c4ffa49d88f354698f4d84949aea"
+      },
+      "no_exposure_ledger": true
+    }
+  },
+  "retained_limitations": [
+    "WikiText conflicting license declarations/redistribution interpretation retained.",
+    "Actual teacher shape/runtime/numerical qualification and final sample-size/power/budgets remain future work.",
+    "MinHash/quote/template/pretraining overlap limits unchanged; no protected permit issued."
+  ]
+}

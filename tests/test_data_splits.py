@@ -123,3 +123,16 @@ def test_new_duplicate_bridge_cannot_relabel_exposure_as_protected(tmp_path):
     rebuilt=assign_roles(build_components([doc(100,b),doc(101,c)],DedupPolicy(exhaustive=True)),'fresh')
     rebuilt=replace(rebuilt,roles={i:'confirm_A' for i in rebuilt.roles})
     with pytest.raises(ExposureError):ledger.validate_rebuild(rebuilt,DedupPolicy())
+
+
+def test_exposure_manifest_digest_is_computed_once_for_all_rows(tmp_path,monkeypatch):
+    from poc.data.manifest import DataManifest
+    records=tuple(doc(i,f'owned distinct short {i}') for i in range(3))
+    m=DataManifest(records,{str(i):'fit' for i in range(3)},{str(i):str(i) for i in range(3)},'salt')
+    calls=[];original=DataManifest.digest
+    def counted(self):calls.append(len(self.records));return original(self)
+    monkeypatch.setattr(DataManifest,'digest',counted)
+    ExposureLedger(tmp_path/'exposures.jsonl').record(m,['0','1','2'],purpose='fit')
+    rows=[__import__('json').loads(line) for line in (tmp_path/'exposures.jsonl').read_text().splitlines()]
+    assert calls==[3]
+    assert len(rows)==3 and len({row['manifest_sha256'] for row in rows})==1
