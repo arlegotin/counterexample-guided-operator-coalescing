@@ -1,0 +1,1760 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "status": "prepared_outcome_blind",
+  "scope": "Public local preparation. No teacher predictions, task scoring, candidate decisions or training.",
+  "source_gate_status": "passed_local_preparation",
+  "full_teacher_runtime_qualification": "pending Task7; source qualification does not qualify actual teacher numerics",
+  "command": ".venv/bin/python -m poc prepare --config configs/135m.yaml",
+  "config_sha256": "8d70cd949ff85bc8cc591142b3312f3349f41c06961601892eedbd581f50d622",
+  "source_manifest_sha256": "a2a4770b7acf7b15e25bfc7f38786a779bcc6f1c7c7bcc5a4bc60033b0d7dfb3",
+  "teacher_asset_manifest_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+  "teacher_weights_sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+  "counts": {
+    "ARC": 7787,
+    "BLiMP_pairs": 67000,
+    "BLiMP_paradigms": 67,
+    "FineWeb": 3072,
+    "WikiText_articles": 122,
+    "roles": {
+      "confirm_A": 140,
+      "confirm_B": 156,
+      "dev": 11305,
+      "fit": 2181,
+      "probe_fit": 147,
+      "probe_score": 142,
+      "protected_benchmark": 63910
+    },
+    "token_ids": 5575102,
+    "windows": 6873
+  },
+  "tokenizer_convention": {
+    "bos_inserted": false,
+    "eos_appended_once_per_sequence": true,
+    "eos_token_id": 0,
+    "native_add_special_tokens_equal_plain": true
+  },
+  "tokenizer_revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+  "preparation_policy": {
+    "fineweb_shards": 3,
+    "max_disk_bytes": 2147483648,
+    "max_document_bytes": 262144,
+    "max_download_bytes": 805306368,
+    "max_fineweb_records": 3072,
+    "max_range_bytes": 201326592,
+    "max_range_request_bytes": 67108864,
+    "max_token_ids": 12000000,
+    "max_total_records": 80000,
+    "output_dir": "data/prepared-135m-v2",
+    "parent_manifest_sha256": "54204aff9cec204f4b7f86576790974b8c8f973098c77fd425ea413e950f2f3a",
+    "parent_preparation_manifest": "data/prepared-135m-v1/preparation.json",
+    "row_groups_per_shard": 2,
+    "rows_per_group": 512,
+    "salt": "cgoc-natural-roles-v1-2026-10-27",
+    "seed": 17,
+    "source_manifest": "provenance/assets-135m-sources.json"
+  },
+  "resource_basis": {
+    "physical_memory_bytes": 38654705664,
+    "initial_disk_free_bytes": 205461909504,
+    "current_pressure_note": "Task2 qualification reported22.29GBswap used; current vm_stat showed only~126MBfree and~7GBinactive. Reclaimability is an estimate. No preparation peak-memory measurement was taken.",
+    "preparation_peak_memory_bytes": null,
+    "preparation_peak_memory_unavailable_reason": "No process peak-memory sampler was attached; no estimate substituted."
+  },
+  "actual_cost": {
+    "actual_file_bytes": 557698370,
+    "download_bytes_this_attempt": 26679738,
+    "fineweb_original_text_bytes": 14403818,
+    "fineweb_range_bytes": 26679738,
+    "fineweb_token_ids": 3168000,
+    "uint32_token_bytes_per_utf8_byte": 0.8797667396241746,
+    "utf8_bytes_per_token_id": 4.5466597222222225,
+    "complete_logical_file_bytes_including_receipt": 581582541,
+    "allocated_file_bytes_in_this_directory": 1158090752,
+    "generation_wall_seconds": 170.10564604197862,
+    "per_attempt_network_bytes": 26679738,
+    "immutable_source_assets_reused": 83,
+    "reuse_method": "verified hardlinks; no linked asset bytes modified in place",
+    "teacher_forward_calls": 0,
+    "training_updates": 0,
+    "protected_predictions": 0,
+    "storage_note": "actual_file_bytes in original receipt is the pre-receipt snapshot; complete logical bytes separately includes its own receipt. Allocated directory bytes include shared hardlinked files and are not additive across v1/v2."
+  },
+  "source_sampling": [
+    {
+      "shard": "sample/10BT/004_00000.parquet",
+      "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+      "parent_sha256": "33557ddd87a07a4ae6fcaf7a4789c7b484e5cc0c273ca12a65b74200e6d8748b",
+      "parent_full_hash_locally_verified": false,
+      "row_groups": [
+        {
+          "row_group": 125,
+          "selected_rows": 512
+        },
+        {
+          "row_group": 185,
+          "selected_rows": 512
+        }
+      ],
+      "retained_range_bytes": 9126987,
+      "retained_range_count": 4
+    },
+    {
+      "shard": "sample/10BT/006_00000.parquet",
+      "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+      "parent_sha256": "554fa2613c9261d6c9c396caab881de3160175794c6c3e1856bf28a0e9cb9b76",
+      "parent_full_hash_locally_verified": false,
+      "row_groups": [
+        {
+          "row_group": 44,
+          "selected_rows": 512
+        },
+        {
+          "row_group": 693,
+          "selected_rows": 512
+        }
+      ],
+      "retained_range_bytes": 8822546,
+      "retained_range_count": 4
+    },
+    {
+      "shard": "sample/10BT/008_00000.parquet",
+      "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+      "parent_sha256": "a6d9dcc0c72ecd7c7f0173c2d06b3a4249a2ccaa94961469d1a522ca689bbf1a",
+      "parent_full_hash_locally_verified": false,
+      "row_groups": [
+        {
+          "row_group": 154,
+          "selected_rows": 512
+        },
+        {
+          "row_group": 702,
+          "selected_rows": 512
+        }
+      ],
+      "retained_range_bytes": 8730205,
+      "retained_range_count": 4
+    }
+  ],
+  "dedup_sensitivity": {
+    "0.7": {
+      "candidate_pairs": 4,
+      "component_count": 3072,
+      "near_edges": 0,
+      "quarantine_records": 0,
+      "role_counts": {
+        "confirm_A": 140,
+        "confirm_B": 156,
+        "dev": 306,
+        "fit": 2181,
+        "probe_fit": 147,
+        "probe_score": 142
+      }
+    },
+    "0.8": {
+      "candidate_pairs": 4,
+      "component_count": 3072,
+      "near_edges": 0,
+      "quarantine_records": 0,
+      "role_counts": {
+        "confirm_A": 140,
+        "confirm_B": 156,
+        "dev": 306,
+        "fit": 2181,
+        "probe_fit": 147,
+        "probe_score": 142
+      }
+    },
+    "0.9": {
+      "candidate_pairs": 4,
+      "component_count": 3072,
+      "near_edges": 0,
+      "quarantine_records": 0,
+      "role_counts": {
+        "confirm_A": 140,
+        "confirm_B": 156,
+        "dev": 306,
+        "fit": 2181,
+        "probe_fit": 147,
+        "probe_score": 142
+      }
+    }
+  },
+  "screen_limits": "64-permutation MinHash is approximate; exact Jaccard verifies candidates; exact inverted-index cross-source overlap. Does not prove no quote/template overlap or unknown teacher pretraining contamination.",
+  "input_lineage": {
+    "expansion_phase": "fresh initial pool before any exploratory/scoring access",
+    "parent_exploratory_exposures": 0,
+    "parent_manifest_sha256": "54204aff9cec204f4b7f86576790974b8c8f973098c77fd425ea413e950f2f3a",
+    "parent_preparation_manifest": "data/prepared-135m-v1/preparation.json"
+  },
+  "parent_preparation": {
+    "counts": {
+      "ARC": 7787,
+      "BLiMP_pairs": 67000,
+      "BLiMP_paradigms": 67,
+      "FineWeb": 192,
+      "WikiText_articles": 122,
+      "roles": {
+        "confirm_A": 9,
+        "confirm_B": 5,
+        "dev": 11022,
+        "fit": 132,
+        "probe_fit": 10,
+        "probe_score": 13,
+        "protected_benchmark": 63910
+      },
+      "token_ids": 2596269,
+      "windows": 2437
+    },
+    "wall_seconds": 118.25139474999742,
+    "storage": {
+      "actual_file_bytes": 496015773,
+      "download_bytes_this_attempt": 331296101,
+      "fineweb_original_text_bytes": 846460,
+      "fineweb_range_bytes": 26679738,
+      "fineweb_token_ids": 189167,
+      "uint32_token_bytes_per_utf8_byte": 0.8939205632871016,
+      "utf8_bytes_per_token_id": 4.474670529214927
+    },
+    "verification": {
+      "status": "passed",
+      "v1_preparation_manifest_sha256": "54204aff9cec204f4b7f86576790974b8c8f973098c77fd425ea413e950f2f3a",
+      "v1_verified_files": 150304,
+      "shared_verified_immutable_source_assets": 83,
+      "wall_seconds": 28.368188666994683
+    }
+  },
+  "manifests": {
+    "preparation.json": {
+      "sha256": "3f5ea4bcafcf408608a4f7f61ea84a11052cb67f34a2a2891765acb3d27a6e15",
+      "bytes": 23884171
+    },
+    "teacher-assets.json": {
+      "sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+      "bytes": 5076
+    },
+    "data-manifest.json": {
+      "sha256": "aa1e4e65f4b9b6170d74fea68bb57a11848bafb8767a2aca432b486fa12b2026",
+      "bytes": 99275793
+    },
+    "components.json": {
+      "sha256": "92b815ffadea92025f3f8499b3a267684427e42ad96162e060efd5538f40f91d",
+      "bytes": 5020416
+    },
+    "windows.json": {
+      "sha256": "0bac27dde8c5a83e3c301b762f877a43f5fbb9b3c46b7f65aa68025b7f7aa1f5",
+      "bytes": 38257520
+    },
+    "sampling.json": {
+      "sha256": "3cc2ee2ee374b6e4b65708d76600cd266e3bbaf60ac9b8acda8a91b9f351e071",
+      "bytes": 28284
+    },
+    "assets.json": {
+      "sha256": "86197fe3ffc28587a08c389fe3acadfe39fb7d63b2315a7b5ed3611ee0d41d0e",
+      "bytes": 64633
+    },
+    "sensitivity.json": {
+      "sha256": "05b44817d04688fb0683058aff8308c048594fbac7cbacbcf3441f00cbcf2697",
+      "bytes": 748
+    }
+  },
+  "verified_output_file_count": 156064,
+  "verification_receipt_sha256": "8f20d9019f7048fce4bc43523e0d2cbbf5636c0c5e0c9bf28ed0b606e57b08a9",
+  "generation_source_identity": {
+    "code_sha256": {
+      "poc/__init__.py": "01873a8282c9a71782c719969f7fbd5710aa2202ecf16e226301e94a2289bc05",
+      "poc/__main__.py": "fbf9e6ef18e8b422a95d9277a81f0746c92455bd9167eebf611a41d569012992",
+      "poc/_probe_mlx.py": "2c7936426be34d1876fe72b0a1e311e0c00598ccf381d9790e45bc4243b49016",
+      "poc/_probe_torch.py": "b6418d15c2e92f39e7ee3a124f234e5da78fc6a3c6e3282cf10ae6a6b28939d8",
+      "poc/assets.py": "11efc747d96fcfec659e69c4e0be30844ca16e82cabeab3995435619d12645fc",
+      "poc/bank.py": "14d341fc0db6cd9b6e90f98af1c18b45b890560b4c30723c78d2df5158b79c51",
+      "poc/budget.py": "22cef9ef5e38e7ad1588e0c23d479a0aa42134ba9d4d5af638c7681c3e7828d6",
+      "poc/bundle.py": "eba76f000de16a062030713cb5323584778c287330a2cc7635945aec5defc4ce",
+      "poc/cli.py": "7f574dfe2cce8ba2443134f23923ed01884330f77495a7a5953ee9f9cf5ade36",
+      "poc/config.py": "148ddbfb4c714893ff2fd35070c66f90656cd602efa8e59696d4bf9f87532035",
+      "poc/contracts.py": "2cc74f8fbc061d1d80e8aec3c89df98c0fac8449e79d9803ba271a38e44ba5a2",
+      "poc/data/__init__.py": "971c3f8e4bf6a95ab6ca1d7e8b72cc371ee77f70249b5bcd3b661dce28425cdf",
+      "poc/data/access.py": "4696a60fe3e42945d4fc4259df1ba5e56b486e231f33750eb7936319c134a6a0",
+      "poc/data/benchmarks.py": "3369d46861ccf09631f4a6e6706ad13590d06348224b56a370f5b8387130b3cc",
+      "poc/data/dedup.py": "5f28a5f1d625744cc53c39814fff4a8ef1da8a8c80b51e8f094236fbbc24d9e2",
+      "poc/data/manifest.py": "c72c67ead7f9f742ce61c54fb159dadb0ce1a98e27f9df7334829ec0e0f1b7a5",
+      "poc/data/prepare.py": "74d7bb9de1deca44a09bc339e45b0408a80dacb6494af2964285442eb71eab2d",
+      "poc/data/windows.py": "b25db96b214473ba374bb7b8df8e03a33aae945cacd86f0f402d94a41f6eab56",
+      "poc/doctor.py": "baff1d8337acd49ecd348ad1f68df773c5409e6f607e937ef34071a09672876d",
+      "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+      "poc/records.py": "da70d7a2b1896418887371653e088f1c047387d0e49cae8babd13664200aa412",
+      "poc/runtime/__init__.py": "9bbddea632b86f7661b08ed637e513f57b06aa4bc24342d8e1156fbc23426694",
+      "poc/runtime/torch_decoder.py": "a2197bd50f7c9eb8cd3ae1fc3f590cebda5df1ce440907095f580e3dd0b197e1",
+      "poc/synthetic.py": "8c34a8c0b169533c7103a30d64a23df0b2e7daa4d18e302a0cdc39f00dbd6101",
+      "poc/validation.py": "afb78dbad598483585086d5a409ab96d79e7eab3ca8de8cb8959fdc429e0e4d4"
+    },
+    "dependency_lock_sha256": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+    "dirty_patch_sha256": "311b87e7882d89461d532048f5ff36b60ad82cb7f6f4d91bcd7a4558f538888f",
+    "qualification_sha256": "414d688d67521b90155a46581805e2450be00788d8bdba2ffbd1c18a0d77b8f1",
+    "source_commit": "a01334bfe803f2dfa9f860e64c88eb58c1270936"
+  },
+  "verification_source_identity": {
+    "code_sha256": {
+      "poc/__init__.py": "01873a8282c9a71782c719969f7fbd5710aa2202ecf16e226301e94a2289bc05",
+      "poc/__main__.py": "fbf9e6ef18e8b422a95d9277a81f0746c92455bd9167eebf611a41d569012992",
+      "poc/_probe_mlx.py": "2c7936426be34d1876fe72b0a1e311e0c00598ccf381d9790e45bc4243b49016",
+      "poc/_probe_torch.py": "b6418d15c2e92f39e7ee3a124f234e5da78fc6a3c6e3282cf10ae6a6b28939d8",
+      "poc/assets.py": "11efc747d96fcfec659e69c4e0be30844ca16e82cabeab3995435619d12645fc",
+      "poc/bank.py": "14d341fc0db6cd9b6e90f98af1c18b45b890560b4c30723c78d2df5158b79c51",
+      "poc/budget.py": "22cef9ef5e38e7ad1588e0c23d479a0aa42134ba9d4d5af638c7681c3e7828d6",
+      "poc/bundle.py": "eba76f000de16a062030713cb5323584778c287330a2cc7635945aec5defc4ce",
+      "poc/cli.py": "7f574dfe2cce8ba2443134f23923ed01884330f77495a7a5953ee9f9cf5ade36",
+      "poc/config.py": "148ddbfb4c714893ff2fd35070c66f90656cd602efa8e59696d4bf9f87532035",
+      "poc/contracts.py": "2cc74f8fbc061d1d80e8aec3c89df98c0fac8449e79d9803ba271a38e44ba5a2",
+      "poc/data/__init__.py": "971c3f8e4bf6a95ab6ca1d7e8b72cc371ee77f70249b5bcd3b661dce28425cdf",
+      "poc/data/access.py": "4696a60fe3e42945d4fc4259df1ba5e56b486e231f33750eb7936319c134a6a0",
+      "poc/data/benchmarks.py": "3369d46861ccf09631f4a6e6706ad13590d06348224b56a370f5b8387130b3cc",
+      "poc/data/dedup.py": "5f28a5f1d625744cc53c39814fff4a8ef1da8a8c80b51e8f094236fbbc24d9e2",
+      "poc/data/manifest.py": "c72c67ead7f9f742ce61c54fb159dadb0ce1a98e27f9df7334829ec0e0f1b7a5",
+      "poc/data/prepare.py": "67cfbcb4e30d8dd47fa7d792b698d159c91d30c8179a4d8430f87ba4dbd8801d",
+      "poc/data/windows.py": "b25db96b214473ba374bb7b8df8e03a33aae945cacd86f0f402d94a41f6eab56",
+      "poc/doctor.py": "baff1d8337acd49ecd348ad1f68df773c5409e6f607e937ef34071a09672876d",
+      "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+      "poc/records.py": "da70d7a2b1896418887371653e088f1c047387d0e49cae8babd13664200aa412",
+      "poc/runtime/__init__.py": "9bbddea632b86f7661b08ed637e513f57b06aa4bc24342d8e1156fbc23426694",
+      "poc/runtime/torch_decoder.py": "a2197bd50f7c9eb8cd3ae1fc3f590cebda5df1ce440907095f580e3dd0b197e1",
+      "poc/synthetic.py": "8c34a8c0b169533c7103a30d64a23df0b2e7daa4d18e302a0cdc39f00dbd6101",
+      "poc/validation.py": "afb78dbad598483585086d5a409ab96d79e7eab3ca8de8cb8959fdc429e0e4d4"
+    },
+    "dependency_lock_sha256": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+    "dirty_patch_sha256": "55ea9797a8cadc346e8707651fe5a658024810ceecc45612b23a7083e919ac6b",
+    "qualification_sha256": "414d688d67521b90155a46581805e2450be00788d8bdba2ffbd1c18a0d77b8f1",
+    "source_commit": "a01334bfe803f2dfa9f860e64c88eb58c1270936"
+  },
+  "tests": {
+    "focused": {
+      "command": ".venv/bin/python -m pytest tests/test_assets.py tests/test_data_splits.py tests/test_windows.py tests/test_data_access.py tests/test_prepare.py -q",
+      "passed": 40
+    },
+    "full_cpu": {
+      "command": ".venv/bin/python -m pytest -q",
+      "passed": 251,
+      "deselected_hardware": 15,
+      "wall_seconds": 10.92
+    }
+  },
+  "actual_assets": [
+    {
+      "bytes": 704,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/config.json",
+      "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+      "source": {
+        "bytes": 704,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "config.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "1d556eab73b69c7f11f64c557a2f9c6f440bd4c6b89bb2584a6b498c92603843",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/config.json"
+      }
+    },
+    {
+      "bytes": 111,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/generation_config.json",
+      "sha256": "2056c988e990b0d13670f63f2f3b87b3b6d07edaf7a3416998ba27dab2d8a059",
+      "source": {
+        "bytes": 111,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "generation_config.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "2056c988e990b0d13670f63f2f3b87b3b6d07edaf7a3416998ba27dab2d8a059",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/generation_config.json"
+      }
+    },
+    {
+      "bytes": 466391,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/merges.txt",
+      "sha256": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+      "source": {
+        "bytes": 466391,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "merges.txt",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "0b54e8aa4e53d5383e2e4bc635a56b43f9647f7b13832d5d9ecd8f82dac4f510",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/merges.txt"
+      }
+    },
+    {
+      "bytes": 269060552,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/model.safetensors",
+      "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+      "source": {
+        "bytes": 269060552,
+        "license": "apache-2.0",
+        "max_bytes": 805306368,
+        "path": "model.safetensors",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/model.safetensors"
+      }
+    },
+    {
+      "bytes": 831,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/special_tokens_map.json",
+      "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+      "source": {
+        "bytes": 831,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "special_tokens_map.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "e786b595b9a23148bf1630df78d9037a048ea671e48bfd3549a1e3c233742bb3",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/special_tokens_map.json"
+      }
+    },
+    {
+      "bytes": 2104556,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/tokenizer.json",
+      "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "source": {
+        "bytes": 2104556,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "tokenizer.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/tokenizer.json"
+      }
+    },
+    {
+      "bytes": 3658,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/tokenizer_config.json",
+      "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+      "source": {
+        "bytes": 3658,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "tokenizer_config.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "4bb9af56a342753d39374f4016a16574cab299fe088e896f425ce3c433f61424",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/tokenizer_config.json"
+      }
+    },
+    {
+      "bytes": 800662,
+      "local_path": "assets/HuggingFaceTB--SmolLM2-135M/vocab.json",
+      "sha256": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79",
+      "source": {
+        "bytes": 800662,
+        "license": "apache-2.0",
+        "max_bytes": 8388608,
+        "path": "vocab.json",
+        "repository": "HuggingFaceTB/SmolLM2-135M",
+        "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+        "sha256": "82b84012e3add4d01d12ba14442026e49b8cbbaead1f79ecf3d919784f82dc79",
+        "terms_permitted": true,
+        "terms_url": "https://www.apache.org/licenses/LICENSE-2.0",
+        "url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M/resolve/93efa2f097d58c2a74874c7e644dbc9b0cee75a2/vocab.json"
+      }
+    },
+    {
+      "bytes": 732610,
+      "local_path": "assets/Salesforce--wikitext/wikitext-103-raw-v1/test-00000-of-00001.parquet",
+      "sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91",
+      "source": {
+        "bytes": 732610,
+        "license": "conflicting card: metadata cc-by-sa-3.0 + gfdl; prose cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "wikitext-103-raw-v1/test-00000-of-00001.parquet",
+        "repository": "Salesforce/wikitext",
+        "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+        "sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-103-raw-v1/test-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 657209,
+      "local_path": "assets/Salesforce--wikitext/wikitext-103-raw-v1/validation-00000-of-00001.parquet",
+      "sha256": "204929b7ff9d6184953f867dedb860e40aa69c078fc1e54b3baaa8fb28511c4c",
+      "source": {
+        "bytes": 657209,
+        "license": "conflicting card: metadata cc-by-sa-3.0 + gfdl; prose cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "wikitext-103-raw-v1/validation-00000-of-00001.parquet",
+        "repository": "Salesforce/wikitext",
+        "revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+        "sha256": "204929b7ff9d6184953f867dedb860e40aa69c078fc1e54b3baaa8fb28511c4c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/Salesforce/wikitext/resolve/b08601e04326c79dfdd32d625aee71d232d685c3/wikitext-103-raw-v1/validation-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 203808,
+      "local_path": "assets/allenai--ai2_arc/ARC-Challenge/test-00000-of-00001.parquet",
+      "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9",
+      "source": {
+        "bytes": 203808,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Challenge/test-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "62f03257e737aed263f55c6abf87c7bb0028a44a6bdd2a26eb1279eb42c1d1e9",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/test-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 189909,
+      "local_path": "assets/allenai--ai2_arc/ARC-Challenge/train-00000-of-00001.parquet",
+      "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb",
+      "source": {
+        "bytes": 189909,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Challenge/train-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "e488c1587ffdcfc8443f916c53488a95cd471c5790e0746c6bfe4cecf20962cb",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/train-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 55743,
+      "local_path": "assets/allenai--ai2_arc/ARC-Challenge/validation-00000-of-00001.parquet",
+      "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05",
+      "source": {
+        "bytes": 55743,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Challenge/validation-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "395a5c88d1580d69855fbaee9450270578df1ad5af6259771cd0a42c20e99f05",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Challenge/validation-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 346257,
+      "local_path": "assets/allenai--ai2_arc/ARC-Easy/test-00000-of-00001.parquet",
+      "sha256": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177",
+      "source": {
+        "bytes": 346257,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Easy/test-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/test-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 330598,
+      "local_path": "assets/allenai--ai2_arc/ARC-Easy/train-00000-of-00001.parquet",
+      "sha256": "b315db8a4be597dc7daa50a4e70d48dd7c990c32085629e6ccd8c926beaa80b5",
+      "source": {
+        "bytes": 330598,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Easy/train-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "b315db8a4be597dc7daa50a4e70d48dd7c990c32085629e6ccd8c926beaa80b5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/train-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 86080,
+      "local_path": "assets/allenai--ai2_arc/ARC-Easy/validation-00000-of-00001.parquet",
+      "sha256": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74",
+      "source": {
+        "bytes": 86080,
+        "license": "cc-by-sa-4.0",
+        "max_bytes": 805306368,
+        "path": "ARC-Easy/validation-00000-of-00001.parquet",
+        "repository": "allenai/ai2_arc",
+        "revision": "210d026faf9955653af8916fad021475a3f00453",
+        "sha256": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+        "url": "https://huggingface.co/datasets/allenai/ai2_arc/resolve/210d026faf9955653af8916fad021475a3f00453/ARC-Easy/validation-00000-of-00001.parquet"
+      }
+    },
+    {
+      "bytes": 359284,
+      "local_path": "assets/alexwarstadt--blimp/data/adjunct_island.jsonl",
+      "sha256": "ecc71c452516de03deeb9262b4203e45220dc52727327a08eef07c79c01eac8b",
+      "source": {
+        "bytes": 359284,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/adjunct_island.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "ecc71c452516de03deeb9262b4203e45220dc52727327a08eef07c79c01eac8b",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/adjunct_island.jsonl"
+      }
+    },
+    {
+      "bytes": 436749,
+      "local_path": "assets/alexwarstadt--blimp/data/anaphor_gender_agreement.jsonl",
+      "sha256": "fd7d6e47196fa1310a251d3aa88ae9a62bb64d3cec35fc02617229d5799767e1",
+      "source": {
+        "bytes": 436749,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/anaphor_gender_agreement.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "fd7d6e47196fa1310a251d3aa88ae9a62bb64d3cec35fc02617229d5799767e1",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/anaphor_gender_agreement.jsonl"
+      }
+    },
+    {
+      "bytes": 450861,
+      "local_path": "assets/alexwarstadt--blimp/data/anaphor_number_agreement.jsonl",
+      "sha256": "05c16b8bfe4feb5b3552dc2c53d1742ce0c91d9a1c896684335bdddd4373cc9b",
+      "source": {
+        "bytes": 450861,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/anaphor_number_agreement.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "05c16b8bfe4feb5b3552dc2c53d1742ce0c91d9a1c896684335bdddd4373cc9b",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/anaphor_number_agreement.jsonl"
+      }
+    },
+    {
+      "bytes": 462292,
+      "local_path": "assets/alexwarstadt--blimp/data/animate_subject_passive.jsonl",
+      "sha256": "245e91961cf597150244c3945c6d0033e691b27ba6cf298c62920d355426e70c",
+      "source": {
+        "bytes": 462292,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/animate_subject_passive.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "245e91961cf597150244c3945c6d0033e691b27ba6cf298c62920d355426e70c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/animate_subject_passive.jsonl"
+      }
+    },
+    {
+      "bytes": 433098,
+      "local_path": "assets/alexwarstadt--blimp/data/animate_subject_trans.jsonl",
+      "sha256": "a7bffeda200f648c33dd215d91d8f5756fcd1e3f410bab467f1ed9235f215850",
+      "source": {
+        "bytes": 433098,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/animate_subject_trans.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "a7bffeda200f648c33dd215d91d8f5756fcd1e3f410bab467f1ed9235f215850",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/animate_subject_trans.jsonl"
+      }
+    },
+    {
+      "bytes": 317162,
+      "local_path": "assets/alexwarstadt--blimp/data/causative.jsonl",
+      "sha256": "2e1006cc24094a3049586888105b22181d77e09e11dea65a326b49977bb366f1",
+      "source": {
+        "bytes": 317162,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/causative.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "2e1006cc24094a3049586888105b22181d77e09e11dea65a326b49977bb366f1",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/causative.jsonl"
+      }
+    },
+    {
+      "bytes": 392362,
+      "local_path": "assets/alexwarstadt--blimp/data/complex_NP_island.jsonl",
+      "sha256": "1c92472731dd9a21eb222d64bee756042a3763c3797b5283d5b84ab8e3cbb74c",
+      "source": {
+        "bytes": 392362,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/complex_NP_island.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "1c92472731dd9a21eb222d64bee756042a3763c3797b5283d5b84ab8e3cbb74c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/complex_NP_island.jsonl"
+      }
+    },
+    {
+      "bytes": 571696,
+      "local_path": "assets/alexwarstadt--blimp/data/coordinate_structure_constraint_complex_left_branch.jsonl",
+      "sha256": "47e0e04efeb320449a8eb2ac722b895041a8609580fec2880dbc719f50fba194",
+      "source": {
+        "bytes": 571696,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/coordinate_structure_constraint_complex_left_branch.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "47e0e04efeb320449a8eb2ac722b895041a8609580fec2880dbc719f50fba194",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/coordinate_structure_constraint_complex_left_branch.jsonl"
+      }
+    },
+    {
+      "bytes": 366045,
+      "local_path": "assets/alexwarstadt--blimp/data/coordinate_structure_constraint_object_extraction.jsonl",
+      "sha256": "d01c27a7a893f3ec071a7913efa504d297671d86a987f26ddb565de914db2fd7",
+      "source": {
+        "bytes": 366045,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/coordinate_structure_constraint_object_extraction.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "d01c27a7a893f3ec071a7913efa504d297671d86a987f26ddb565de914db2fd7",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/coordinate_structure_constraint_object_extraction.jsonl"
+      }
+    },
+    {
+      "bytes": 468642,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_1.jsonl",
+      "sha256": "f48065fd760d0fd1a895012860d38bdf3c2ac115cd221e521684cc430c0f1855",
+      "source": {
+        "bytes": 468642,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "f48065fd760d0fd1a895012860d38bdf3c2ac115cd221e521684cc430c0f1855",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_1.jsonl"
+      }
+    },
+    {
+      "bytes": 488856,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_2.jsonl",
+      "sha256": "8ae7eff7c7bd384ff5ef3113984834f4d78b34559203aa9d5cb14ea8394291a9",
+      "source": {
+        "bytes": 488856,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "8ae7eff7c7bd384ff5ef3113984834f4d78b34559203aa9d5cb14ea8394291a9",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_2.jsonl"
+      }
+    },
+    {
+      "bytes": 474932,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_irregular_1.jsonl",
+      "sha256": "4f350e88db9e29e53ae96f1f0b5991c7809fd4fd403190907330b721e1e6e264",
+      "source": {
+        "bytes": 474932,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_irregular_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "4f350e88db9e29e53ae96f1f0b5991c7809fd4fd403190907330b721e1e6e264",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_irregular_1.jsonl"
+      }
+    },
+    {
+      "bytes": 490854,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_irregular_2.jsonl",
+      "sha256": "d688af0ccd0614d24a936e0929276784f37554f3ad3e247c3bade8dcaa9099df",
+      "source": {
+        "bytes": 490854,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_irregular_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "d688af0ccd0614d24a936e0929276784f37554f3ad3e247c3bade8dcaa9099df",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_irregular_2.jsonl"
+      }
+    },
+    {
+      "bytes": 526806,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_with_adj_2.jsonl",
+      "sha256": "8d2828d7dfbfc3f7191024514060fedb033ea2e232304f63448c33051a85d2b3",
+      "source": {
+        "bytes": 526806,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_with_adj_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "8d2828d7dfbfc3f7191024514060fedb033ea2e232304f63448c33051a85d2b3",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_with_adj_2.jsonl"
+      }
+    },
+    {
+      "bytes": 499664,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_with_adj_irregular_1.jsonl",
+      "sha256": "1f4c6e42a48f4220afec629679641479feac3883cd7fa346d9e9e129cd7e8f55",
+      "source": {
+        "bytes": 499664,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_with_adj_irregular_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "1f4c6e42a48f4220afec629679641479feac3883cd7fa346d9e9e129cd7e8f55",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_with_adj_irregular_1.jsonl"
+      }
+    },
+    {
+      "bytes": 528528,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_with_adj_irregular_2.jsonl",
+      "sha256": "aa3f297a7ce0c03b5fc00458834f89e54eb855973be098497f766a390b4bc669",
+      "source": {
+        "bytes": 528528,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_with_adj_irregular_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "aa3f297a7ce0c03b5fc00458834f89e54eb855973be098497f766a390b4bc669",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_with_adj_irregular_2.jsonl"
+      }
+    },
+    {
+      "bytes": 504676,
+      "local_path": "assets/alexwarstadt--blimp/data/determiner_noun_agreement_with_adjective_1.jsonl",
+      "sha256": "2c3de4e7b7aea499fb7cf1b23b9c3b63662289880f991b9ffabe5ceb94cf7430",
+      "source": {
+        "bytes": 504676,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/determiner_noun_agreement_with_adjective_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "2c3de4e7b7aea499fb7cf1b23b9c3b63662289880f991b9ffabe5ceb94cf7430",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/determiner_noun_agreement_with_adjective_1.jsonl"
+      }
+    },
+    {
+      "bytes": 525650,
+      "local_path": "assets/alexwarstadt--blimp/data/distractor_agreement_relational_noun.jsonl",
+      "sha256": "37c1553f4c6594b162256edce0f6b40bad1898b311c8aaa69605b526b6494a34",
+      "source": {
+        "bytes": 525650,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/distractor_agreement_relational_noun.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "37c1553f4c6594b162256edce0f6b40bad1898b311c8aaa69605b526b6494a34",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/distractor_agreement_relational_noun.jsonl"
+      }
+    },
+    {
+      "bytes": 564770,
+      "local_path": "assets/alexwarstadt--blimp/data/distractor_agreement_relative_clause.jsonl",
+      "sha256": "854728b6db8f23f12583f7332b654835351eaedb50783e6f2a3bf6c101b8c422",
+      "source": {
+        "bytes": 564770,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/distractor_agreement_relative_clause.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "854728b6db8f23f12583f7332b654835351eaedb50783e6f2a3bf6c101b8c422",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/distractor_agreement_relative_clause.jsonl"
+      }
+    },
+    {
+      "bytes": 304196,
+      "local_path": "assets/alexwarstadt--blimp/data/drop_argument.jsonl",
+      "sha256": "e262339a262a57a8f56dc41941ee1dc32c62eb97054b27d33cd8c356a6e62064",
+      "source": {
+        "bytes": 304196,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/drop_argument.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "e262339a262a57a8f56dc41941ee1dc32c62eb97054b27d33cd8c356a6e62064",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/drop_argument.jsonl"
+      }
+    },
+    {
+      "bytes": 411980,
+      "local_path": "assets/alexwarstadt--blimp/data/ellipsis_n_bar_1.jsonl",
+      "sha256": "3cc0bcf91631a4476ce573ea9dbf9627d52efbe071c26019e2c2448b68769d09",
+      "source": {
+        "bytes": 411980,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/ellipsis_n_bar_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "3cc0bcf91631a4476ce573ea9dbf9627d52efbe071c26019e2c2448b68769d09",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/ellipsis_n_bar_1.jsonl"
+      }
+    },
+    {
+      "bytes": 427551,
+      "local_path": "assets/alexwarstadt--blimp/data/ellipsis_n_bar_2.jsonl",
+      "sha256": "3dfc2b378ea4867186917ec9cce5ce927e4d3bb6addf018bc31b870dd2aa8474",
+      "source": {
+        "bytes": 427551,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/ellipsis_n_bar_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "3dfc2b378ea4867186917ec9cce5ce927e4d3bb6addf018bc31b870dd2aa8474",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/ellipsis_n_bar_2.jsonl"
+      }
+    },
+    {
+      "bytes": 550672,
+      "local_path": "assets/alexwarstadt--blimp/data/existential_there_object_raising.jsonl",
+      "sha256": "3781bfd54ec1208fc634f4d365189f948ec246526a7345b5148dd3ab6023ff4f",
+      "source": {
+        "bytes": 550672,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/existential_there_object_raising.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "3781bfd54ec1208fc634f4d365189f948ec246526a7345b5148dd3ab6023ff4f",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/existential_there_object_raising.jsonl"
+      }
+    },
+    {
+      "bytes": 357321,
+      "local_path": "assets/alexwarstadt--blimp/data/existential_there_quantifiers_1.jsonl",
+      "sha256": "4bd0f6dee3c1824b51b0dafb9fce2b00933e8053fcd4a7b99b6202e1b8b49f9e",
+      "source": {
+        "bytes": 357321,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/existential_there_quantifiers_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "4bd0f6dee3c1824b51b0dafb9fce2b00933e8053fcd4a7b99b6202e1b8b49f9e",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/existential_there_quantifiers_1.jsonl"
+      }
+    },
+    {
+      "bytes": 359216,
+      "local_path": "assets/alexwarstadt--blimp/data/existential_there_quantifiers_2.jsonl",
+      "sha256": "b1a80f4ebebae90a90927259f95b680059020e6bb4e38e64a41eb8e53bc3f617",
+      "source": {
+        "bytes": 359216,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/existential_there_quantifiers_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "b1a80f4ebebae90a90927259f95b680059020e6bb4e38e64a41eb8e53bc3f617",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/existential_there_quantifiers_2.jsonl"
+      }
+    },
+    {
+      "bytes": 394453,
+      "local_path": "assets/alexwarstadt--blimp/data/existential_there_subject_raising.jsonl",
+      "sha256": "7c6f5b13225f73a777755c1948beef5cfa31d135ae8a0e7ba8853d256fbece23",
+      "source": {
+        "bytes": 394453,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/existential_there_subject_raising.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "7c6f5b13225f73a777755c1948beef5cfa31d135ae8a0e7ba8853d256fbece23",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/existential_there_subject_raising.jsonl"
+      }
+    },
+    {
+      "bytes": 587648,
+      "local_path": "assets/alexwarstadt--blimp/data/expletive_it_object_raising.jsonl",
+      "sha256": "15ed3a52c978ecfe5eda7f64b0304b5bd133439cccb2c97fde20834f39874c93",
+      "source": {
+        "bytes": 587648,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/expletive_it_object_raising.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "15ed3a52c978ecfe5eda7f64b0304b5bd133439cccb2c97fde20834f39874c93",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/expletive_it_object_raising.jsonl"
+      }
+    },
+    {
+      "bytes": 298709,
+      "local_path": "assets/alexwarstadt--blimp/data/inchoative.jsonl",
+      "sha256": "d9389a7130ca84c6f920c9d892cc60c1b20f378d28e7041b1c53ae589fc84f1d",
+      "source": {
+        "bytes": 298709,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/inchoative.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "d9389a7130ca84c6f920c9d892cc60c1b20f378d28e7041b1c53ae589fc84f1d",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/inchoative.jsonl"
+      }
+    },
+    {
+      "bytes": 305487,
+      "local_path": "assets/alexwarstadt--blimp/data/intransitive.jsonl",
+      "sha256": "9af9f3f30c891cd21623922b62fd97685552b4ae94a6cfd5617a5f0cb0f731b3",
+      "source": {
+        "bytes": 305487,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/intransitive.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "9af9f3f30c891cd21623922b62fd97685552b4ae94a6cfd5617a5f0cb0f731b3",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/intransitive.jsonl"
+      }
+    },
+    {
+      "bytes": 444520,
+      "local_path": "assets/alexwarstadt--blimp/data/irregular_past_participle_adjectives.jsonl",
+      "sha256": "5e490be0723989499391ac14d11b3bb6677f4b470514486b2db3fbfe76d56b3c",
+      "source": {
+        "bytes": 444520,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/irregular_past_participle_adjectives.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "5e490be0723989499391ac14d11b3bb6677f4b470514486b2db3fbfe76d56b3c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/irregular_past_participle_adjectives.jsonl"
+      }
+    },
+    {
+      "bytes": 420119,
+      "local_path": "assets/alexwarstadt--blimp/data/irregular_past_participle_verbs.jsonl",
+      "sha256": "75a990117c1a403d3b479e0fbe170f6919c2408def738ffcea8c62b49b70a555",
+      "source": {
+        "bytes": 420119,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/irregular_past_participle_verbs.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "75a990117c1a403d3b479e0fbe170f6919c2408def738ffcea8c62b49b70a555",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/irregular_past_participle_verbs.jsonl"
+      }
+    },
+    {
+      "bytes": 460705,
+      "local_path": "assets/alexwarstadt--blimp/data/irregular_plural_subject_verb_agreement_1.jsonl",
+      "sha256": "0066174143671bffa54232d89254d14221afab666273edfefdfb625fbb75e226",
+      "source": {
+        "bytes": 460705,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/irregular_plural_subject_verb_agreement_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "0066174143671bffa54232d89254d14221afab666273edfefdfb625fbb75e226",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/irregular_plural_subject_verb_agreement_1.jsonl"
+      }
+    },
+    {
+      "bytes": 453376,
+      "local_path": "assets/alexwarstadt--blimp/data/irregular_plural_subject_verb_agreement_2.jsonl",
+      "sha256": "9b22db814e7b7251f4abafe8beb9616f2f46eaa58f7cdb701cbc737cc8f1a124",
+      "source": {
+        "bytes": 453376,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/irregular_plural_subject_verb_agreement_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "9b22db814e7b7251f4abafe8beb9616f2f46eaa58f7cdb701cbc737cc8f1a124",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/irregular_plural_subject_verb_agreement_2.jsonl"
+      }
+    },
+    {
+      "bytes": 482617,
+      "local_path": "assets/alexwarstadt--blimp/data/left_branch_island_echo_question.jsonl",
+      "sha256": "7dadbe3c5a5ceadb78b9408807ac88230ddd748abfe8de8121f064e2bce94ad8",
+      "source": {
+        "bytes": 482617,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/left_branch_island_echo_question.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "7dadbe3c5a5ceadb78b9408807ac88230ddd748abfe8de8121f064e2bce94ad8",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/left_branch_island_echo_question.jsonl"
+      }
+    },
+    {
+      "bytes": 343450,
+      "local_path": "assets/alexwarstadt--blimp/data/left_branch_island_simple_question.jsonl",
+      "sha256": "e2a64b8a1b7b8d94f931018cf9325836e9c79953a01379233da255eac5e8cd71",
+      "source": {
+        "bytes": 343450,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/left_branch_island_simple_question.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "e2a64b8a1b7b8d94f931018cf9325836e9c79953a01379233da255eac5e8cd71",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/left_branch_island_simple_question.jsonl"
+      }
+    },
+    {
+      "bytes": 457806,
+      "local_path": "assets/alexwarstadt--blimp/data/matrix_question_npi_licensor_present.jsonl",
+      "sha256": "657c9d6e6d50a9cd651881fcbc57cef2fd998611f6f53158ed05e48822fcd2b5",
+      "source": {
+        "bytes": 457806,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/matrix_question_npi_licensor_present.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "657c9d6e6d50a9cd651881fcbc57cef2fd998611f6f53158ed05e48822fcd2b5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/matrix_question_npi_licensor_present.jsonl"
+      }
+    },
+    {
+      "bytes": 438013,
+      "local_path": "assets/alexwarstadt--blimp/data/npi_present_1.jsonl",
+      "sha256": "9aa85dc5c2b0d85ea51f21db50d6d327ab5b45d1669e386d54b1360d3ac954af",
+      "source": {
+        "bytes": 438013,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/npi_present_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "9aa85dc5c2b0d85ea51f21db50d6d327ab5b45d1669e386d54b1360d3ac954af",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/npi_present_1.jsonl"
+      }
+    },
+    {
+      "bytes": 422136,
+      "local_path": "assets/alexwarstadt--blimp/data/npi_present_2.jsonl",
+      "sha256": "52fcfa230a40ae27998273cc08ecd062aad17025c92389df3404a85ed519909b",
+      "source": {
+        "bytes": 422136,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/npi_present_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "52fcfa230a40ae27998273cc08ecd062aad17025c92389df3404a85ed519909b",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/npi_present_2.jsonl"
+      }
+    },
+    {
+      "bytes": 459170,
+      "local_path": "assets/alexwarstadt--blimp/data/only_npi_licensor_present.jsonl",
+      "sha256": "475c6595187a32e4dcfb868d3db90394e89669a94a9312ebd60f88dad1665f1c",
+      "source": {
+        "bytes": 459170,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/only_npi_licensor_present.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "475c6595187a32e4dcfb868d3db90394e89669a94a9312ebd60f88dad1665f1c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/only_npi_licensor_present.jsonl"
+      }
+    },
+    {
+      "bytes": 583720,
+      "local_path": "assets/alexwarstadt--blimp/data/only_npi_scope.jsonl",
+      "sha256": "ca1f0671643e37936515f02125036bc2904ab9b35c4689b0e7a3ea3914e571f6",
+      "source": {
+        "bytes": 583720,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/only_npi_scope.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "ca1f0671643e37936515f02125036bc2904ab9b35c4689b0e7a3ea3914e571f6",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/only_npi_scope.jsonl"
+      }
+    },
+    {
+      "bytes": 340272,
+      "local_path": "assets/alexwarstadt--blimp/data/passive_1.jsonl",
+      "sha256": "e9374307bca5c24e9df18597a0859f7fb5ca4cfe5f136ec894d1ba69f4c90116",
+      "source": {
+        "bytes": 340272,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/passive_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "e9374307bca5c24e9df18597a0859f7fb5ca4cfe5f136ec894d1ba69f4c90116",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/passive_1.jsonl"
+      }
+    },
+    {
+      "bytes": 308350,
+      "local_path": "assets/alexwarstadt--blimp/data/passive_2.jsonl",
+      "sha256": "4d49e438185bed4122a252dd9ee69bc8eccb2fe6c1b09ccc78198fd925fed8c5",
+      "source": {
+        "bytes": 308350,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/passive_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "4d49e438185bed4122a252dd9ee69bc8eccb2fe6c1b09ccc78198fd925fed8c5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/passive_2.jsonl"
+      }
+    },
+    {
+      "bytes": 527689,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_c_command.jsonl",
+      "sha256": "74c8111666542c797dee1c38c9e432b0b65751dfa0faa51874a990f2cbfc76fc",
+      "source": {
+        "bytes": 527689,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_c_command.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "74c8111666542c797dee1c38c9e432b0b65751dfa0faa51874a990f2cbfc76fc",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_c_command.jsonl"
+      }
+    },
+    {
+      "bytes": 477239,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_case_1.jsonl",
+      "sha256": "7efb5246fe315dc2cf56b80739783cffcddee9e52650716cf5aa0f6987f7644d",
+      "source": {
+        "bytes": 477239,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_case_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "7efb5246fe315dc2cf56b80739783cffcddee9e52650716cf5aa0f6987f7644d",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_case_1.jsonl"
+      }
+    },
+    {
+      "bytes": 492973,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_case_2.jsonl",
+      "sha256": "5de6db4c21a8433bc1f1030e81d5ee151efce02078460f7de7ca5e9566afd914",
+      "source": {
+        "bytes": 492973,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_case_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "5de6db4c21a8433bc1f1030e81d5ee151efce02078460f7de7ca5e9566afd914",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_case_2.jsonl"
+      }
+    },
+    {
+      "bytes": 499865,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_domain_1.jsonl",
+      "sha256": "2276dc35a51396c7d11a401e378e0f4b31cd10d7916c73e9a361703cb96eddc5",
+      "source": {
+        "bytes": 499865,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_domain_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "2276dc35a51396c7d11a401e378e0f4b31cd10d7916c73e9a361703cb96eddc5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_domain_1.jsonl"
+      }
+    },
+    {
+      "bytes": 493189,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_domain_2.jsonl",
+      "sha256": "9d14e5ae911fb8ddf571484ef2d6a6e6a053765c1c6d34253aec2c11f7d7306a",
+      "source": {
+        "bytes": 493189,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_domain_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "9d14e5ae911fb8ddf571484ef2d6a6e6a053765c1c6d34253aec2c11f7d7306a",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_domain_2.jsonl"
+      }
+    },
+    {
+      "bytes": 513886,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_domain_3.jsonl",
+      "sha256": "a0d66b9d8541ab1df08f629161c6c4e8bca3aa2693eaa342edd2097e6b579bdd",
+      "source": {
+        "bytes": 513886,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_domain_3.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "a0d66b9d8541ab1df08f629161c6c4e8bca3aa2693eaa342edd2097e6b579bdd",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_domain_3.jsonl"
+      }
+    },
+    {
+      "bytes": 345494,
+      "local_path": "assets/alexwarstadt--blimp/data/principle_A_reconstruction.jsonl",
+      "sha256": "65dc403c4d6e9a609f2c4cc2ec6c8baa05cf6fce89b920a816b0d9932204b2a3",
+      "source": {
+        "bytes": 345494,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/principle_A_reconstruction.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "65dc403c4d6e9a609f2c4cc2ec6c8baa05cf6fce89b920a816b0d9932204b2a3",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/principle_A_reconstruction.jsonl"
+      }
+    },
+    {
+      "bytes": 451850,
+      "local_path": "assets/alexwarstadt--blimp/data/regular_plural_subject_verb_agreement_1.jsonl",
+      "sha256": "1a18d94062c8e792c0a200a3b00dff0e051a92bb084c05e9b5e5c73bee32a620",
+      "source": {
+        "bytes": 451850,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/regular_plural_subject_verb_agreement_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "1a18d94062c8e792c0a200a3b00dff0e051a92bb084c05e9b5e5c73bee32a620",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/regular_plural_subject_verb_agreement_1.jsonl"
+      }
+    },
+    {
+      "bytes": 456477,
+      "local_path": "assets/alexwarstadt--blimp/data/regular_plural_subject_verb_agreement_2.jsonl",
+      "sha256": "e5b4668811e63b00ac4c9569cb9553281a39c21df43256905ad78e59ae24942c",
+      "source": {
+        "bytes": 456477,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/regular_plural_subject_verb_agreement_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "e5b4668811e63b00ac4c9569cb9553281a39c21df43256905ad78e59ae24942c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/regular_plural_subject_verb_agreement_2.jsonl"
+      }
+    },
+    {
+      "bytes": 490996,
+      "local_path": "assets/alexwarstadt--blimp/data/sentential_negation_npi_licensor_present.jsonl",
+      "sha256": "c43405aca13ba4aa6ad87f9b051e4ba5fc458f24e683cfe0af23e6e09ec7268b",
+      "source": {
+        "bytes": 490996,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/sentential_negation_npi_licensor_present.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "c43405aca13ba4aa6ad87f9b051e4ba5fc458f24e683cfe0af23e6e09ec7268b",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/sentential_negation_npi_licensor_present.jsonl"
+      }
+    },
+    {
+      "bytes": 614930,
+      "local_path": "assets/alexwarstadt--blimp/data/sentential_negation_npi_scope.jsonl",
+      "sha256": "6c341ccc39c94bea45c0412986751bf2f6eca48626728e30e23d2b6a22c8b949",
+      "source": {
+        "bytes": 614930,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/sentential_negation_npi_scope.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "6c341ccc39c94bea45c0412986751bf2f6eca48626728e30e23d2b6a22c8b949",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/sentential_negation_npi_scope.jsonl"
+      }
+    },
+    {
+      "bytes": 365822,
+      "local_path": "assets/alexwarstadt--blimp/data/sentential_subject_island.jsonl",
+      "sha256": "a286b67cc5912aafeb06750b38923abf3338786ffa4309e0a6a07b1dbe2444bd",
+      "source": {
+        "bytes": 365822,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/sentential_subject_island.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "a286b67cc5912aafeb06750b38923abf3338786ffa4309e0a6a07b1dbe2444bd",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/sentential_subject_island.jsonl"
+      }
+    },
+    {
+      "bytes": 381189,
+      "local_path": "assets/alexwarstadt--blimp/data/superlative_quantifiers_1.jsonl",
+      "sha256": "bebc5c5ff28cf226cc35293c60cde1fcf7565a7b58cb219d01ac8908b952a497",
+      "source": {
+        "bytes": 381189,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/superlative_quantifiers_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "bebc5c5ff28cf226cc35293c60cde1fcf7565a7b58cb219d01ac8908b952a497",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/superlative_quantifiers_1.jsonl"
+      }
+    },
+    {
+      "bytes": 516120,
+      "local_path": "assets/alexwarstadt--blimp/data/superlative_quantifiers_2.jsonl",
+      "sha256": "4bef08f3e6bd3fbb46021dda34000f3c00222c5576babe4882a8541f6820a106",
+      "source": {
+        "bytes": 516120,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/superlative_quantifiers_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "4bef08f3e6bd3fbb46021dda34000f3c00222c5576babe4882a8541f6820a106",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/superlative_quantifiers_2.jsonl"
+      }
+    },
+    {
+      "bytes": 343026,
+      "local_path": "assets/alexwarstadt--blimp/data/tough_vs_raising_1.jsonl",
+      "sha256": "8eb3a1ecbdbd969c5b77e2f85b12a39d33723bdc58d673e5067bb456da91d0e5",
+      "source": {
+        "bytes": 343026,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/tough_vs_raising_1.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "8eb3a1ecbdbd969c5b77e2f85b12a39d33723bdc58d673e5067bb456da91d0e5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/tough_vs_raising_1.jsonl"
+      }
+    },
+    {
+      "bytes": 364074,
+      "local_path": "assets/alexwarstadt--blimp/data/tough_vs_raising_2.jsonl",
+      "sha256": "a6db2f24a8aee0c90a9be63e6bb6787fe04e990c518761115f69f27c7438b5ae",
+      "source": {
+        "bytes": 364074,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/tough_vs_raising_2.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "a6db2f24a8aee0c90a9be63e6bb6787fe04e990c518761115f69f27c7438b5ae",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/tough_vs_raising_2.jsonl"
+      }
+    },
+    {
+      "bytes": 460291,
+      "local_path": "assets/alexwarstadt--blimp/data/transitive.jsonl",
+      "sha256": "48de2025571897c7590659c793d2d1ce85c247808d4199bad60f66cf2eb179ef",
+      "source": {
+        "bytes": 460291,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/transitive.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "48de2025571897c7590659c793d2d1ce85c247808d4199bad60f66cf2eb179ef",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/transitive.jsonl"
+      }
+    },
+    {
+      "bytes": 448630,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_island.jsonl",
+      "sha256": "77824ca8c0008fb7a204e785ca2dcee1b2803f666bb545bd95cb8a51e04f1a4c",
+      "source": {
+        "bytes": 448630,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_island.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "77824ca8c0008fb7a204e785ca2dcee1b2803f666bb545bd95cb8a51e04f1a4c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_island.jsonl"
+      }
+    },
+    {
+      "bytes": 387435,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_questions_object_gap.jsonl",
+      "sha256": "685c74eb8c199f30a24bba1bfabf9d9dff7962a64430e62b9b5f61d5369241ff",
+      "source": {
+        "bytes": 387435,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_questions_object_gap.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "685c74eb8c199f30a24bba1bfabf9d9dff7962a64430e62b9b5f61d5369241ff",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_questions_object_gap.jsonl"
+      }
+    },
+    {
+      "bytes": 389983,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_questions_subject_gap.jsonl",
+      "sha256": "3c33e4efc7182824211ff3288694cf010f4ce84f85c8df67410d784139c722b3",
+      "source": {
+        "bytes": 389983,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_questions_subject_gap.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "3c33e4efc7182824211ff3288694cf010f4ce84f85c8df67410d784139c722b3",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_questions_subject_gap.jsonl"
+      }
+    },
+    {
+      "bytes": 462660,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_questions_subject_gap_long_distance.jsonl",
+      "sha256": "985bae202dbc5566b9b5c51bd77dd9d1dbcd87e0f38e008c34a11d7aa07db788",
+      "source": {
+        "bytes": 462660,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_questions_subject_gap_long_distance.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "985bae202dbc5566b9b5c51bd77dd9d1dbcd87e0f38e008c34a11d7aa07db788",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_questions_subject_gap_long_distance.jsonl"
+      }
+    },
+    {
+      "bytes": 383262,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_vs_that_no_gap.jsonl",
+      "sha256": "6a25d0d1499e9f522696a62ce9dba8c49f58c5446fddc6d852bf562d1016163c",
+      "source": {
+        "bytes": 383262,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_vs_that_no_gap.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "6a25d0d1499e9f522696a62ce9dba8c49f58c5446fddc6d852bf562d1016163c",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_vs_that_no_gap.jsonl"
+      }
+    },
+    {
+      "bytes": 441429,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_vs_that_no_gap_long_distance.jsonl",
+      "sha256": "968faf59602a67f9cfd7c2e91a314a3f7342fd5daf41c21cadd25288fc85fdcf",
+      "source": {
+        "bytes": 441429,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_vs_that_no_gap_long_distance.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "968faf59602a67f9cfd7c2e91a314a3f7342fd5daf41c21cadd25288fc85fdcf",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_vs_that_no_gap_long_distance.jsonl"
+      }
+    },
+    {
+      "bytes": 367776,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_vs_that_with_gap.jsonl",
+      "sha256": "56f1ca988a8ca368234f12359792c414fdfec2891154e3f8ce6404da1d3f3212",
+      "source": {
+        "bytes": 367776,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_vs_that_with_gap.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "56f1ca988a8ca368234f12359792c414fdfec2891154e3f8ce6404da1d3f3212",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_vs_that_with_gap.jsonl"
+      }
+    },
+    {
+      "bytes": 425985,
+      "local_path": "assets/alexwarstadt--blimp/data/wh_vs_that_with_gap_long_distance.jsonl",
+      "sha256": "3cb19100d6384264e512801e96c20e172a3c0c7778276b80ed60c65e97b86ab5",
+      "source": {
+        "bytes": 425985,
+        "license": "cc-by-4.0",
+        "max_bytes": 8388608,
+        "path": "data/wh_vs_that_with_gap_long_distance.jsonl",
+        "repository": "alexwarstadt/blimp",
+        "revision": "3e56b06fcabca9b30822fc66435fca6b1aa40bb1",
+        "sha256": "3cb19100d6384264e512801e96c20e172a3c0c7778276b80ed60c65e97b86ab5",
+        "terms_permitted": true,
+        "terms_url": "https://creativecommons.org/licenses/by/4.0/",
+        "url": "https://raw.githubusercontent.com/alexwarstadt/blimp/3e56b06fcabca9b30822fc66435fca6b1aa40bb1/data/wh_vs_that_with_gap_long_distance.jsonl"
+      }
+    }
+  ],
+  "limitations": [
+    "WikiText card metadata/prose license conflict retained; version/redistribution interpretation unresolved. Local-only/no-raw-redistribution is project scope, not a research-only license claim.",
+    "The pool is routine initial preparation; no final study budget, powered sample size, tolerances or protected evaluation authorization is inferred.",
+    "All protected readers fail closed; Task22 owns the freeze-verifying permit issuer.",
+    "Future growth after exploratory access must preserve/validate all exposure lineage or reject the rebuild."
+  ]
+}

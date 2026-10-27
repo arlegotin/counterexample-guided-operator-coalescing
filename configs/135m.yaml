@@ -1,0 +1,88 @@
+schema_version: 1
+study: cgoc_smol135
+phase: exploratory
+teacher:
+  repository: HuggingFaceTB/SmolLM2-135M
+  revision: 93efa2f097d58c2a74874c7e644dbc9b0cee75a2
+  weights_sha256: 9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083
+  tokenizer_revision: 93efa2f097d58c2a74874c7e644dbc9b0cee75a2
+  trust_remote_code: false
+numerics:
+  scientific_backend: torch_mps
+  scientific_dtype: float32
+  reference_backend: cpu
+  reference_dtype: float64
+  deployment_backend: mlx
+  loss_temperature: 1.0
+  head_position_chunk: 32
+model:
+  preserve_original_depth: true
+  share_attention: false
+  initial_target_bank_count: 15
+  ff_residual_rank: 8
+  residual_scale: 1.0
+  tied_embedding: true
+training:
+  context_tokens: 512
+  microbatch_sequences: 1
+  target_valid_tokens_per_update: 8192
+  bank_learning_rate: 0.0001
+  residual_learning_rate: 0.0003
+  adam_betas:
+  - 0.9
+  - 0.95
+  nll_weight: 0.1
+  gradient_clip_norm: 1.0
+  final_target_presentations: null
+  final_training_seeds: null
+search:
+  seed: 17
+  natural_state_weight: 0.5
+  student_state_weight: 0.25
+  donor_state_weight: 0.25
+  teacher_query_budget: null
+  total_search_seconds: null
+  final_topology_policy: null
+quantization:
+  initial_bits: 4
+  initial_group_size: 64
+  validated_formats: null
+  calibration_manifest: null
+  preserve_canonical_sharing: true
+evaluation:
+  primary_context_tokens: 512
+  primary_metric: kl_teacher_to_model_nats_per_token
+  payload_budget_bytes: null
+  protected_manifest: null
+  independent_cluster_count: null
+  timing_pair_count: null
+  analysis_freeze_sha256: null
+budgets:
+  updates: null
+  valid_target_presentations: null
+  teacher_forward_calls: null
+  suffix_backward_calls: null
+  student_backward_calls: null
+  search_proposals: null
+  search_seconds: null
+  wall_seconds: null
+  disk_bytes: null
+  memory_bytes: null
+preparation:
+  source_manifest: provenance/assets-135m-sources.json
+  output_dir: data/prepared-135m-v2
+  salt: cgoc-natural-roles-v1-2026-10-27
+  seed: 17
+  max_download_bytes: 805306368
+  max_range_bytes: 201326592
+  max_range_request_bytes: 67108864
+  fineweb_shards: 3
+  row_groups_per_shard: 2
+  rows_per_group: 512
+  max_fineweb_records: 3072
+  max_total_records: 80000
+  max_token_ids: 12000000
+  max_document_bytes: 262144
+  max_disk_bytes: 2147483648
+  parent_preparation_manifest: data/prepared-135m-v1/preparation.json
+  parent_manifest_sha256: 54204aff9cec204f4b7f86576790974b8c8f973098c77fd425ea413e950f2f3a

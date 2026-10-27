@@ -6,6 +6,7 @@ import sys
 
 from poc.config import COMMANDS, ConfigError, load_config, validate_config
 from poc.records import RecordError
+from poc.assets import AssetError
 
 
 class _Parser(argparse.ArgumentParser):
@@ -63,11 +64,18 @@ def main(argv: Sequence[str] | None = None) -> int:
         if hasattr(args, "config"):
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)
+        if args.command == "prepare" and config.preparation is not None:
+            import json
+            from poc.data.prepare import run_prepare
+            summary = run_prepare(config)
+            print(json.dumps({"status":summary["status"], "counts":summary["counts"],
+                              "manifest":str(config.preparation.output_dir / "preparation.json")}, sort_keys=True))
+            return 0
         print(f"{args.command}: not implemented; WP00 and command-specific evidence are unmet prerequisites", file=sys.stderr)
         return 3
     except ConfigError as exc:
         print(f"invalid configuration/contract: {exc}", file=sys.stderr)
         return 2
-    except (OSError, RecordError) as exc:
+    except (OSError, RecordError, AssetError) as exc:
         print(f"runtime/data-integrity failure: {exc}", file=sys.stderr)
         return 4

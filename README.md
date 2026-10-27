@@ -2,7 +2,7 @@
 
 A proposed local study of whether candidate-specific counterexamples improve the selection of reusable nonlinear FFNs in a pretrained language model, at measured storage and construction cost.
 
-**Current state:** strict configuration, run identity, append-only event records, retry-aware budget accounting, and the command entry point are implemented. WP00 is not qualified. No model training, compression result, or hardware qualification exists yet.
+**Current state:** Tasks 1–6 provide strict configuration and run records, native tiny-operation qualification, decoder/bank/loss controls, and pinned public assets with outcome-blind data preparation. The prepared natural pool contains 3,072 FineWeb records plus the named benchmark distributions. Actual teacher runtime qualification is next; no model training or compression-quality result is claimed.
 
 Read in this order:
 
@@ -23,7 +23,7 @@ python3.12 -m venv .venv
 .venv/bin/python -m poc compile --config configs/pilot.yaml
 ```
 
-The last command exits **2** because the pilot deliberately leaves budgets and asset pins unresolved. Commands awaiting implementation return **3**, with their unmet prerequisites. Exit **0** means the requested command completed (help currently); **4** means a runtime or data-integrity failure. A command returning 0 never implies a positive scientific result. No scientific command starts work yet.
+The last command exits **2** because the pilot deliberately leaves budgets and asset pins unresolved. Commands awaiting implementation return **3**, with their unmet prerequisites. Exit **0** means the requested command completed; **4** means a runtime or data-integrity failure. A command returning 0 never implies a positive scientific result. Preparation and component validation execute their documented work; fitting and evaluation still require later implementations and gates.
 
 `load_config(path, phase=...)` rejects unknown or duplicate keys, implicit type coercion, nonfinite numbers, invalid ranges, and manifest paths escaping the repository. Relative configuration and manifest paths resolve against the repository root. `validate_config(config, command=...)` checks command-specific blocking fields. The pilot preserves the blueprint §9.3 values; its additional `budgets` section records unresolved finite ceilings for updates, valid target presentations, teacher/suffix/student calls, search proposals, search and wall seconds, and disk/memory bytes. Counts use integer units; seconds use finite numbers; ceilings are nonnegative and have no unlimited defaults. These fields implement specification R24; WP00 and later gates must supply measured or explicitly approved values.
 
@@ -33,4 +33,6 @@ The primary study requires reported KL temperature **1.0**, primary evaluation c
 
 `BudgetTracker(spec.budgets, attempt).check(next_cost)` preflights each costly operation; `record(actual_cost)` durably records actual expenditure. The shared run ledger retains teacher work across retries and fresh processes. An atomic-operation overrun is recorded before the tracker raises. Disk and memory are high-water observations, while execution counts and seconds accumulate. Unmeasured memory carries a reason. The caller must count recomputation and cache generation again; unique-token increments must count newly seen tokens only. One costly job may be active at a time; checking a budget does not reserve work for concurrent jobs.
 
-Hardware/operation qualification is next. The current branch is retained. A supported negative or inconclusive experimental outcome is a valid completion of the planned study.
+With the pinned scientific environment installed, run `.venv/bin/python -m poc prepare --config configs/135m.yaml` to verify the existing private preparation or create it from qualified public sources. The typed `preparation` section records routine byte/record/token/shard ceilings independently of unresolved final study budgets. [Preparation contracts](protocol/data-preparation.md) document role access, windows, exposure lineage and Task 7 interfaces; [retrieval evidence](provenance/preparation-135m-2026-10-27.json) records actual hashes, counts and cost. Protected readers remain denied until the Task 22 freeze-verifying issuer exists.
+
+Actual teacher/harness qualification is next. The current branch is retained. A supported negative or inconclusive experimental outcome is a valid completion of the planned study.

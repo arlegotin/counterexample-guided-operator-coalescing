@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cgoc.local/schema/source-record-v1",
+  "title": "source-record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "repository",
+    "revision",
+    "path",
+    "url",
+    "sha256",
+    "bytes",
+    "license",
+    "terms_url",
+    "terms_permitted",
+    "max_bytes"
+  ],
+  "properties": {
+    "repository": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "sha256": {
+      "type": "string"
+    },
+    "bytes": {
+      "type": "integer"
+    },
+    "license": {
+      "type": "string"
+    },
+    "terms_url": {
+      "type": "string"
+    },
+    "terms_permitted": {
+      "type": "boolean"
+    },
+    "max_bytes": {
+      "type": "integer"
+    }
+  }
+}

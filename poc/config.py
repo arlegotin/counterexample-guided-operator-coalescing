@@ -119,6 +119,28 @@ class BudgetConfig:
 
 
 @dataclass(frozen=True)
+class PreparationConfig:
+    """Routine local preparation ceilings, not final study/training budgets."""
+    source_manifest: Path
+    output_dir: Path
+    parent_preparation_manifest: Path | None
+    parent_manifest_sha256: str | None
+    salt: str
+    seed: int
+    max_download_bytes: int
+    max_range_bytes: int
+    max_range_request_bytes: int
+    fineweb_shards: int
+    row_groups_per_shard: int
+    rows_per_group: int
+    max_fineweb_records: int
+    max_total_records: int
+    max_token_ids: int
+    max_document_bytes: int
+    max_disk_bytes: int
+
+
+@dataclass(frozen=True)
 class StudyConfig:
     schema_version: int
     study: str
@@ -131,6 +153,7 @@ class StudyConfig:
     quantization: QuantizationConfig
     evaluation: EvaluationConfig
     budgets: BudgetConfig
+    preparation: PreparationConfig | None
 
 
 class _UniqueLoader(yaml.SafeLoader):
@@ -247,6 +270,17 @@ def _shape(config):
         raise ConfigError("quantization.initial_bits must be 2, 4 or 8; support remains unqualified")
     if evaluation.primary_metric != "kl_teacher_to_model_nats_per_token":
         raise ConfigError("unsupported primary metric")
+    if config.preparation is not None:
+        prep = config.preparation
+        if (prep.parent_preparation_manifest is None) != (prep.parent_manifest_sha256 is None):
+            raise ConfigError("preparation parent path/hash must both be resolved or null")
+        if prep.parent_manifest_sha256 is not None and not re.fullmatch('[0-9a-f]{64}',prep.parent_manifest_sha256):
+            raise ConfigError("preparation.parent_manifest_sha256 must be a full digest")
+        for field in fields(prep):
+            if field.type is int:
+                _range(f"preparation.{field.name}", getattr(prep, field.name), inclusive=False)
+        if prep.max_range_bytes > prep.max_download_bytes or prep.max_download_bytes > prep.max_disk_bytes:
+            raise ConfigError("preparation byte ceilings must be range <= download <= disk")
     for field in fields(config.budgets):
         _range(f"budgets.{field.name}", getattr(config.budgets, field.name))
 

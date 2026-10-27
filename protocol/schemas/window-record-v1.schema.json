@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cgoc.local/schema/window-record-v1",
+  "title": "window-record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_id",
+    "source_start",
+    "token_ids",
+    "target_indices",
+    "position_ids"
+  ],
+  "properties": {
+    "document_id": {
+      "type": "string"
+    },
+    "source_start": {
+      "type": "integer"
+    },
+    "token_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "target_indices": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    },
+    "position_ids": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      }
+    }
+  }
+}
