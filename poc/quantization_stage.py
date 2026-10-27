@@ -14,8 +14,8 @@ import time
 from uuid import uuid4
 
 from poc.bundle import _canonical,_sha,verify_bundle,measure_bundle,load_bundle
-from poc.contracts import BundleRef,RuntimeSpec,Budget,CostRecord,RunSpec
-from poc.budget import BudgetTracker
+from poc.contracts import BundleRef,RuntimeSpec,Budget,CostRecord,RunSpec,thaw
+from poc.budget import BudgetTracker,BudgetExceeded
 from poc.records import start_attempt,append_event
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -85,11 +85,98 @@ def _prepared_window(record,seed):
     return make_windows(TokenDocument(record.document_id,tuple(raw['fields']['text'])),WindowPolicy(seed=seed))[0]
 
 
+def _evaluation_contract(source_root,teacher_bundle,windows_sha256,expected_source_hashes=None):
+    """Content identity for executed metrics/teacher; excludes accounting-only code.
+
+    Historical source is accepted only after its whole-file hash matches the
+    original report. ASTs then explicitly compare the numerical evaluator and
+    native runtime, while CostRecord/logging growth cannot relabel old results.
+    """
+    import ast
+    dependencies={'poc/quantization_stage.py':{'_quality','_native_numerical_controls'},
+                  'poc/quantize.py':{'_native_batch'},
+                  'poc/runtime/mlx_decoder.py':None,
+                  'poc/contracts.py':{'_number','freeze','thaw','_optional_reason','Batch','Boundary','CacheState','LayerCache','ModelManifest','ByteAccounting'}}
+    evaluator={}
+    for filename,names in dependencies.items():
+        path=Path(source_root)/filename
+        if expected_source_hashes is not None and _sha(path)!=expected_source_hashes.get(filename):
+            raise ValueError('historical evaluator source identity mismatch: '+filename)
+        tree=ast.parse(path.read_text())
+        nodes=tree.body if names is None else [node for node in tree.body if getattr(node,'name',None) in names]
+        if names is not None and {node.name for node in nodes}!=names: raise ValueError('incomplete evaluator dependency binding')
+        evaluator[filename]=hashlib.sha256(ast.dump(ast.Module(body=nodes,type_ignores=[]),include_attributes=False).encode()).hexdigest()
+        if filename=='poc/quantization_stage.py':
+            run=next(node for node in tree.body if getattr(node,'name',None)=='_run')
+            critical={'native_teacher','batches','teacher_hidden','batch','candidate'}
+            flow=[]
+            for node in ast.walk(run):
+                if not any(isinstance(item,ast.Name) and item.id in critical for item in ast.walk(node)): continue
+                if isinstance(node,(ast.Assign,ast.AnnAssign,ast.AugAssign,ast.Expr)): flow.append(node)
+                elif isinstance(node,ast.For): flow.append(ast.Tuple(elts=[node.target,node.iter],ctx=ast.Load()))
+                elif isinstance(node,(ast.If,ast.While)): flow.append(node.test)
+            for node in list(tree.body)+list(ast.walk(run)):
+                if isinstance(node,ast.ImportFrom):
+                    aliases=[a for a in node.names if (a.asname or a.name) in {'load_bundle','_native_batch','_quality','_native_numerical_controls','_prepared_window'}]
+                    if aliases: flow.append(ast.ImportFrom(module=node.module,names=aliases,level=node.level))
+            evaluator[filename+'::_run_numerical_flow']=hashlib.sha256(ast.dump(ast.Module(body=flow,type_ignores=[]),include_attributes=False).encode()).hexdigest()
+    manifest=verify_bundle(Path(teacher_bundle)).metadata
+    teacher={name:thaw(manifest[name]) for name in ('source_checkpoint_digest','tokenizer_digest','execution_profile','config','head_dim','rope_theta','norm_epsilons','dependency_lock_sha256')}
+    teacher['weight_files']={name:entry['sha256'] for name,entry in manifest['file_entries'].items() if name.startswith('weights/')}
+    return {'schema_version':1,'evaluator':evaluator,'teacher':teacher,'windows':windows_sha256}
+
+
+def _historical_contract(evidence,previous):
+    if 'evaluation_contract' in evidence: return evidence['evaluation_contract']
+    previous=Path(previous)
+    snapshot=previous.parent.parent/'source-snapshots'/previous.parent.name
+    if not snapshot.is_dir(): return None
+    windows=previous.parent/'dev-windows.json'
+    if not windows.is_file() or _sha(windows)!=evidence.get('dev_windows_sha256'): raise ValueError('historical evaluation window identity mismatch')
+    return _evaluation_contract(snapshot,previous.parent/'floating',evidence['dev_windows_sha256'],evidence['source_sha256'])
+
+
+def _reusable_rows(evidence,previous,contract):
+    """Reuse exact artifacts under an explicitly equal evaluator/teacher contract."""
+    original_contract=_historical_contract(evidence,previous)
+    if original_contract!=contract: return []
+    contracts={str(previous):original_contract}
+    rows=[]
+    for row in evidence.get('rows',[]):
+        if row['status'] not in ('eligible','operation_smoke_only','unsupported_kernel'): continue
+        origin=evidence;origin_path=Path(previous);original=row;visited=set()
+        while original.get('reused_from_summary'):
+            path=Path(original['reused_from_summary'])
+            if str(path) in visited: raise ValueError('cyclic reuse attribution')
+            visited.add(str(path))
+            if not path.is_file() or _sha(path)!=original['reused_from_summary_sha256']: raise ValueError('historical reused summary identity mismatch')
+            origin=json.loads(path.read_text());origin_path=path
+            matches=[r for r in origin['rows'] if r['variant']==original['variant'] and r.get('manifest_sha256')==original.get('manifest_sha256')]
+            if len(matches)!=1: raise ValueError('ambiguous original reuse attribution')
+            original=matches[0]
+        if str(origin_path) not in contracts: contracts[str(origin_path)]=_historical_contract(origin,origin_path)
+        if contracts[str(origin_path)]!=contract: continue
+        if row.get('artifact'):
+            artifact=Path(row['artifact'])
+            if _sha(artifact/'manifest.json')!=row['manifest_sha256']: raise ValueError('historical reused artifact identity mismatch')
+            if measure_bundle(artifact).payload_bytes!=row['payload_bytes']: raise ValueError('historical reused payload byte identity mismatch')
+        copy=dict(row)
+        copy['reused_from_summary']=str(previous)
+        copy['reused_from_summary_sha256']=_sha(Path(previous)) if Path(previous).exists() else None
+        copy['reuse_audit']={'evaluation_contract_sha256':hashlib.sha256(_canonical(contract)).hexdigest(),
+                             'original_summary':str(origin_path),'original_source_sha256':origin.get('source_sha256'),
+                             'artifact_manifest_sha256':row.get('manifest_sha256'),'payload_bytes':row.get('payload_bytes'),
+                             'scope':'exact detached artifact/bytes, source-audited numerical evaluator, canonical floating teacher values, dependency lock and frozen windows; original outcomes/source retained'}
+        rows.append(copy)
+    return rows
+
+
 class PilotRecorder:
     """One serialized job; live snapshots survive interruption and retries."""
     def __init__(self,out,report,prior,caps,tracker):
         self.out,self.report,self.prior,self.caps=out,report,prior,caps
         self.tracker=tracker
+        self.baseline=tracker.totals
         self.lock=threading.RLock()
         self.started=time.monotonic();self.stop=threading.Event();self.error=None
         self.costs={'teacher_forward_calls':0,'student_forward_calls':0,'student_backward_calls':0,'fit_updates':0,'conversion_attempts':0}
@@ -105,31 +192,40 @@ class PilotRecorder:
             self.peaks['mlx_active_bytes']=max(self.peaks['mlx_active_bytes'],mx.get_active_memory())
             self.peaks['mlx_peak_memory_bytes']=mx.get_peak_memory()
         spent=self.tracker.totals
-        self.report['costs']={**self.costs,'teacher_forward_calls':spent.teacher_forward_calls,'student_backward_calls':spent.student_backward_calls,'fit_updates':spent.updates,'wall_seconds':time.monotonic()-self.started}
+        self.report['costs']={**self.costs,'teacher_forward_calls':spent.teacher_forward_calls-self.baseline.teacher_forward_calls,'student_forward_calls':spent.student_forward_calls-self.baseline.student_forward_calls,'student_backward_calls':spent.student_backward_calls-self.baseline.student_backward_calls,'fit_updates':spent.updates-self.baseline.updates,'wall_seconds':time.monotonic()-self.started}
         self.report['authoritative_cost_record']=spent.to_dict()
         self.report['peaks']=dict(self.peaks)
         _write(self.out/'summary.json',self.report)
+    def _check_aggregate(self,next_cost):
+        if self.error: raise BudgetExceeded(self.error)
+        elapsed=time.monotonic()-self.started
+        if self.prior['wall_seconds']+max(elapsed,self.tracker.totals.wall_seconds-self.baseline.wall_seconds)+next_cost.wall_seconds>self.caps['wall_seconds']:
+            raise BudgetExceeded('aggregate pilot wall cap exhausted')
+        spent=self.tracker.totals
+        for key,limit in (('teacher_forward_calls','teacher_forward_calls'),('student_forward_calls','student_forward_calls'),('student_backward_calls','student_backward_calls'),('updates','fit_updates')):
+            if self.prior.get(limit,0)+getattr(spent,key)-getattr(self.baseline,key)+getattr(next_cost,key)>self.caps[limit]:
+                raise BudgetExceeded('aggregate cap exhausted: '+limit)
+
     def check(self,next_cost):
-        if self.error: raise RuntimeError(self.error)
         self.tracker.check(next_cost)
-        for key,limit in (('teacher_forward_calls','teacher_forward_calls'),('student_backward_calls','student_backward_calls'),('updates','fit_updates')):
-            if self.prior.get(limit,0)+getattr(self.tracker.totals,key)+getattr(next_cost,key)>self.caps[limit]: raise RuntimeError('aggregate cap exhausted: '+limit)
+        self._check_aggregate(next_cost)
 
     def record(self,actual_cost):
-        self.tracker.record(actual_cost)
+        # Already-spent work must survive both local and aggregate overruns.
+        try: self.tracker.record(actual_cost)
+        finally: self.snapshot()
+        self._check_aggregate(CostRecord())
 
     def account(self,**increments):
         import psutil
-        if self.error: raise RuntimeError(self.error)
-        totalwall=self.prior['wall_seconds']+time.monotonic()-self.started
-        if totalwall>self.caps['wall_seconds']: raise RuntimeError('aggregate pilot wall cap exhausted')
-        for key,value in increments.items():
-            if self.prior.get(key,0)+self.costs[key]+value>self.caps[key]: raise RuntimeError('aggregate cap exhausted: '+key)
-        if psutil.virtual_memory().available<1024**3: raise RuntimeError('less than1GiB incremental compute headroom')
-        self.costs.update({key:self.costs[key]+value for key,value in increments.items()})
-        cost=CostRecord(teacher_forward_calls=increments.get('teacher_forward_calls',0),student_backward_calls=increments.get('student_backward_calls',0),updates=increments.get('fit_updates',0))
-        self.check(cost);self.record(cost)
-        self.snapshot()
+        cost=CostRecord(teacher_forward_calls=increments.get('teacher_forward_calls',0),student_forward_calls=increments.get('student_forward_calls',0),student_backward_calls=increments.get('student_backward_calls',0),updates=increments.get('fit_updates',0))
+        self.check(cost)
+        conversion=increments.get('conversion_attempts',0)
+        if self.prior.get('conversion_attempts',0)+self.costs['conversion_attempts']+conversion>self.caps['conversion_attempts']:
+            raise BudgetExceeded('aggregate cap exhausted: conversion_attempts')
+        if psutil.virtual_memory().available<1024**3: raise BudgetExceeded('less than1GiB incremental compute headroom')
+        self.costs['conversion_attempts']+=conversion
+        self.record(cost)
     def monitor(self):
         import psutil
         while not self.stop.wait(.5):
@@ -262,19 +358,14 @@ def _run(config,out,report,recorder,policy):
         teacher_hidden.append(native_teacher.final_hidden(batch))
     report['native_numerical_controls']=_native_numerical_controls(native_teacher,teacher_hidden[0])
     report['teacher_identity']=_quality(native_teacher,native_teacher,batches,recorder,teacher_hidden)
+    report['evaluation_contract']=_evaluation_contract(ROOT,Path(dense_ref.directory),report['dev_windows_sha256'])
     report['rows']=[]
     reused=[]
-    from poc.bundle import RUNTIME_FILES
     for previous in sorted((ROOT/'artifacts/quantization').glob('attempt-*/summary.json')):
         if previous.parent==out: continue
         evidence=json.loads(previous.read_text())
-        if evidence.get('dev_windows_sha256')!=report['dev_windows_sha256']: continue
-        if any(evidence.get('source_sha256',{}).get('poc/'+f)!=_sha(ROOT/'poc'/f) for f in RUNTIME_FILES): continue
-        for row in evidence.get('rows',[]):
-            if row['status'] in ('eligible','operation_smoke_only','unsupported_kernel'):
-                if row.get('artifact'): verify_bundle(Path(row['artifact']))
-                copy=dict(row);copy['reused_from_summary']=str(previous);copy['reused_from_summary_sha256']=_sha(previous)
-                reused=[r for r in reused if r['variant']!=row['variant']]+[copy]
+        for copy in _reusable_rows(evidence,previous,report['evaluation_contract']):
+            reused=[r for r in reused if r['variant']!=copy['variant']]+[copy]
     report['rows'].extend(reused)
     # Predeclared dense frontier; all actual points retained, never discard a
     # working dense method because a shared learned adapter is unavailable.
@@ -319,8 +410,6 @@ def _run(config,out,report,recorder,policy):
             evidence_path=Path(spec.destination+'.quantizer-evidence.json')
             if evidence_path.exists():
                 row['quantizer_evidence']=json.loads(evidence_path.read_text());row['quantizer_evidence_sha256']=_sha(evidence_path)
-                counts=row['quantizer_evidence']['actual_upstream_counts']
-                recorder.account(student_forward_calls=counts['forwards']-counts['teacher_forwards'])
             row['resident_bytes']=measure_resident(candidate).resident_bytes
             row['development']=_quality(native_teacher,candidate,batches[:4] if phase=='smoke' else batches,recorder,teacher_hidden[:4] if phase=='smoke' else teacher_hidden)
             if row['development']['kl_nats_per_target'] < -report['native_numerical_controls']['negative_kl_floor_per_target']: raise RuntimeError('native KL exceeds measured negative floor; unresolved fidelity')
@@ -357,7 +446,7 @@ def _prior_costs(root,fixture_wall):
         if ledger and Path(ledger).exists():
             rows=[json.loads(line) for line in Path(ledger).read_text().splitlines()]
             rows=[r['cost'] for r in rows if r.get('attempt_id')==old.get('attempt_id')]
-            for key in ('wall_seconds','teacher_forward_calls','student_backward_calls','updates'):
+            for key in ('wall_seconds','teacher_forward_calls','student_forward_calls','student_backward_calls','updates'):
                 value=sum(r.get(key,0) for r in rows)
                 target='fit_updates' if key=='updates' else key
                 costs[target]=max(costs.get(target,0),value)
@@ -390,7 +479,7 @@ def run_format_and_quant(config):
     report['run_id']=attempt.run_id;report['attempt_id']=attempt.attempt_id;report['run_record']=str(attempt.path/'run.json');report['cost_ledger']=str(tracker.path)
     append_event(attempt,{'kind':'stage_started','output':str(out),'prior_aggregate_costs':prior})
     recorder=PilotRecorder(out,report,prior,caps,tracker);recorder.snapshot()
-    if report['available_memory_before_bytes']<caps['process_rss_bytes'] or report['disk_free_before_bytes']<caps['generated_disk_bytes']: raise RuntimeError('predeclared aggregate memory/disk headroom unavailable')
+    if report['available_memory_before_bytes']<caps['process_rss_bytes'] or report['disk_free_before_bytes']<caps['generated_disk_bytes']: raise BudgetExceeded('predeclared aggregate memory/disk headroom unavailable')
     print(json.dumps({'preflight':caps,'prior_costs':prior,'memory_available':report['available_memory_before_bytes'],'out':str(out)}),flush=True)
     def interrupt(signum,frame): raise PilotInterrupted('finite resource cap/interruption; attempt retained')
     previous=signal.signal(signal.SIGTERM,interrupt)
@@ -403,8 +492,13 @@ def run_format_and_quant(config):
     finally:
         recorder.stop.set();thread.join();signal.signal(signal.SIGTERM,previous)
         recorder.peaks['generated_disk_bytes']=sum(p.stat().st_size for p in root.rglob('*') if p.is_file())+sum(p.stat().st_size for p in (ROOT/'artifacts/payload-anchors').rglob('*') if p.is_file())
-        remaining=time.monotonic()-recorder.started-tracker.totals.wall_seconds
-        recorder.record(CostRecord(wall_seconds=max(0,remaining),disk_bytes=recorder.peaks['generated_disk_bytes'],memory_bytes=recorder.peaks['process_rss_bytes'],memory_unavailable_reason=None))
-        append_event(attempt,{'kind':'stage_finished','status':report['status'],'summary':str(out/'summary.json')})
-        recorder.snapshot();print(json.dumps({'status':report['status'],'report':str(out/'summary.json'),'costs':report['costs'],'peaks':report['peaks']}),flush=True)
-        fcntl.flock(lock,fcntl.LOCK_UN);lock.close()
+        remaining=time.monotonic()-recorder.started-(tracker.totals.wall_seconds-recorder.baseline.wall_seconds)
+        try:
+            recorder.record(CostRecord(wall_seconds=max(0,remaining),disk_bytes=recorder.peaks['generated_disk_bytes'],memory_bytes=recorder.peaks['process_rss_bytes'],memory_unavailable_reason=None))
+        except BudgetExceeded as exc:
+            report.update(status='failed',reason=f'BudgetExceeded: {exc}')
+            raise
+        finally:
+            append_event(attempt,{'kind':'stage_finished','status':report['status'],'summary':str(out/'summary.json')})
+            recorder.snapshot();print(json.dumps({'status':report['status'],'report':str(out/'summary.json'),'costs':report['costs'],'peaks':report['peaks']}),flush=True)
+            fcntl.flock(lock,fcntl.LOCK_UN);lock.close()

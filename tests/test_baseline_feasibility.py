@@ -129,3 +129,124 @@ def test_retry_cost_includes_attributed_supplemental_forward_counters(tmp_path):
     from poc.quantization_stage import _prior_costs
     (tmp_path/'cost-amendments.json').write_text(json.dumps({'amendments':[{'cost':{'student_forward_calls':213}},{'cost':{'student_forward_calls':15}}]}))
     assert _prior_costs(tmp_path,10.)['student_forward_calls']==228
+
+
+def pilot_recorder(tmp_path, *, prior=None, limits=None):
+    from dataclasses import replace
+    from test_records import spec,budget
+    from poc.records import start_attempt
+    from poc.budget import BudgetTracker
+    from poc.quantization_stage import PilotRecorder
+    caps={'wall_seconds':3600,'teacher_forward_calls':100,'student_forward_calls':100,'student_backward_calls':100,'fit_updates':100,'conversion_attempts':100,'process_rss_bytes':10**12,'mlx_active_bytes':10**12,'generated_disk_bytes':10**12}
+    caps.update(limits or {})
+    b=replace(budget(),wall_seconds=3600,teacher_forward_calls=100,student_backward_calls=100,updates=100,memory_bytes=10**12,disk_bytes=10**12)
+    identity=spec(budgets=b);attempt=start_attempt(identity,tmp_path/'runs')
+    output=tmp_path/'output';output.mkdir()
+    return PilotRecorder(output,{'status':'running'},{'wall_seconds':0,**(prior or {})},caps,BudgetTracker(b,attempt))
+
+
+@pytest.mark.parametrize('field,increment', [('teacher_forward_calls',{'teacher_forward_calls':1}),('student_backward_calls',{'student_backward_calls':1}),('fit_updates',{'fit_updates':1}),('conversion_attempts',{'conversion_attempts':1}),('wall_seconds',{'conversion_attempts':1}),('headroom',{'teacher_forward_calls':1}),('live',{'teacher_forward_calls':1})])
+def test_real_aggregate_ceiling_escapes_actual_method_failure_handler(tmp_path,monkeypatch,field,increment):
+    from poc.quantization_stage import _failure_status
+    from poc.budget import BudgetExceeded
+    recorder=pilot_recorder(tmp_path,prior={field:101},limits={field:100})
+    if field=='headroom':
+        import psutil
+        from types import SimpleNamespace
+        monkeypatch.setattr(psutil,'virtual_memory',lambda:SimpleNamespace(available=0))
+    if field=='live': recorder.error='live resource cap exceeded'
+    calls=[]
+    with pytest.raises(BudgetExceeded):
+        for method in ('first','must not run'):
+            calls.append(method)
+            try: recorder.account(**increment)
+            except (ValueError,RuntimeError,ImportError) as error: _failure_status(error)
+    assert calls==['first']
+    assert recorder.tracker.totals.teacher_forward_calls==0
+
+
+def test_actual_aggregate_overrun_is_durable_before_raising(tmp_path):
+    from poc.contracts import CostRecord
+    from poc.budget import BudgetExceeded,BudgetTracker
+    recorder=pilot_recorder(tmp_path,limits={'teacher_forward_calls':1})
+    with pytest.raises(BudgetExceeded): recorder.record(CostRecord(teacher_forward_calls=2))
+    assert BudgetTracker(recorder.tracker.budget,recorder.tracker.attempt).totals.teacher_forward_calls==2
+
+
+def test_student_forward_preflight_and_actual_overrun_use_shared_ledger(tmp_path):
+    from poc.contracts import CostRecord
+    from poc.budget import BudgetExceeded,BudgetTracker
+    recorder=pilot_recorder(tmp_path,prior={'student_forward_calls':1},limits={'student_forward_calls':2})
+    recorder.check(CostRecord(student_forward_calls=1));recorder.record(CostRecord(student_forward_calls=1))
+    with pytest.raises(BudgetExceeded): recorder.check(CostRecord(student_forward_calls=1))
+    assert recorder.tracker.totals.student_forward_calls==1
+    with pytest.raises(BudgetExceeded): recorder.record(CostRecord(student_forward_calls=1))
+    assert BudgetTracker(recorder.tracker.budget,recorder.tracker.attempt).totals.student_forward_calls==2
+
+
+def test_reuse_rejects_valid_replacement_and_changed_evaluator_or_teacher(tmp_path):
+    from pathlib import Path
+    from test_export import model,runtime
+    from poc.bundle import write_bundle,measure_bundle,_sha
+    from poc.quantization_stage import _reusable_rows
+    import shutil
+    original=write_bundle(model('0'),tmp_path/'artifact',runtime(tmp_path))
+    contract={'evaluator':'first','teacher':'original','windows':'fixed'}
+    row={'artifact':original.directory,'manifest_sha256':original.manifest_sha256,'payload_bytes':measure_bundle(Path(original.directory)).payload_bytes,'status':'eligible','variant':'fixture','development':{'kl':0.1}}
+    evidence={'evaluation_contract':contract,'rows':[row]}
+    assert len(_reusable_rows(evidence,tmp_path/'previous.json',contract))==1
+    assert _reusable_rows(evidence,tmp_path/'previous.json',{**contract,'evaluator':'changed'})==[]
+    assert _reusable_rows(evidence,tmp_path/'previous.json',{**contract,'teacher':'changed'})==[]
+    shutil.rmtree(original.directory)
+    write_bundle(model('2'),Path(original.directory),runtime(tmp_path))
+    with pytest.raises(ValueError,match='identity'): _reusable_rows(evidence,tmp_path/'previous.json',contract)
+
+
+def test_evaluation_contract_binds_numeric_code_and_teacher_values_not_cost_logging(tmp_path):
+    import shutil
+    from pathlib import Path
+    from test_export import model,runtime
+    from poc.bundle import write_bundle
+    from poc.quantization_stage import _evaluation_contract,ROOT
+    source=tmp_path/'source';(source/'poc/runtime').mkdir(parents=True)
+    for name in ('contracts.py','quantize.py','quantization_stage.py','runtime/mlx_decoder.py'):
+        shutil.copyfile(ROOT/'poc'/name,source/'poc'/name)
+    original=write_bundle(model('0'),tmp_path/'teacher',runtime(tmp_path))
+    contract=_evaluation_contract(source,Path(original.directory),'fixed-windows')
+    # Accounting-only source growth is explicitly outside numerical compatibility.
+    p=source/'poc/contracts.py';p.write_text(p.read_text().replace('teacher_forward_calls: int = 0','teacher_forward_calls: int = 99'))
+    assert _evaluation_contract(source,Path(original.directory),'fixed-windows')==contract
+    p=source/'poc/quantization_stage.py';p.write_text(p.read_text().replace('range(0,batch.input_ids.shape[1]-1,32)','range(0,batch.input_ids.shape[1]-1,16)'))
+    assert _evaluation_contract(source,Path(original.directory),'fixed-windows')!=contract
+    # The orchestration passing teacher states into the evaluator is numerical
+    # code too; definitions alone cannot bind this mutation.
+    p.write_text((ROOT/'poc/quantization_stage.py').read_text().replace('teacher_hidden.append(native_teacher.final_hidden(batch))','teacher_hidden.append(native_teacher.final_hidden(batch)*0)'))
+    assert _evaluation_contract(source,Path(original.directory),'fixed-windows')!=contract
+    changed=model('0')
+    import torch
+    with torch.no_grad(): changed.norm.weight.add_(.01)
+    other=write_bundle(changed,tmp_path/'other-teacher',runtime(tmp_path))
+    assert _evaluation_contract(ROOT,Path(original.directory),'fixed-windows')['teacher']!=_evaluation_contract(ROOT,Path(other.directory),'fixed-windows')['teacher']
+
+
+def test_legacy_known_student_spending_is_not_reset_by_new_zero_increments(tmp_path):
+    import json
+    from poc.quantization_stage import _prior_costs
+    attempt=tmp_path/'attempt-fixture';attempt.mkdir()
+    ledger=tmp_path/'costs.jsonl'
+    ledger.write_text(json.dumps({'attempt_id':'a','cost':{'teacher_forward_calls':530}})+'\n'+json.dumps({'attempt_id':'a','cost':{'student_forward_calls':0,'wall_seconds':1}})+'\n')
+    (attempt/'summary.json').write_text(json.dumps({'attempt_id':'a','cost_ledger':str(ledger),'costs':{'wall_seconds':1,'student_forward_calls':709}}))
+    (tmp_path/'cost-amendments.json').write_text(json.dumps({'amendments':[{'cost':{'student_forward_calls':228}}]}))
+    prior=_prior_costs(tmp_path,0)
+    assert prior['student_forward_calls']==937 and prior['teacher_forward_calls']==530
+
+
+def test_per_run_prior_cost_is_not_double_counted_on_same_identity_retry(tmp_path):
+    from poc.contracts import CostRecord
+    from poc.quantization_stage import PilotRecorder
+    first=pilot_recorder(tmp_path,limits={'student_forward_calls':2})
+    first.record(CostRecord(student_forward_calls=1))
+    retry=PilotRecorder(first.out,{'status':'running'},{'wall_seconds':0,'student_forward_calls':1},first.caps,first.tracker)
+    retry.check(CostRecord(student_forward_calls=1));retry.record(CostRecord(student_forward_calls=1))
+    assert retry.tracker.totals.student_forward_calls==2
+    assert retry.report['costs']['student_forward_calls']==1

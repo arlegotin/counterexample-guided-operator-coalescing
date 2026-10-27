@@ -224,7 +224,7 @@ def _official_model(native, recorder=None, method=None):
         def __call__(self,inputs,*args,**kwargs):
             teacher=self is state['model'] and not state['quantized']
             backward=method=='dynamic' and self is not state['model']
-            cost=CostRecord(teacher_forward_calls=int(teacher),student_backward_calls=int(backward),processed_inputs=inputs.shape[0],processed_tokens=inputs.size)
+            cost=CostRecord(teacher_forward_calls=int(teacher),student_forward_calls=int(not teacher),student_backward_calls=int(backward),processed_inputs=inputs.shape[0],processed_tokens=inputs.size)
             if recorder is not None: recorder.check(cost);recorder.record(cost)
             state['forwards']+=1;state['teacher_forwards']+=int(teacher);state['backwards']+=int(backward)
             return super().__call__(inputs,*args,**kwargs)

@@ -80,6 +80,7 @@ class CostRecord:
     updates: int = 0
     search_proposals: int = 0
     search_seconds: float = 0
+    student_forward_calls: int = 0
 
     def __post_init__(self) -> None:
         for field in fields(self):

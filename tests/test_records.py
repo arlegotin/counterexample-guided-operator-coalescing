@@ -199,3 +199,18 @@ def test_every_identity_component_changes_run_hash():
                     dict(input_manifests={"teacher": "e" * 64}), dict(hardware_policy={"backend": "torch_mps"}),
                     dict(parent_run_ids=("d" * 64,)), dict(budgets=replace(budget(), teacher_forward_calls=4))]:
         assert run_id(spec(**changes)) != run_id(original)
+
+
+def test_student_forward_cost_is_compatible_with_legacy_rows_and_durable(tmp_path):
+    identity=spec();attempt=start_attempt(identity,tmp_path)
+    tracker=BudgetTracker(identity.budgets,attempt)
+    tracker.record(CostRecord(teacher_forward_calls=1))
+    # Simulate the genuine prior schema: absence means no typed increment was
+    # recorded, not a measurement erasing externally attributed historical cost.
+    rows=[json.loads(line) for line in tracker.path.read_text().splitlines()]
+    rows[0]['cost'].pop('student_forward_calls')
+    tracker.path.write_text(''.join(json.dumps(row)+'\n' for row in rows))
+    tracker.record(CostRecord(student_forward_calls=2))
+    fresh=BudgetTracker(identity.budgets,attempt)
+    assert fresh.totals.teacher_forward_calls==1 and fresh.totals.student_forward_calls==2
+    with pytest.raises(ValueError): CostRecord(student_forward_calls=-1)

@@ -165,3 +165,31 @@ def test_quantizer_failed_work_is_charged_once():
     with pytest.raises(ValueError): failed(None,None,recorder)
     assert len(recorder.rows)==1 and recorder.rows[0].wall_seconds>0
     assert recorder.rows[0].memory_bytes>0
+
+
+@pytest.mark.mlx
+@pytest.mark.parametrize('failure',['exception','interruption'])
+def test_learned_student_dispatch_is_preflighted_and_durable_on_failure(tmp_path,monkeypatch,failure):
+    import mlx.core as mx
+    import torch
+    from poc.runtime.torch_decoder import TinyConfig,make_tiny_decoder
+    from poc.bundle import write_bundle,load_bundle
+    from poc.quantize import _official_model
+    from poc.quantization_stage import PilotInterrupted
+    from poc.budget import BudgetExceeded,BudgetTracker
+    from test_baseline_feasibility import pilot_recorder
+    from mlx_lm.models.llama import Model
+    source=make_tiny_decoder(TinyConfig(hidden_size=64,intermediate_size=128,num_attention_heads=4,num_key_value_heads=2),seed=3,dtype=torch.float32)
+    ref=write_bundle(source,tmp_path/'source',runtime(tmp_path));native=load_bundle(Path(ref.directory),backend='mlx')
+    recorder=pilot_recorder(tmp_path,limits={'student_forward_calls':1})
+    official,state=_official_model(native,recorder);state['quantized']=True
+    calls=[]
+    def fail(self,inputs,*args,**kwargs):
+        calls.append('dispatched')
+        raise RuntimeError('upstream failed') if failure=='exception' else PilotInterrupted('stopped')
+    monkeypatch.setattr(Model,'__call__',fail)
+    with pytest.raises(RuntimeError if failure=='exception' else PilotInterrupted): official(mx.array([[1,4]]))
+    fresh=BudgetTracker(recorder.tracker.budget,recorder.tracker.attempt)
+    assert fresh.totals.student_forward_calls==1
+    with pytest.raises(BudgetExceeded): official(mx.array([[1,4]]))
+    assert calls==['dispatched'] and fresh.totals.student_forward_calls==1
