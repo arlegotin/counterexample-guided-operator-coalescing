@@ -220,7 +220,7 @@ def _schedule(optimizer,step,max_updates):
 class _Guard:
     def __init__(self,recorder,budget):
         self.recorder,self.budget=recorder,budget
-        self.total=recorder.totals if hasattr(recorder,'totals') else (recorder.tracker.totals if hasattr(recorder,'tracker') else CostRecord())
+        self.total=recorder.aggregate() if hasattr(recorder,'aggregate') else (recorder.totals if hasattr(recorder,'totals') else (recorder.tracker.totals if hasattr(recorder,'tracker') else CostRecord()))
     def _combined(self,cost):
         values=self.total.to_dict()
         for k,v in cost.to_dict().items():
@@ -347,6 +347,8 @@ def _snapshot(student,optimizer,scheduler,config,sources,step,cursor,probe_curso
     for group in optimizer.param_groups:
         optimizer_state['groups'].append({k:cpu(v) for k,v in group.items() if k!='params'})
         for name,p in zip(group['owner_ids'],group['params'],strict=True):optimizer_state['state'][name]=cpu(optimizer.state[p])
+    if hasattr(recorder.recorder,'aggregate'):recorder.total=recorder.recorder.aggregate()
+    elif hasattr(recorder.recorder,'totals'):recorder.total=recorder.recorder.totals
     order=tuple(b.document_ids for b in sources.natural)
     probes=tuple(p.identity for p in sources.probes)
     return TrainingState(config.run_spec,{n:cpu(p) for n,p in student.named_parameters()},_model_schema(student),

@@ -117,7 +117,10 @@ def save_checkpoint(state,root: Path,*,recorder=None) -> CheckpointRef:
         return 0
     # Metadata bound is deliberately conservative. Actual bytes are observed
     # after publication, and the transient third generation also needs headroom.
-    estimate=existing+tensor_bytes(state.model)+tensor_bytes(state.optimizer)+tensor_bytes(state.rng)+2*1024**2
+    observed=recorder
+    while observed is not None and not hasattr(observed,'disk') and hasattr(observed,'recorder'):observed=observed.recorder
+    current=observed.disk() if observed is not None and hasattr(observed,'disk') else existing
+    estimate=current+tensor_bytes(state.model)+tensor_bytes(state.optimizer)+tensor_bytes(state.rng)+2*1024**2
     if recorder is not None:recorder.check(CostRecord(disk_bytes=estimate))
     try:
         return _save_generation(state,root)

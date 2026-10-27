@@ -38,26 +38,36 @@ class TrainingPilotRecorder(PilotRecorder):
     """Same accounting policy with prefix-verified incremental run totals."""
     def __init__(self,tracker,student_cap):
         self._phase_trackers={}
+        self.carry=tracker.attempt.spec.resolved_config['carry_in']
         super().__init__(tracker,student_cap)
 
     def aggregate(self):
         from poc.checkpoint import _spec
         from poc.records import AttemptRecord
-        total=None
-        for spec_path in (self.phase_root/'runs').glob('*/spec.json'):
+        total=CostRecord(wall_seconds=self.carry['audit_wall_seconds'])
+        prior_paths={str(ROOT/p) for p in self.carry['spec_paths']}
+        paths=list((self.phase_root/'runs').glob('*/spec.json'))+[Path(p) for p in sorted(prior_paths)]
+        for spec_path in paths:
             raw=json.loads(spec_path.read_text())
             if raw['method_variant']!=self.phase_key:continue
-            if raw['resolved_config'].get('plan_sha256')!=self.plan_sha256:raise ValueError('pilot plan lineage changed within phase')
+            if str(spec_path) not in prior_paths and raw['resolved_config'].get('plan_sha256')!=self.plan_sha256:raise ValueError('pilot plan lineage changed within phase')
             key=str(spec_path.parent)
             if key not in self._phase_trackers:
                 identity=_spec(raw)
                 if key==str(self.tracker.path.parent):tracker=self.tracker
                 else:
                     tracker=BudgetTracker(identity.budgets,AttemptRecord(spec_path.parent.name,'aggregate_only',spec_path.parent/'attempts'/'aggregate_only',identity))
+                if str(spec_path) in prior_paths:
+                    evidence=self.carry['evidence'][spec_path.parent.name]
+                    if sha256_file(spec_path)!=evidence['spec_sha256'] or sha256_file(tracker.path)!=evidence['cost_ledger_sha256']:raise ValueError('prior carry-in evidence changed')
                 self._phase_trackers[key]=tracker
             observed=self._phase_trackers[key].totals
             total=observed if total is None else BudgetTracker.combine(total,observed)
-        return total or CostRecord()
+        return total
+
+    def disk(self):
+        # Retained diagnostics, all generations and transient files share the cap.
+        return sum(p.stat().st_size for p in (ROOT/'artifacts/training/task11').rglob('*') if p.is_file())
 
 
 def plan(out,stage,wall,updates):
@@ -80,22 +90,47 @@ def plan(out,stage,wall,updates):
         if component not in seen:fit_ids.append(row.document_id);seen.add(component)
         if len(fit_ids)==512:break
     if len(fit_ids)!=512:raise ValueError('512 component-distinct fit windows required')
+    audit_path=ROOT/'artifacts/training/task11/canonical-window-audit-v1.json'
+    audit=json.loads(audit_path.read_text())
+    if audit['saved_windows_sha256']!=receipt['manifests']['windows.json']['sha256']:
+        raise ValueError('canonical window audit lineage mismatch')
+    short={r['document_id']:r['context_tokens'] for r in audit['short_windows']}
+    if any(i not in fit_ids for i in short):raise ValueError('unexpected short observation/development window')
+    original_fit_ids=list(fit_ids)
+    fit_ids=[i for i in fit_ids if i not in short]
+    if len(fit_ids)<497:raise ValueError('insufficient verified full windows for253952targets without repetition')
     development=[];seen=set()
     for row in sorted((r for r in manifest.records if manifest.roles[r.document_id]=='dev' and r.source=='HuggingFaceFW/fineweb-edu' and r.metadata.get('token_count',0)>=512),key=lambda r:hashlib.sha256(('task11-v1:'+r.document_id).encode()).digest()):
         component=manifest.membership[row.document_id]
         if component not in seen:development.append(row.document_id);seen.add(component)
         if len(development)==8:break
     if len(development)!=8:raise ValueError('insufficient component-distinct development windows')
+    from poc.checkpoint import _spec
+    from poc.records import AttemptRecord,run_id
+    prior_specs=[];carry_cost=None;carry_evidence={}
+    for name in ('learn31','learn31-diverse-v1','learn31-diverse-v2'):
+        for spec_path in sorted((ROOT/'artifacts/training/task11'/name/'runs').glob('*/spec.json')):
+            raw=json.loads(spec_path.read_text());prior_spec=_spec(raw)
+            if run_id(prior_spec)!=spec_path.parent.name:raise ValueError('prior cost identity mismatch')
+            tracker=BudgetTracker(prior_spec.budgets,AttemptRecord(spec_path.parent.name,'carry_only',spec_path.parent/'attempts'/'carry_only',prior_spec))
+            observed=tracker.totals
+            carry_cost=observed if carry_cost is None else BudgetTracker.combine(carry_cost,observed)
+            prior_specs.append(str(spec_path.relative_to(ROOT)))
+            carry_evidence[spec_path.parent.name]={'spec_sha256':sha256_file(spec_path),'cost_ledger_sha256':sha256_file(tracker.path)}
+    carry_cost=carry_cost or CostRecord()
+    carry=dict(spec_paths=prior_specs,verified_cost=carry_cost.to_dict(),evidence=carry_evidence,
+        audit_wall_seconds=audit['wall_seconds'],audit_sha256=sha256_file(audit_path))
     available=psutil.virtual_memory().available
     memory=min(6*GiB,int(.8*available))
-    p=dict(schema_version=1,stage=stage,selection='sha256(task11-v1:document_id),512 distinct fit components excluding fixed3fitchecks,metadata token_count>=512',
-        fit_ids=fit_ids,observation_ids=observations,dev_ids=development,
-        observation_steps=[0]+[k for k in (2,8,16,31) if k<=updates],context_tokens=512,window='prepared convention: tokenizeplain+oneEOS, first512/reset0, rejectshort',
+    p=dict(schema_version=1,stage=stage,selection='original512 metadata-ranked fit IDs, exclude4 canonicalshort windows without replacement;508 distinct full fit components, fixed3fitchecks',
+        fit_ids=fit_ids,original_fit_ids=original_fit_ids,observation_ids=observations,dev_ids=development,excluded_short_windows=short,
+        canonical_window_audit_sha256=sha256_file(audit_path),saved_windows_sha256=receipt['manifests']['windows.json']['sha256'],natural_window_policy={'context_tokens':512,'max_windows':4,'seed':17,'selection':'first regenerated saved-policy window per document'},
+        observation_steps=[0]+[k for k in (2,8,16,31) if k<=updates],context_tokens=512,window='verifiedpreparedtokens;WindowPolicy512/max4/seed17 firstwindow;source_start saved;positions reset0;originaltarget_indices',
         head_chunk=32,bank_count=15,rank=8,seed=17,alpha=.1,lr_bank=1e-4,lr_residual=3e-4,
-        max_updates=updates,wall_cap=wall,teacher_cap=2048 if stage=='profile' else 12000,
-        student_cap=2048 if stage=='profile' else 12000,memory_cap=memory,headroom_at_plan_bytes=available,
-        backward_cap=4 if stage=='profile' else 600,suffix_backward_cap=3 if stage=='profile' else 0,
-        update_cap=1 if stage=='profile' else updates,presentation_cap=2044 if stage=='profile' else updates*8192,
+        max_updates=updates,wall_cap=wall,carry_in=carry,teacher_cap=2048 if stage=='profile' else 12000+carry_cost.teacher_forward_calls,
+        student_cap=2048 if stage=='profile' else 12000+carry_cost.student_forward_calls,memory_cap=memory,headroom_at_plan_bytes=available,
+        backward_cap=4 if stage=='profile' else 600+carry_cost.student_backward_calls,suffix_backward_cap=3 if stage=='profile' else 0,
+        update_cap=1 if stage=='profile' else updates+carry_cost.updates,presentation_cap=2044 if stage=='profile' else updates*8192+carry_cost.valid_target_presentations,
         disk_cap=3*GiB if stage=='profile' else 8*GiB,data_manifest_sha256=receipt['manifests']['data-manifest.json']['sha256'],
         teacher_asset_sha256=receipt['teacher_asset_manifest_sha256'],scope='finite exploratory resource/fit evidence; final study seeds/budgets unchosen')
     path=out/'plan.json'
@@ -121,11 +156,11 @@ def run(stage,out,wall,updates):
         numerical_profile=EXECUTION_PROFILE+';teacher-qualification-torch_mps-context512')
     patch=subprocess.check_output(['git','diff','--binary','HEAD'],cwd=ROOT)
     spec=RunSpec(method_id='M',method_variant='task11_'+stage+'_natural_only',
-        resolved_config=dict(plan_sha256=sha256_file(out/'plan.json'),source_sha256=sources,training=config.identity(),student_forward_cap=p['student_cap']),
+        resolved_config=dict(plan_sha256=sha256_file(out/'plan.json'),source_sha256=sources,training=config.identity(),student_forward_cap=p['student_cap'],carry_in=p['carry_in']),
         source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),dirty_patch_sha256=hashlib.sha256(patch).hexdigest(),
         dependency_lock_sha256=sha256_file(ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),
-        input_manifests={'teacher':p['teacher_asset_sha256'],'data':p['data_manifest_sha256']},
-        hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'pilot':17},parent_run_ids=(),budgets=budgets)
+        input_manifests={'teacher':p['teacher_asset_sha256'],'data':p['data_manifest_sha256'],'saved_windows':p['saved_windows_sha256'],'window_audit':p['canonical_window_audit_sha256']},
+        hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'pilot':17},parent_run_ids=tuple(p['carry_in']['evidence']),budgets=budgets)
     attempt=start_attempt(spec,out/'runs');tracker=BudgetTracker(budgets,attempt);rec=TrainingPilotRecorder(tracker,p['student_cap'])
     snap=attempt.path/'source';snap.mkdir()
     for f in source_files:
@@ -152,14 +187,18 @@ def run(stage,out,wall,updates):
         if stage!='profile':
             dev_records=[r for r in manifest.records if r.document_id in p['dev_ids']]
             docs.extend(measured('development_role_reader',lambda:list(open_records(_restricted(manifest,dev_records),purpose='selection'))))
-        by_id={d.document_id:d for d in docs};batches={}
+        by_id={d.document_id:d for d in docs};batches={};window_rows=[]
+        if sha256_file(ROOT/'data/prepared-135m-v2/windows.json')!=p['saved_windows_sha256']:raise ValueError('full saved windows manifest hash mismatch')
+        from poc.quantization_stage import _prepared_window
         for identity in p['fit_ids']+p['observation_ids']+(p['dev_ids'] if stage!='profile' else []):
-            ids=(tokenizer(by_id[identity].text,add_special_tokens=False)['input_ids']+[tokenizer.eos_token_id])[:512]
-            if len(ids)!=512:raise ValueError('predeclared context512 source too short; no replacement')
-            batches[identity]=_batch(ids,device='mps',document_id=identity,cluster_id=manifest.membership[identity])
+            w=_prepared_window(by_id[identity],p['natural_window_policy']['seed'])
+            if len(w.token_ids)!=512:raise ValueError('predeclared canonical512 window too short; no replacement')
+            window_rows.append(dict(**asdict(w),role=manifest.roles[identity],component=manifest.membership[identity],token_file_sha256=by_id[identity].token_sha256))
+            batches[identity]=_batch(w.token_ids,device='mps',document_id=identity,cluster_id=manifest.membership[identity],targets=w.target_indices)
         # Full fit stream and independent fit/dev observation windows are fixed
         # before any prediction. Text/tokens stay in ignored local artifacts.
-        _write(attempt.path/'window-stream.json',{i:dict(tokens=b.input_ids[0].tolist(),target_mask=b.target_mask[0].tolist(),component=b.cluster_ids[0],role=manifest.roles[i]) for i,b in batches.items()})
+        _write(attempt.path/'window-stream.json',{'policy':p['natural_window_policy'],'saved_windows_sha256':p['saved_windows_sha256'],'windows':window_rows})
+        result['window_stream_sha256']=sha256_file(attempt.path/'window-stream.json')
         b=batches[p['fit_ids'][0]]
         if stage=='profile':
             hidden=measured('teacher_full_context512',lambda:teacher.final_hidden(b),teacher_forward_calls=1)
@@ -217,7 +256,7 @@ def run(stage,out,wall,updates):
                 destination=attempt.path/'milestones'/str(step)
                 measured(f'preserve_milestone_{step}',lambda:shutil.copytree(ref.directory,destination))
                 result.setdefault('milestones',[]).append(dict(step=step,directory=str(destination),manifest_sha256=ref.manifest_sha256))
-                elapsed=time.monotonic()-started
+                elapsed=rec.phase_wall_at_start+time.monotonic()-started
                 # Include evaluation/copy overhead in the measured continuation phase.
                 phase_seconds=time.monotonic()-phase_started
                 forecast=elapsed+(updates-step)*phase_seconds/(step-previous)
