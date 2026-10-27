@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cgoc-poc"
+version = "0.1.0"
+description = "Local counterexample-guided operator coalescing research harness"
+requires-python = ">=3.12,<3.13"
+dependencies = ["PyYAML>=6.0.2,<7"]
+
+[project.optional-dependencies]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+poc = "poc.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["poc*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
