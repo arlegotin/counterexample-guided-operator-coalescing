@@ -178,4 +178,22 @@ class DiagnosticResult:
 def run_single_merge(config) -> DiagnosticResult:
     from provenance.measure_single_merge import run
     result=run(config)
+    if result['status']=='complete':
+        from provenance.measure_single_merge_sensitivity import run as sensitivity
+        extra=sensitivity(config)
+        if len(extra)!=2 or any(r['status']!='complete' for r in extra):result['status']='sensitivity_incomplete'
     return DiagnosticResult(result['status'],result['attempt']+'/result.json')
+
+
+def shortlist_misses(damage:DamageTable,shortlist,*,seed:int,resamples:int):
+    values=_matrix(damage);included=np.array([t.pair in set(shortlist) for t in damage.trials]);excluded=~included
+    if not included.any() or not excluded.any() or resamples<2:raise ValueError('both included and excluded sampled alternatives required')
+    means=values.mean(axis=1);best=means[included].min();regret=best-means.min()
+    draws=np.random.default_rng(seed).integers(0,len(damage.components),(resamples,len(damage.components)))
+    sampled=values[:,draws].mean(axis=2)
+    restriction=sampled[included].min(axis=0)-sampled.min(axis=0)
+    fractions=(sampled[excluded]<sampled[included].min(axis=0)).mean(axis=0)
+    return dict(scope='sampled excluded pairs against sampled shortlist members; not all435',included_pairs=int(included.sum()),excluded_pairs=int(excluded.sum()),
+        observed_excluded_better_fraction=float((means[excluded]<best).mean()),restriction_regret=float(regret),
+        restriction_regret_interval=np.quantile(restriction,[.025,.975]).tolist(),excluded_better_fraction_interval=np.quantile(fractions,[.025,.975]).tolist(),
+        bootstrap_unit='source_component; finite candidate set held together')

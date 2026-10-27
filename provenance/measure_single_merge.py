@@ -11,7 +11,7 @@ from poc.data.access import open_records
 from poc.data.manifest import load_manifest
 from poc.data.windows import TokenDocument,WindowPolicy,make_windows
 from poc.diagnostics import (PairSamplingPolicy,pair_population,pair_stratum,sample_pairs,ensure_excluded_coverage,
-    TrialIdentity,TrialRecord,DamageTable,ScoreTable,score_trials,selected_merge_regret,bootstrap_regret,fixed_scores,run_controls)
+    TrialIdentity,TrialRecord,DamageTable,ScoreTable,score_trials,selected_merge_regret,bootstrap_regret,fixed_scores,run_controls,shortlist_misses)
 from poc.merge import initialize_merge,fit_trial,centered_linear_cka,initializer_sensitivity_control,save_trial_delta,restore_trial_delta
 from poc.losses import stream_metrics
 from poc.probes import PathologyObservation,PathologyThresholds,ProbePolicy,generate_donors,prefix_for_probe,apply_probe,local_discrepancy
@@ -30,6 +30,21 @@ class DiagnosticRecorder(TrainingPilotRecorder):
     def __init__(self,*args,profile=False,profile_cap=600,**kwargs):
         self.profile,self.profile_cap=profile,profile_cap
         super().__init__(*args,**kwargs)
+    def aggregate(self):
+        from poc.checkpoint import _spec
+        from poc.records import AttemptRecord
+        total=CostRecord(wall_seconds=self.carry['audit_wall_seconds'])
+        for path in (self.phase_root/'runs').glob('*/spec.json'):
+            raw=json.loads(path.read_text())
+            if raw['method_variant'] not in ('task12_single_merge_score_only','task12_single_merge_sensitivity_refit'):continue
+            if raw['resolved_config']['plan_sha256']!=self.plan_sha256:raise ValueError('Task12 aggregate plan changed')
+            key=str(path.parent)
+            if key not in self._phase_trackers:
+                identity=_spec(raw)
+                self._phase_trackers[key]=self.tracker if key==str(self.tracker.path.parent) else BudgetTracker(identity.budgets,AttemptRecord(path.parent.name,'aggregate_only',path.parent/'attempts'/'aggregate_only',identity))
+            total=BudgetTracker.combine(total,self._phase_trackers[key].totals)
+        if total.memory_bytes is not None:total=replace(total,memory_unavailable_reason=None)
+        return total
     def disk(self):return sum(p.stat().st_size for p in OUT.rglob('*') if p.is_file())
     def check_aggregate(self,cost=None):
         super().check_aggregate(cost)
@@ -45,8 +60,14 @@ def _cost_delta(after,before):
     return result
 
 
+def source_compatible(stored,current,amendment):
+    if stored==current:return True
+    return bool(amendment and stored==amendment.get('old_source_sha256') and current==amendment.get('new_source_sha256'))
+
+
 def _identity(x):return TrialIdentity(tuple(x['pair']),x['initialized_digest'],x['fitted_digest'])
 def _mean(values):
+    values=tuple(values)
     if not values:raise ValueError('missing positive-weight source observations')
     return sum(values)/len(values)
 
@@ -228,6 +249,11 @@ def activation_scores(teacher,trial,batches,rec):
 
 def pair_design(teacher,rec):
     path=OUT/'pairs.json'
+    amendment=OUT/'pairs-amended.json'
+    if amendment.exists():
+        changed=json.loads(amendment.read_text())
+        if changed['original_pairs_sha256']!=sha256_file(path):raise ValueError('pair amendment original population changed')
+        return changed
     if path.exists():return json.loads(path.read_text())
     distances={}
     started=time.monotonic()
@@ -248,6 +274,7 @@ def pair_design(teacher,rec):
 
 
 def summarize(records,pair_info):
+    records=sorted(records,key=lambda r:tuple(r['identity']['pair']))
     trials=tuple(_identity(r['identity']) for r in records)
     methods=list(records[0]['scores']);trial_records=[TrialRecord(_identity(r['identity']),r['scores'],r['score_manifest'],{k:tuple(v) for k,v in r['costs'].items()}) for r in records]
     tables=[score_trials(trial_records,k,records=records[0]['score_manifest']) for k in methods]
@@ -259,7 +286,7 @@ def summarize(records,pair_info):
     fresh_regrets={t.method:asdict(selected_merge_regret(t,fresh)) for t in tables}
     secondary_comps=tuple(sorted(records[0]['secondary_scores']));secondary=ScoreTable('canonical_dev8_kl',trials,secondary_comps,tuple(tuple(r['secondary_scores'][c] for c in secondary_comps) for r in records),'canonical-dev8',0,0.)
     shortlisted={tuple(p) for p in pair_info['shortlist']};means=[sum(r['natural_damage'].values())/len(comps) for r in records];best=min(range(len(records)),key=lambda i:(means[i],trials[i].pair))
-    return dict(regret=regrets,fresh_intervention_regret=fresh_regrets,uncertainty=bootstrap_regret(tables,damage,seed=17,resamples=2000),fresh_uncertainty=bootstrap_regret(tables,fresh,seed=17,resamples=2000),secondary=asdict(selected_merge_regret(secondary,damage)),secondary_uncertainty=bootstrap_regret([secondary],damage,seed=17,resamples=2000),
+    return dict(shortlist_misses=(shortlist_misses(damage,shortlisted,seed=17,resamples=2000) if any(t.pair in shortlisted for t in trials) and any(t.pair not in shortlisted for t in trials) else {'status':'not_estimable_without_both_included_and_excluded_pairs'}),regret=regrets,fresh_intervention_regret=fresh_regrets,uncertainty=bootstrap_regret(tables,damage,seed=17,resamples=2000),fresh_uncertainty=bootstrap_regret(tables,fresh,seed=17,resamples=2000),secondary=asdict(selected_merge_regret(secondary,damage)),secondary_uncertainty=bootstrap_regret([secondary],damage,seed=17,resamples=2000),
         coverage={'full_population':435,'sampled':len(records),'sampled_excluded':sum(t.pair not in shortlisted for t in trials),'sampled_best_excluded':trials[best].pair not in shortlisted,'sampled_best_pair':trials[best].pair,'strata':sorted({pair_stratum(t.pair,30) for t in trials})},controls=run_controls(),initializer_control=initializer_sensitivity_control())
 
 
@@ -275,11 +302,18 @@ def _finish_damage(record,teacher,trial,batches,pool,rec,calibration):
 def run(config):
     p=json.loads((OUT/'plan.json').read_text());plan_sha=sha256_file(OUT/'plan.json');limits=config.budgets.resolve()
     approval=OUT/'full-phase-approved.json';profile=not approval.exists()
+    full_policy=json.loads(approval.read_text()) if approval.exists() else {}
     if approval.exists() and json.loads(approval.read_text())['plan_sha256']!=plan_sha:raise ValueError('full-phase approval belongs to another plan')
-    source_files=sorted([*ROOT.glob('poc/**/*.py'),ROOT/'provenance/measure_single_merge.py',ROOT/'provenance/measure_training_pilot.py',ROOT/'provenance/measure_probe_pilot.py',ROOT/'provenance/prepare_single_merge.py'])
+    amendment_path=OUT/'source-amendment.json'
+    source_amendment=json.loads(amendment_path.read_text()) if amendment_path.exists() else None
+    source_files=sorted([*ROOT.glob('poc/**/*.py'),ROOT/'provenance/measure_single_merge.py',ROOT/'provenance/measure_training_pilot.py',ROOT/'provenance/measure_probe_pilot.py',ROOT/'provenance/prepare_single_merge.py',ROOT/'provenance/measure_single_merge_sensitivity.py'])
     sources={str(f.relative_to(ROOT)):sha256_file(f) for f in source_files}
+    if source_amendment:
+        if source_amendment['new_source_sha256']!=sources:raise ValueError('source amendment current source mismatch')
+        for path,digest in source_amendment['reused_artifact_sha256'].items():
+            if sha256_file(ROOT/path)!=digest:raise ValueError('reused profile artifact changed: '+path)
     commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip();patch=subprocess.check_output(['git','diff','--binary','HEAD'])
-    spec=RunSpec(method_id='M',method_variant='task12_single_merge_score_only',resolved_config={'plan_sha256':plan_sha,'source_sha256':sources,'carry_in':p['task12_carry_in'],'fit':p['common_fit'],'methods':p['methods'],'student_forward_cap':p['student_call_cap']},source_commit=commit,dirty_patch_sha256=hashlib.sha256(patch).hexdigest(),dependency_lock_sha256=sha256_file(ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),input_manifests={'data':p['data_manifest_sha256'],'teacher':p['teacher_asset_sha256'],'windows':p['saved_windows_sha256']},hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'diagnostic':17},parent_run_ids=(),budgets=limits)
+    spec=RunSpec(method_id='M',method_variant='task12_single_merge_score_only',resolved_config={'plan_sha256':plan_sha,'source_sha256':sources,'carry_in':p['task12_carry_in'],'fit':p['common_fit'],'methods':p['methods'],'student_forward_cap':p['student_call_cap'],'source_amendment_sha256':sha256_file(amendment_path) if amendment_path.exists() else None,'pair_amendment_sha256':sha256_file(OUT/'pairs-amended.json') if (OUT/'pairs-amended.json').exists() else None},source_commit=commit,dirty_patch_sha256=hashlib.sha256(patch).hexdigest(),dependency_lock_sha256=sha256_file(ROOT/'provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt'),input_manifests={'data':p['data_manifest_sha256'],'teacher':p['teacher_asset_sha256'],'windows':p['saved_windows_sha256']},hardware_policy={'backend':'torch_mps','dtype':'float32','execution_profile':EXECUTION_PROFILE},seeds={'diagnostic':17},parent_run_ids=(),budgets=limits)
     attempt=start_attempt(spec,OUT/'runs');rec=DiagnosticRecorder(BudgetTracker(limits,attempt),p['student_call_cap'],profile=profile,profile_cap=p['profile_wall_cap']);started=time.monotonic()
     for f in source_files:
         dest=attempt.path/'source'/f.relative_to(ROOT);dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(f.read_bytes())
@@ -298,7 +332,7 @@ def run(config):
         calibration_path=OUT/'calibration.json'
         if calibration_path.exists():
             stored=json.loads(calibration_path.read_text())
-            if stored['plan_sha256']!=plan_sha or stored['source_sha256']!=sources:raise ValueError('calibration source/plan binding mismatch')
+            if stored['plan_sha256']!=plan_sha or not source_compatible(stored['source_sha256'],sources,source_amendment):raise ValueError('calibration source/plan binding mismatch')
             thresholds=PathologyThresholds(tuple(PathologyObservation(**x) for x in stored['thresholds']['observations']),.01,.99);calibration=stored['summary']
         else:
             thresholds,calibration=calibrate(teacher,_documents(manifest,p['selected']['calibration'],rec),manifest,rec)
@@ -318,13 +352,16 @@ def run(config):
         score_manifest=hashlib.sha256(canonical_json({'components':[b.cluster_ids[0] for b in main_batches],'contexts':[b.input_ids[0].tolist() for b in main_batches]})).hexdigest()
         measured=0
         for pair_list in design['sample']:
-            pair=tuple(pair_list);path=OUT/'trials'/f'{pair[0]:02d}-{pair[1]:02d}.json'
-            if path.exists():
-                previous=json.loads(path.read_text())
-                if previous['source_sha256']!=sources or previous['plan_sha256']!=plan_sha:raise ValueError('trial reuse source/plan binding mismatch')
+            pair=tuple(pair_list);path=OUT/('trials' if profile else 'trials-final')/f'{pair[0]:02d}-{pair[1]:02d}.json'
+            profile_path=OUT/'trials'/f'{pair[0]:02d}-{pair[1]:02d}.json'
+            existing=path if path.exists() else profile_path
+            if existing.exists():
+                previous=json.loads(existing.read_text())
+                if not source_compatible(previous['source_sha256'],sources,source_amendment) or previous['plan_sha256']!=plan_sha:raise ValueError('trial reuse source/plan binding mismatch')
                 if 'natural_damage' not in previous and not profile:
                     trial=restore_trial_delta(current,teacher,OUT/'profile-delta',recorder=rec)
                     _finish_damage(previous,teacher,trial,natural_batches['natural_damage'],pools['probe_damage'],rec,calibration)
+                    previous['damage_source_sha256']=sources;previous['profile_source_artifact_sha256']=sha256_file(existing)
                     _write(path,previous);del trial;gc.collect();torch.mps.empty_cache()
                 result['trials'].append(previous);continue
             rec.check(CostRecord());trial_started=time.monotonic();before=rec.aggregate()
@@ -364,6 +401,7 @@ def run(config):
                 save_trial_delta(trial,current,OUT/'profile-delta')
                 record['damage_status']='sealed_pending_full_phase_protocol_freeze'
             else:
+                if list(pair) in full_policy.get('sensitivity_pairs',[]):save_trial_delta(trial,current,OUT/f'sensitivity-delta-{pair[0]:02d}-{pair[1]:02d}')
                 _finish_damage(record,teacher,trial,natural_batches['natural_damage'],pools['probe_damage'],rec,calibration)
             _write(path,record);append_event(attempt,dict(kind='trial_complete',pair=pair,path=str(path.relative_to(ROOT)),sha256=sha256_file(path),wall_seconds=record['trial_wall_seconds']))
             result['trials'].append(record);measured+=1
@@ -371,7 +409,10 @@ def run(config):
             del trial;gc.collect();torch.mps.empty_cache()
             if profile and measured>=1:break
         result['status']='profile_complete' if profile else 'complete'
-        if not profile:result['summary']=summarize(result['trials'],design)
+        if not profile:
+            result['summary']=summarize(result['trials'],design)
+            original=json.loads((OUT/'pairs.json').read_text());original_pairs={tuple(x) for x in original['sample']}
+            result['summary']['secondary_original18']=summarize([r for r in result['trials'] if tuple(r['identity']['pair']) in original_pairs],original)
         else:
             result['profile_summary']={'damage_status':'not predicted; awaiting full-phase protocol freeze','controls':run_controls(),'initializer_control':initializer_sensitivity_control(),
                 'trial_wall_seconds':result['trials'][0]['trial_wall_seconds'],'fit_sensitivity':result['trials'][0]['sensitivity'],'fit':result['trials'][0]['fit'],
@@ -383,7 +424,7 @@ def run(config):
     finally:
         rec.finish_attempt(result,elapsed=time.monotonic()-started)
         # Compact public result refers to immutable per-trial raw artifacts.
-        result['trial_paths']=[str((OUT/'trials'/f"{r['identity']['pair'][0]:02d}-{r['identity']['pair'][1]:02d}.json").relative_to(ROOT)) for r in result.pop('trials',[])]
+        result['trial_paths']=[str((OUT/('trials' if profile else 'trials-final')/f"{r['identity']['pair'][0]:02d}-{r['identity']['pair'][1]:02d}.json").relative_to(ROOT)) for r in result.pop('trials',[])]
         _write(attempt.path/'result.json',result);_write(OUT/'latest.json',{'attempt':result['attempt'],'result_sha256':sha256_file(attempt.path/'result.json'),'status':result['status']})
         print(json.dumps({'status':result['status'],'attempt':result['attempt'],'cost':result['aggregate_phase_cost'],'failure':result.get('failure_reason')}),flush=True)
     return result

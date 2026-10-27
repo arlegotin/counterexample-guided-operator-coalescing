@@ -88,3 +88,49 @@ def test_single_merge_cli_routes_profile_status_without_claiming_full_completion
     monkeypatch.setattr(a,'run_single_merge',lambda config:a.DiagnosticResult('profile_complete','fixture/result.json'))
     code=cli.main(['diagnose','--kind','single_merge','--config','configs/pilot.yaml'])
     assert code==0 and 'profile_complete' in capsys.readouterr().out
+
+
+def test_measured_driver_mean_accepts_generator_after_durable_trial_logging():
+    from provenance.measure_single_merge import _mean
+    assert _mean(x for x in [1.,2.,6.])==3.
+    with pytest.raises(ValueError):_mean(iter(()))
+
+
+def test_source_amendment_accepts_only_exact_old_and_new_source_maps():
+    from provenance import measure_single_merge as driver
+    assert hasattr(driver,'source_compatible'), 'explicit source amendment contract missing'
+    old={'poc/merge.py':'a'*64,'driver':'b'*64};new={'poc/merge.py':'a'*64,'driver':'c'*64}
+    amendment={'old_source_sha256':old,'new_source_sha256':new}
+    assert driver.source_compatible(old,new,amendment)
+    assert driver.source_compatible(new,new,None)
+    assert not driver.source_compatible(old,new,None)
+    assert not driver.source_compatible(old,new|{'poc/merge.py':'d'*64},amendment)
+    assert not driver.source_compatible(old|{'extra':'e'*64},new,amendment)
+
+
+def test_shortlist_miss_estimate_uses_observed_excluded_pairs_and_damage_components():
+    a=api();s=table();d=a.DamageTable(s.trials,('h1','h2'),((.4,.4),(.1,.1),(.6,.6)),'damage')
+    assert hasattr(a,'shortlist_misses'), 'excluded-pair miss estimate missing'
+    result=a.shortlist_misses(d,[(0,1)],seed=17,resamples=100)
+    assert result['observed_excluded_better_fraction']==.5
+    assert result['restriction_regret']==pytest.approx(.3)
+    assert result['restriction_regret_interval']==pytest.approx([.3,.3])
+    assert result['scope']=='sampled excluded pairs against sampled shortlist members; not all435'
+    with pytest.raises(ValueError):a.shortlist_misses(d,[],seed=17,resamples=100)
+
+
+def test_primary_and_sensitivity_attempts_share_one_aggregate_budget(tmp_path):
+    from provenance.measure_single_merge import DiagnosticRecorder
+    from poc.records import start_attempt
+    from poc.budget import BudgetTracker,BudgetExceeded
+    from poc.contracts import CostRecord
+    from test_records import spec
+    base=spec();limits=replace(base.budgets,updates=2,wall_seconds=100.)
+    config={'plan_sha256':'a'*64,'carry_in':{'audit_wall_seconds':3.,'spec_paths':[],'evidence':{}}}
+    primary=start_attempt(replace(base,method_variant='task12_single_merge_score_only',budgets=limits,resolved_config=config),tmp_path/'runs')
+    tracker=BudgetTracker(limits,primary);tracker.record(CostRecord(updates=1,wall_seconds=4.))
+    sensitivity=start_attempt(replace(base,method_variant='task12_single_merge_sensitivity_refit',budgets=limits,resolved_config=config),tmp_path/'runs')
+    second=BudgetTracker(limits,sensitivity);second.record(CostRecord(updates=1,wall_seconds=5.))
+    recorder=DiagnosticRecorder(second,100)
+    assert recorder.aggregate().updates==2 and recorder.aggregate().wall_seconds==12.
+    with pytest.raises(BudgetExceeded):recorder.check_aggregate(CostRecord(updates=1))

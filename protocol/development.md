@@ -119,3 +119,41 @@ It evaluates fit/main score/development8 secondary only. Final natural16 and
 fresh-intervention16 predictions stay sealed until the protocol and full-phase
 ruling are fixed. The profile's fitted changed-owner delta is retained with exact
 base/initialized/fitted digests; delayed damage restores it without refitting.
+
+## Frozen full-phase amendment
+
+The numerical profile completed pair(0,15), one8192-target update and all score
+observations, saving its changed-owner delta before a generator/list mismatch
+failed a progress-print statement. Its raw status remains failed and attributed
+to ed6193c. The source-bound derived profile receipt preserves exact raw hashes;
+the logging fix materializes the iterable and has a failing-then-passing test.
+Original calibration, profile trial, delta and failed result remain immutable;
+deferred endpoint additions use new `trials-final` artifacts. Exact old/new source
+maps and reused-artifact hashes are recorded in the source amendment.
+
+The profile spent155.856894s including57.897840s preflight,4337teacher/555student
+calls, one update8192targets and17backwards of each kind. The maximum observed
+RSS+driver sum was6,712,950,784bytes. Separate RSS/driver/allocated maxima occur
+at different times and must not be added into an invented simultaneous peak.
+The fixed fit-check mean KL fell0.15911549 to0.15506479; this shows first-step
+learning, not convergence. The source-bound profile receipt includes adverse
+initializer and pairwise/joint controls.
+
+All18 original stratified pairs happened to be outside the24-member shortlist.
+Before any endpoint predictions, the controller approved two uniformly seeded
+(seed18) shortlist additions: (1,5) and(1,2). Primary comparisons use all20
+candidates. A frozen no-extra-query secondary analysis repeats selection/regret
+on the original18 only. Neither population replaces the other according to its
+outcomes. Coverage/miss estimates concern18 sampled excluded versus2 sampled
+included pairs; they are neither a complete shortlist test nor a435-pair rate.
+
+Within the unchanged22-update/180224-target cap, one further8192-target update
+with fresh Adam is predeclared for(0,15) and(1,5). These are separately named
+sensitivity-refit RunSpecs, initialized from each retained primary one-update
+state, using the same fit cases and default mixture. Fixed fit/main-score checks
+measure remaining optimization sensitivity. Their states never enter the
+primary20-trial or secondary18-trial ranking. Primary and sensitivity variants
+share one aggregate budget. No convergence or active-refit efficacy claim follows
+from these two additional steps. Full phase was approved against a conservative
+~3006s eighteen-trial forecast with ample margin under7200s; the20-trial amendment
+and two extra updates remain within those existing caps.
