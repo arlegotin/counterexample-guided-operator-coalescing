@@ -139,7 +139,7 @@ The fixed fit-check mean KL fell0.15911549 to0.15506479; this shows first-step
 learning, not convergence. The source-bound profile receipt includes adverse
 initializer and pairwise/joint controls.
 
-All18 original stratified pairs happened to be outside the24-member shortlist.
+All18 original stratified pairs happened to be outside the23-member deduplicated shortlist (the union cap was24).
 Before any endpoint predictions, the controller approved two uniformly seeded
 (seed18) shortlist additions: (1,5) and(1,2). Primary comparisons use all20
 candidates. A frozen no-extra-query secondary analysis repeats selection/regret
