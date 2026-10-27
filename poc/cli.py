@@ -57,6 +57,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             write_doctor_report(args.out, report)
             print(f"doctor: WP00 compute-path {report.compute_path_status}; full gate={report.wp00_status}; scientific backend={report.scientific_backend}; report={args.out}")
             return 0 if report.compute_path_status == "passed" else 3
+        if args.command == "validate" and args.suite == "component":
+            from poc.validation import run_component_validation
+            return run_component_validation()
         if hasattr(args, "config"):
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)

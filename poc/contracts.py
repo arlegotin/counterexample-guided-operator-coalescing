@@ -315,3 +315,43 @@ class BankStateRef:
             raise ValueError('state directory required')
         if not isinstance(self.manifest_sha256, str) or not re.fullmatch(r'[0-9a-f]{64}', self.manifest_sha256):
             raise ValueError('bank state manifest requires SHA-256')
+
+
+@dataclass(frozen=True)
+class MetricSums:
+    """Unnormalized token sums, aggregated on CPU in FP64; raw KL is preserved.
+
+    A skipped batch is not an empty-population evaluation result: evaluation
+    callers must reject an aggregate with zero valid targets.
+    """
+    kl: float = 0.0
+    nll: float = 0.0
+    valid_targets: int = 0
+    disagreements: int = 0
+    status: str = 'ok'
+    reason: str | None = None
+
+    def __post_init__(self) -> None:
+        for name in ('kl', 'nll'):
+            value = getattr(self, name)
+            if type(value) not in (int, float) or not math.isfinite(value):
+                raise ValueError(f'{name} must be finite')
+        for name in ('valid_targets', 'disagreements'):
+            _number(name, getattr(self, name), integer=True)
+        if self.disagreements > self.valid_targets:
+            raise ValueError('disagreements cannot exceed valid targets')
+        if self.status not in ('ok', 'skipped'):
+            raise ValueError('unknown metric status')
+        if self.status == 'skipped':
+            if self.reason != 'no_valid_targets' or self.valid_targets or self.kl or self.nll or self.disagreements:
+                raise ValueError('skipped metrics require no_valid_targets and empty sums')
+        elif self.reason is not None:
+            raise ValueError('successful metrics cannot have a skip reason')
+
+    def __add__(self, other: 'MetricSums') -> 'MetricSums':
+        if not isinstance(other, MetricSums):
+            return NotImplemented
+        count = self.valid_targets + other.valid_targets
+        return MetricSums(math.fsum((self.kl, other.kl)), math.fsum((self.nll, other.nll)), count,
+                          self.disagreements + other.disagreements,
+                          'ok' if count else 'skipped', None if count else 'no_valid_targets')

@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-27",
+  "fixture": {
+    "alpha": 0.1,
+    "batch_size": 1,
+    "hidden_width": 16,
+    "prediction_positions": 512,
+    "vocabulary": 16384
+  },
+  "measurement": "fresh-child ru_maxrss process high-water bytes, two repeats, one CPU thread",
+  "rows": [
+    {
+      "baseline_high_water_bytes": 211615744,
+      "chunk_size": 512,
+      "high_water_increase_bytes": 182648832,
+      "kl": 313.2706298828125,
+      "max_readout_positions": 512,
+      "mode": "full",
+      "nll": 5100.22509765625,
+      "peak_rss_bytes": 394264576,
+      "repeat": 0
+    },
+    {
+      "baseline_high_water_bytes": 210993152,
+      "chunk_size": 32,
+      "high_water_increase_bytes": 57540608,
+      "kl": 313.2706127166748,
+      "max_readout_positions": 32,
+      "mode": "chunked",
+      "nll": 5100.224884033203,
+      "peak_rss_bytes": 268533760,
+      "repeat": 0
+    },
+    {
+      "baseline_high_water_bytes": 211697664,
+      "chunk_size": 128,
+      "high_water_increase_bytes": 106954752,
+      "kl": 313.27061462402344,
+      "max_readout_positions": 128,
+      "mode": "chunked",
+      "nll": 5100.224853515625,
+      "peak_rss_bytes": 318652416,
+      "repeat": 0
+    },
+    {
+      "baseline_high_water_bytes": 212156416,
+      "chunk_size": 512,
+      "high_water_increase_bytes": 309837824,
+      "kl": 313.2706298828125,
+      "max_readout_positions": 512,
+      "mode": "chunked",
+      "nll": 5100.22509765625,
+      "peak_rss_bytes": 521994240,
+      "repeat": 0
+    },
+    {
+      "baseline_high_water_bytes": 210878464,
+      "chunk_size": 512,
+      "high_water_increase_bytes": 182616064,
+      "kl": 313.2706298828125,
+      "max_readout_positions": 512,
+      "mode": "full",
+      "nll": 5100.22509765625,
+      "peak_rss_bytes": 393494528,
+      "repeat": 1
+    },
+    {
+      "baseline_high_water_bytes": 211009536,
+      "chunk_size": 32,
+      "high_water_increase_bytes": 73646080,
+      "kl": 313.2706127166748,
+      "max_readout_positions": 32,
+      "mode": "chunked",
+      "nll": 5100.224884033203,
+      "peak_rss_bytes": 284655616,
+      "repeat": 1
+    },
+    {
+      "baseline_high_water_bytes": 212025344,
+      "chunk_size": 128,
+      "high_water_increase_bytes": 109002752,
+      "kl": 313.27061462402344,
+      "max_readout_positions": 128,
+      "mode": "chunked",
+      "nll": 5100.224853515625,
+      "peak_rss_bytes": 321028096,
+      "repeat": 1
+    },
+    {
+      "baseline_high_water_bytes": 210927616,
+      "chunk_size": 512,
+      "high_water_increase_bytes": 310444032,
+      "kl": 313.2706298828125,
+      "max_readout_positions": 512,
+      "mode": "chunked",
+      "nll": 5100.22509765625,
+      "peak_rss_bytes": 521371648,
+      "repeat": 1
+    }
+  ],
+  "schema_version": 1,
+  "scope": "isolated CPU FP32 projection/tied-readout loss only; not full-model memory",
+  "source_sha256": {
+    "poc/contracts.py": "2cc74f8fbc061d1d80e8aec3c89df98c0fac8449e79d9803ba271a38e44ba5a2",
+    "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+    "provenance/measure_loss_memory.py": "2d73cf8ee2c65949aca3a75f32c1c005e5b37a80589355a7f872d6cf805ff040"
+  }
+}
