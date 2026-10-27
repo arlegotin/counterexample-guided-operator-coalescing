@@ -60,7 +60,9 @@ class PrecisionRecorder(TrainingPilotRecorder):
                 self._phase_trackers[key]=self.tracker if key==str(self.tracker.path.parent) else BudgetTracker(identity.budgets,AttemptRecord(path.parent.name,'aggregate_only',path.parent/'attempts'/'aggregate_only',identity))
             total=BudgetTracker.combine(total,self._phase_trackers[key].totals)
         return total
-    def phase_totals(self):return self._total_paths(sorted((self.phase_root/'runs').glob('*/spec.json')))
+    def phase_totals(self):
+        total=self._total_paths(sorted((self.phase_root/'runs').glob('*/spec.json')))
+        return replace(total,memory_unavailable_reason=None) if total.memory_bytes is not None else total
     def aggregate(self):
         parent_paths=[]
         for item in self.plan['parent_runs']:
@@ -125,6 +127,7 @@ def make_plan(config):
 
 
 def _start(stage,p,config):
+    if config.budgets.resolve().to_dict()!=p['overall_budgets']:raise ValueError('frozen overall budgets changed')
     sources=sorted([*ROOT.glob('poc/**/*.py'),*[(ROOT/'provenance'/name) for name in ('measure_single_merge.py','measure_single_merge_sensitivity.py','measure_training_pilot.py','measure_probe_pilot.py','prepare_single_merge.py','measure_single_merge_precision.py')]])
     hashes={str(f.relative_to(ROOT)):sha256_file(f) for f in sources}
     original=json.loads((ORIGINAL/'source-amendment.json').read_text())['new_source_sha256']
@@ -199,6 +202,7 @@ def prepare(p,rec,attempt):
         policy=ProbePolicy(selection_mode='seeded_random',seed=17,per_document_cap=4,generated_edits_per_document=4,random_component_fraction=1.,depth_regions=(tuple(range(30)),),depth_region_balance=(1.,),selection_count=1,max_pool_records=120,max_cache_entries=1,max_cache_bytes=4*1024**2,thresholds=thresholds,roles={doc.document_id:'probe_score'},components={doc.document_id:entry['component_id']},allowed_roles=('probe_score',),use='rank',teacher_digest=base['teacher_digest'],candidate_digest=base['candidate_digest'],tokenizer_digest=base['tokenizer_digest'],dtype='float32',backend='torch_mps',boundary_version=base['boundary_version'],execution_profile=EXECUTION_PROFILE,context_tokens=512,recorder=rec)
         rows=list(generate_donors([doc],tokenizer,policy));good=_accepted(rows,tuple(range(30)));pool.extend(rows)
         eligibility.append({'document_id':doc.document_id,'component_id':entry['component_id'],'eligible':bool(good),'row_count':len(rows),'rejection_reasons':[r.rejection_reason or ('no_valid_targets' if not any(r.target_mask) else 'identity_or_short') for r in rows if r not in good]})
+        _write(OUT/'eligibility-score'/f'{doc.document_id}.json',{'entry':entry,'check':eligibility[-1],'rows':[asdict(r) for r in rows]})
         if good:selected.append(entry)
         if len(selected)==16:break
     if len(selected)!=16:raise ValueError('fixed fresh score reserve underfilled; stop without population amendment')
@@ -209,9 +213,11 @@ def prepare(p,rec,attempt):
         if hashlib.sha256(raw).hexdigest()!=doc.token_sha256:raise ValueError('fresh canonical token hash mismatch')
         tokens=json.loads(raw)['fields']['text']
         if len(tokens)<512:
-            damage_eligibility.append({'document_id':doc.document_id,'eligible':False,'reason':'verified_token_length_below512','length':len(tokens)});continue
+            damage_eligibility.append({'document_id':doc.document_id,'eligible':False,'reason':'verified_token_length_below512','length':len(tokens)})
+            _write(OUT/'eligibility-damage'/f'{doc.document_id}.json',{'entry':entry,'check':damage_eligibility[-1]});continue
         batch,w=_canonical(doc,entry['component_id'],rec)
         windows.append({'entry':entry,'window':asdict(w)});damage_eligibility.append({'document_id':doc.document_id,'eligible':True})
+        _write(OUT/'eligibility-damage'/f'{doc.document_id}.json',{'entry':entry,'check':damage_eligibility[-1],'window':asdict(w)})
         if len(windows)==32:break
     if len(windows)!=32:raise ValueError('fixed fresh damage reserve underfilled')
     _write(OUT/'pool.json',[asdict(r) for r in pool]);_write(OUT/'windows.json',windows)
