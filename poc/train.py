@@ -114,6 +114,8 @@ class TrainingConfig:
     checkpoint_root: Path | None = None
     resume: object | None = None
     stop_after_updates: int | None = None
+    observation_steps: tuple[int,...] = ()
+    on_update: Callable[[int],None] | None = None
 
     def __post_init__(self):
         for name in ('max_updates','epochs','target_count','chunk_size'):
@@ -130,6 +132,9 @@ class TrainingConfig:
         if not weights or any(k not in ('natural','student','donor') or type(v) not in (int,float) or not math.isfinite(v) or v<=0 for k,v in weights.items()) or not math.isclose(sum(weights.values()),1):
             raise ValueError('explicit positive source weights must sum to one')
         if self.phase=='global' and weights!={'natural':1.0}: raise ValueError('global fitting uses natural text')
+        if (tuple(sorted(set(self.observation_steps)))!=tuple(self.observation_steps) or any(type(k) is not int or not 1<=k<=self.max_updates for k in self.observation_steps)):
+            raise ValueError('observation steps must be sorted unique update boundaries')
+        if self.on_update is not None and not callable(self.on_update):raise ValueError('observation callback must be callable')
         if self.stop_after_updates is not None and (type(self.stop_after_updates) is not int or self.stop_after_updates<1): raise ValueError('invalid bounded stop')
         if self.kl_floor_per_target and self.numerical_profile=='cpu_fp64_reference': raise ValueError('nonzero floor needs qualified scientific profile')
 
@@ -138,7 +143,7 @@ class TrainingConfig:
             alpha=self.alpha,bank_lr=self.bank_lr,residual_lr=self.residual_lr,weight_decay=self.weight_decay,
             lr_factor=self.lr_factor,phase=self.phase,affected_depths=list(self.affected_depths),
             mixture_weights=dict(self.mixture_weights),kl_floor_per_target=self.kl_floor_per_target,
-            numerical_profile=self.numerical_profile,epoch_tail_policy='actual_denominator_v1')
+            numerical_profile=self.numerical_profile,epoch_tail_policy='actual_denominator_v1',observation_steps=list(self.observation_steps))
 
 
 @dataclass
@@ -411,7 +416,7 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
         for key,value in saved.items():group[key]=value
         for n,p in zip(group['owner_ids'],group['params'],strict=True):
             # Adam step is deliberately CPU unless capturable; moments follow owner device.
-            optimizer.state[p]={k:(v.clone() if k=='step' else v.to(p.device).clone()) if isinstance(v,torch.Tensor) else v for k,v in state.optimizer['state'][n].items()}
+            optimizer.state[p]={k:(v.clone() if k=='step' or v.device==p.device else v.to(p.device)) if isinstance(v,torch.Tensor) else v for k,v in state.optimizer['state'][n].items()}
     _restore_rng(state.rng)
 
 
@@ -485,6 +490,8 @@ def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSourc
                     from poc.checkpoint import save_checkpoint
                     state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited)
                     checkpoint_ref=save_checkpoint(state,config.checkpoint_root,recorder=guard)
+                    del state
+                if step in config.observation_steps and config.on_update is not None:config.on_update(step)
                 guard.check(CostRecord())
             if step>=config.max_updates or (config.stop_after_updates is not None and step-initial_step>=config.stop_after_updates):break
     finally:

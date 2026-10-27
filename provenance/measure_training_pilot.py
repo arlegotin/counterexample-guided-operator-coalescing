@@ -72,6 +72,14 @@ def plan(out,stage,wall,updates):
         if component not in seen:chosen.append(row.document_id);seen.add(component)
         if len(chosen)==20:break
     if len(chosen)!=20:raise ValueError('insufficient component-distinct fit windows')
+    observations=chosen[17:]
+    excluded={manifest.membership[i] for i in observations}
+    fit_ids=[];seen=set(excluded)
+    for row in rows:
+        component=manifest.membership[row.document_id]
+        if component not in seen:fit_ids.append(row.document_id);seen.add(component)
+        if len(fit_ids)==512:break
+    if len(fit_ids)!=512:raise ValueError('512 component-distinct fit windows required')
     development=[];seen=set()
     for row in sorted((r for r in manifest.records if manifest.roles[r.document_id]=='dev' and r.source=='HuggingFaceFW/fineweb-edu' and r.metadata.get('token_count',0)>=512),key=lambda r:hashlib.sha256(('task11-v1:'+r.document_id).encode()).digest()):
         component=manifest.membership[row.document_id]
@@ -80,8 +88,8 @@ def plan(out,stage,wall,updates):
     if len(development)!=8:raise ValueError('insufficient component-distinct development windows')
     available=psutil.virtual_memory().available
     memory=min(6*GiB,int(.8*available))
-    p=dict(schema_version=1,stage=stage,selection='sha256(task11-v1:document_id),20 distinct fit components,metadata token_count>=512',
-        fit_ids=chosen[:17],observation_ids=chosen[17:],dev_ids=development,
+    p=dict(schema_version=1,stage=stage,selection='sha256(task11-v1:document_id),512 distinct fit components excluding fixed3fitchecks,metadata token_count>=512',
+        fit_ids=fit_ids,observation_ids=observations,dev_ids=development,
         observation_steps=[0]+[k for k in (2,8,16,31) if k<=updates],context_tokens=512,window='first512 reset0 appendEOS only if short (short input rejected)',
         head_chunk=32,bank_count=15,rank=8,seed=17,alpha=.1,lr_bank=1e-4,lr_residual=3e-4,
         max_updates=updates,wall_cap=wall,teacher_cap=2048 if stage=='profile' else 12000,
@@ -109,7 +117,7 @@ def run(stage,out,wall,updates):
     budgets=Budget(updates=p['update_cap'],valid_target_presentations=p['presentation_cap'],teacher_forward_calls=p['teacher_cap'],
         suffix_backward_calls=p['suffix_backward_cap'],student_backward_calls=p['backward_cap'],search_proposals=0,search_seconds=0,
         wall_seconds=wall,disk_bytes=p['disk_cap'],memory_bytes=p['memory_cap'])
-    config=TrainingConfig(max_updates=max(1,updates),epochs=max(1,updates),kl_floor_per_target=1.2814748543802652e-7,
+    config=TrainingConfig(max_updates=max(1,updates),epochs=1,observation_steps=tuple(k for k in (2,8,16,31) if k<=updates),kl_floor_per_target=1.2814748543802652e-7,
         numerical_profile=EXECUTION_PROFILE+';teacher-qualification-torch_mps-context512')
     patch=subprocess.check_output(['git','diff','--binary','HEAD'],cwd=ROOT)
     spec=RunSpec(method_id='M',method_variant='task11_'+stage+'_natural_only',
@@ -127,6 +135,8 @@ def run(stage,out,wall,updates):
         plan_sha256=sha256_file(out/'plan.json'),source_sha256=sources,measurements=[],status='running',
         memory_guard='RSS+MPSdriver conservative overlapping observation; separate counters also retained')
     started=time.monotonic()
+    run_record=json.loads((attempt.path/'run.json').read_text());run_record['status']='running';_write(attempt.path/'run.json',run_record)
+    append_event(attempt,dict(kind='attempt_status',status='running'))
     def measured(name,fn,*,nested=False,**counts):
         start=time.monotonic()
         value=fn() if nested else rec.call(fn,**counts)
@@ -186,52 +196,55 @@ def run(stage,out,wall,updates):
                 for role,identities in [('fit_observation',p['observation_ids']),('dev',p['dev_ids'])]:
                     observations=[batches[i] for i in identities]
                     label=f'{role}_step{step}'
-                    sums=measured(label,lambda:[stream_metrics(_Dispatch(teacher,_Counts(rec),'teacher'),_Dispatch(student,_Counts(rec),'student'),b,32) for b in observations])
+                    sums=measured(label,lambda:[stream_metrics(_Dispatch(teacher,_Counts(rec),'teacher'),_Dispatch(student,_Counts(rec),'student'),b,32) for b in observations],processed_inputs=len(observations),processed_tokens=512*len(observations))
                     row=dict(label=label,step=step,role=role,valid_targets=sum(s.valid_targets for s in sums),kl_sum=sum(s.kl for s in sums),nll_sum=sum(s.nll for s in sums))
                     row['kl_per_target']=row['kl_sum']/row['valid_targets'];row['objective_per_target']=(row['kl_sum']+.1*row['nll_sum'])/row['valid_targets']
                     append_event(attempt,dict(kind='observation',**row));result.setdefault('observations',[]).append(row)
             observe(0)
-            # Exactly8192 per epoch, preserving all512 context tokens. The
-            # unused495 targets of window17 never enter the fitting denominator.
+            # A single pass over512 distinct fit components; exact8192 splits
+            # reuse full context only at update boundaries, never repeat epochs.
             fit_batches=[batches[i] for i in p['fit_ids']]
-            last=fit_batches[-1];mask=torch.zeros_like(last.target_mask);mask[:,:16]=True
-            fit_batches[-1]=replace(last,target_mask=mask)
             stream=TrainingSources(natural=tuple(fit_batches),manifest_hashes={'data':p['data_manifest_sha256']})
             _write(attempt.path/'fit-target-stream.json',{str(i):dict(document=b.document_ids[0],target_mask=b.target_mask[0].tolist()) for i,b in enumerate(fit_batches)})
-            config=replace(config,run_spec=spec,checkpoint_root=attempt.path/'checkpoints')
-            previous=0;resume=None
-            milestones=sorted(set(k for k in (2,8,16,31,updates) if k<=updates))
-            for milestone in milestones:
-                phase_start=time.monotonic()
-                phase_config=replace(config,resume=resume,stop_after_updates=milestone-previous)
-                fitted=measured(f'fit_exact8192_steps{previous+1}_to{milestone}',lambda:fit_model(student,teacher,stream,phase_config,budgets,rec),nested=True)
-                phase_seconds=time.monotonic()-phase_start
-                result['fit']=dict(outcome=fitted.outcome,reason=fitted.reason,step=fitted.state.step,target_cursor=fitted.state.target_cursor,
-                    metrics=[e for e in fitted.state.events if e['kind']=='update'],candidate_digest=fitted.state.candidate_digest,
-                    checkpoint=asdict(fitted.checkpoint) if fitted.checkpoint else None)
-                if fitted.state.step!=milestone:raise ValueError('bounded fit failed to reach declared milestone')
-                observe(milestone)
-                if fitted.checkpoint is not None:
-                    # Selected learning checkpoints supplement current+previous.
-                    destination=attempt.path/'milestones'/str(milestone)
-                    measured(f'preserve_milestone_{milestone}',lambda:shutil.copytree(fitted.checkpoint.directory,destination))
-                    result.setdefault('milestones',[]).append(dict(step=milestone,directory=str(destination),manifest_sha256=fitted.checkpoint.manifest_sha256))
+            checkpoint_root=attempt.path/'checkpoints'
+            previous=0;phase_started=time.monotonic()
+            def milestone(step):
+                nonlocal previous,phase_started
+                from poc.checkpoint import resolve_checkpoint
+                phase_seconds=time.monotonic()-phase_started
+                observe(step)
+                ref=resolve_checkpoint(checkpoint_root)
+                destination=attempt.path/'milestones'/str(step)
+                measured(f'preserve_milestone_{step}',lambda:shutil.copytree(ref.directory,destination))
+                result.setdefault('milestones',[]).append(dict(step=step,directory=str(destination),manifest_sha256=ref.manifest_sha256))
                 elapsed=time.monotonic()-started
-                forecast=elapsed+(updates-milestone)*phase_seconds/(milestone-previous)
-                row=dict(kind='continuation_forecast',step=milestone,elapsed_seconds=elapsed,remaining_updates=updates-milestone,
+                # Include evaluation/copy overhead in the measured continuation phase.
+                phase_seconds=time.monotonic()-phase_started
+                forecast=elapsed+(updates-step)*phase_seconds/(step-previous)
+                row=dict(kind='continuation_forecast',step=step,elapsed_seconds=elapsed,remaining_updates=updates-step,
                     measured_phase_seconds=phase_seconds,forecast_total_seconds=forecast,wall_cap_seconds=wall,
-                    policy='linear measured phase including checkpoint+ledger; explicit heuristic, no throughput promise')
+                    policy='linear measured phase including checkpoint+evaluation+ledger; explicit heuristic, no throughput promise')
                 append_event(attempt,row);result.setdefault('continuation_forecasts',[]).append(row);print(json.dumps(row),flush=True)
                 if forecast>wall:
                     from poc.budget import BudgetExceeded
                     raise BudgetExceeded('measured continuation forecast exceeds fixed wall cap')
-                resume=fitted.state;previous=milestone
+                previous=step;phase_started=time.monotonic()
+            config=replace(config,run_spec=spec,checkpoint_root=checkpoint_root,on_update=milestone)
+            fitted=measured('fit_exact8192_diverse_single_pass',lambda:fit_model(student,teacher,stream,config,budgets,rec),nested=True)
+            result['fit']=dict(outcome=fitted.outcome,reason=fitted.reason,step=fitted.state.step,target_cursor=fitted.state.target_cursor,
+                metrics=list(fitted.metrics),candidate_digest=fitted.state.candidate_digest,
+                checkpoint=asdict(fitted.checkpoint) if fitted.checkpoint else None)
         result['status']='passed'
     except BaseException as exc:
         result.update(status='failed',failure_type=type(exc).__name__,failure_reason=str(exc));raise
     finally:
         overrun=rec.finish_attempt(result,elapsed=time.monotonic()-started)
-        _write(attempt.path/'result.json',result);append_event(attempt,dict(kind='result',status=result['status'],cost=result['cost']))
+        _write(attempt.path/'result.json',result)
+        run_record['status']='complete' if result['status']=='passed' else ('interrupted' if result.get('failure_type') in ('KeyboardInterrupt','InterruptedError') else 'failed')
+        run_record['output_manifest_sha256']=sha256_file(attempt.path/'result.json') if run_record['status']=='complete' else None
+        run_record['failure_category']=result.get('failure_type');run_record['failure_details']=result.get('failure_reason')
+        _write(attempt.path/'run.json',run_record);append_event(attempt,dict(kind='attempt_status',status=run_record['status']))
+        append_event(attempt,dict(kind='result',status=result['status'],cost=result['cost']))
         print(json.dumps(dict(result_path=str(attempt.path/'result.json'),status=result['status'],cost=result['cost'],memory=result['memory_observed_highwaters'])),flush=True)
         if overrun:raise overrun
     return result

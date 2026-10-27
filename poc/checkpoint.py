@@ -45,7 +45,7 @@ def _publication_boundary(stage):
 def _encode(value,tensors):
     if isinstance(value,torch.Tensor):
         key=f'tensor_{len(tensors):06d}'
-        tensors[key]=value.detach().cpu().contiguous().clone()
+        tensors[key]=value.detach().cpu().contiguous()
         return {'tag':'tensor','key':key}
     if isinstance(value,np.ndarray):
         key=f'tensor_{len(tensors):06d}'

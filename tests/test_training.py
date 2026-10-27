@@ -181,3 +181,13 @@ def test_runspec_cannot_silently_omit_or_misstate_resolved_training_config():
     with pytest.raises(ValueError,match='resolved training'):
         t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),
             t.TrainingConfig(max_updates=1,run_spec=spec(budgets=budget(),resolved_config={'training':{'max_updates':99}})),budget(),MemoryRecorder())
+
+
+def test_observation_callbacks_run_only_at_complete_checkpoint_boundaries(tmp_path):
+    t=api();teacher,student=models();seen=[]
+    def observe(step):
+        assert all(p.grad is None for p in student.parameters())
+        seen.append(step)
+    cfg=t.TrainingConfig(max_updates=4,epochs=4,observation_steps=(2,4),on_update=observe)
+    result=t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),cfg,budget(),MemoryRecorder())
+    assert seen==[2,4] and result.state.step==4
