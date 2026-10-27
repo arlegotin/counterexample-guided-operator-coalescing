@@ -86,6 +86,11 @@ class TorchDecoder(nn.Module):
         return cls(model, tokenizer_digest=tokenizer_digest)
 
     @property
+    def owner_count(self):
+        """Actual registered canonical parameter identities, deduplicating ties."""
+        return len(list(self.parameters()))
+
+    @property
     def device(self):
         return self.embed_tokens.weight.device
 

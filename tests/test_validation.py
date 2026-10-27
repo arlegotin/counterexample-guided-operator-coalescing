@@ -52,7 +52,7 @@ def test_teacher_cli_routes_explicit_local_device_and_output(tmp_path,monkeypatc
 import pytest
 
 
-@pytest.mark.parametrize('suite',['export','all'])
+@pytest.mark.parametrize('suite',['all'])
 def test_unimplemented_validation_suites_keep_explicit_prerequisite_status(suite):
     from poc.cli import main
     assert main(['validate','--suite',suite])==3

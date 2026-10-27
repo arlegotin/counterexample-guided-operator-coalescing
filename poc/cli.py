@@ -31,6 +31,16 @@ def _parser() -> argparse.ArgumentParser:
             sub.add_argument("--config", type=Path, default=Path('configs/135m.yaml'))
             sub.add_argument("--device", choices=("cpu", "mps"), default="mps")
             sub.add_argument("--out", type=Path, default=Path('artifacts/validation/teacher_and_harness'))
+        if command == "validate":
+            sub.add_argument("--bundle", type=Path)
+            sub.add_argument("--backend", choices=("torch", "mlx"), default="torch")
+        if command == "export":
+            sources = sub.add_mutually_exclusive_group(required=True)
+            sources.add_argument("--source-bundle", type=Path)
+            sources.add_argument("--teacher-assets", type=Path)
+            sub.add_argument("--teacher-manifest-sha256")
+            sub.add_argument("--runtime-spec", type=Path)
+            sub.add_argument("--out", type=Path, required=True)
         if command == "baselines":
             sub.add_argument("--stage", choices=("format_and_quant",), required=True)
         if command == "diagnose":
@@ -67,6 +77,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "validate" and args.suite == "teacher_and_harness":
             from poc.teacher_validation import run_teacher_validation
             return run_teacher_validation(config_path=args.config, device=args.device, out=args.out)
+        if args.command == "export":
+            from poc.export import export_command
+            return export_command(args)
+        if args.command == "validate" and args.suite == "export":
+            if args.bundle is not None:
+                from poc.export import validate_artifact
+                return validate_artifact(args.bundle, args.backend)
+            from poc.validation import run_export_validation
+            return run_export_validation(backend=args.backend)
         if hasattr(args, "config") and args.command != "validate":
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)

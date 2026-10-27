@@ -355,3 +355,116 @@ class MetricSums:
         return MetricSums(math.fsum((self.kl, other.kl)), math.fsum((self.nll, other.nll)), count,
                           self.disagreements + other.disagreements,
                           'ok' if count else 'skipped', None if count else 'no_valid_targets')
+
+
+def _optional_reason(name, value):
+    if value is not None and (type(value) is not str or not value.strip()):
+        raise ValueError(f'{name} must be a nonempty reason or null')
+
+
+@dataclass(frozen=True)
+class RuntimeSpec:
+    """Export-only local inputs. Paths never enter the artifact's identity."""
+    tokenizer_files: Mapping
+    license_files: Mapping
+    dependency_lock: str
+    install_bytes: int | None = None
+    install_unknown_reason: str | None = 'installed environment not measured'
+
+    def __post_init__(self):
+        from pathlib import PurePosixPath
+        for name in ('tokenizer_files', 'license_files'):
+            mapping = getattr(self, name)
+            if not isinstance(mapping, Mapping) or not mapping:
+                raise ValueError(f'{name} must explicitly supply files')
+            for filename, path in mapping.items():
+                if (type(filename) is not str or PurePosixPath(filename).name != filename
+                        or filename in ('.', '..') or '\\' in filename or not isinstance(path, str) or not path):
+                    raise ValueError('export inputs require simple file names and local paths')
+            object.__setattr__(self, name, freeze(mapping))
+        if ('tokenizer.json' not in self.tokenizer_files or type(self.dependency_lock) is not str
+                or not self.dependency_lock.strip()):
+            raise ValueError('a self-contained tokenizer.json and dependency lock are required')
+        _optional_reason('install_unknown_reason',self.install_unknown_reason)
+        if self.install_bytes is not None: _number('install_bytes', self.install_bytes, integer=True)
+        elif not self.install_unknown_reason: raise ValueError('unknown installation size requires a reason')
+
+
+@dataclass(frozen=True)
+class BundleRef:
+    directory: str
+    manifest_sha256: str
+
+    def __post_init__(self):
+        if (type(self.directory) is not str or not self.directory or type(self.manifest_sha256) is not str
+                or not re.fullmatch('[0-9a-f]{64}', self.manifest_sha256)):
+            raise ValueError('bundle requires a directory and detached manifest SHA-256')
+
+
+@dataclass(frozen=True)
+class BundleManifest:
+    schema_version: int
+    file_entries: Mapping
+    metadata: Mapping
+
+    def __post_init__(self):
+        if type(self.schema_version) is not int or self.schema_version != 1:
+            raise ValueError('unsupported bundle schema')
+        object.__setattr__(self, 'file_entries', freeze(self.file_entries))
+        object.__setattr__(self, 'metadata', freeze(self.metadata))
+
+
+@dataclass(frozen=True)
+class ByteAccounting:
+    payload_bytes: int
+    archive_bytes: int | None = None
+    archive_unknown_reason: str | None = 'archive not measured'
+    install_bytes: int | None = None
+    install_unknown_reason: str | None = 'installation not measured'
+    resident_bytes: int | None = None
+    resident_unknown_reason: str | None = 'no materialized decoder supplied'
+    owner_count: int | None = None
+    phase_peaks: Mapping | None = None
+
+    def __post_init__(self):
+        _number('payload_bytes', self.payload_bytes, integer=True)
+        for name in ('archive', 'install', 'resident'):
+            _optional_reason(name+'_unknown_reason',getattr(self,name+'_unknown_reason'))
+            value = getattr(self, name + '_bytes')
+            if value is None:
+                if not getattr(self, name + '_unknown_reason'): raise ValueError(f'unknown {name} bytes need reason')
+            else: _number(name + '_bytes', value, integer=True)
+        if self.owner_count is not None: _number('owner_count', self.owner_count, integer=True)
+        peaks = self.phase_peaks or {'load': {'bytes': None, 'reason': 'not measured'},
+                                    'inference': {'bytes': None, 'reason': 'not measured'}}
+        if not isinstance(peaks,Mapping): raise ValueError('phase peaks must be a mapping')
+        for value in peaks.values():
+            if not isinstance(value,Mapping): raise ValueError('phase peak must record bytes and reason')
+            _optional_reason('phase reason',value.get('reason'))
+            if value.get('bytes') is None:
+                if not value.get('reason'): raise ValueError('unknown phase peak requires reason')
+            else: _number('phase peak', value['bytes'], integer=True)
+        object.__setattr__(self, 'phase_peaks', freeze(peaks))
+
+
+@dataclass(frozen=True)
+class ArchiveRecord:
+    path: str
+    archive_bytes: int
+    sha256: str
+    compressor: str
+    wall_seconds: float
+    temporary_disk_peak_bytes: int
+    unpack_seconds: float | None = None
+    unpack_unknown_reason: str | None = 'unpack not measured'
+
+    def __post_init__(self):
+        _number('archive_bytes', self.archive_bytes, integer=True)
+        _number('wall_seconds', self.wall_seconds)
+        _number('temporary_disk_peak_bytes', self.temporary_disk_peak_bytes, integer=True)
+        if type(self.sha256) is not str or not re.fullmatch('[0-9a-f]{64}', self.sha256): raise ValueError('archive requires SHA-256')
+        if type(self.path) is not str or not self.path or type(self.compressor) is not str or not self.compressor.strip():
+            raise ValueError('archive requires a path and explicit compressor identity')
+        _optional_reason('unpack_unknown_reason',self.unpack_unknown_reason)
+        if self.unpack_seconds is not None: _number('unpack_seconds', self.unpack_seconds)
+        elif not self.unpack_unknown_reason: raise ValueError('unknown unpack time requires reason')

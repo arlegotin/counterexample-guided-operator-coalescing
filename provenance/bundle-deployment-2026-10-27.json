@@ -1,0 +1,429 @@
+{
+  "artifacts": {
+    "compact": {
+      "archive": {
+        "bytes": null,
+        "sha256": null,
+        "status": "not_run_budget",
+        "unknown_reason": "level9 gzip produced only 84.8 MB partial compressed output in interrupted 192 s pre-ZIP attempt; full-model archive repetition exceeds remaining aggregate cap. Complete tiny dense/rank0/rank2 archives verify deterministic equality and safe extraction accounting.",
+        "unpack_seconds": null
+      },
+      "conversion_load_seconds": 2.2714244999806397,
+      "groups": 15,
+      "manifest_sha256": "4cd650a2f6f6a745a664d501987d8e6995d4aa5bf79443572cf3aa940b85fcc2",
+      "mlx_memory": {
+        "active_bytes": 386189567,
+        "cache_bytes": 3227459,
+        "counters_nonadditive_with_rss": true,
+        "peak_bytes": 864848127
+      },
+      "norm_epsilon_preserved": true,
+      "owners": 407,
+      "payload_bytes": 388553984,
+      "rank": 8,
+      "resident_bytes": 384890112,
+      "source_checkpoint_digest": "2862ddd67ef35556916e4ff82162c6bbe091e29cff05be3df13f6c80eda8552a",
+      "source_owner_numel": 96222528,
+      "task": {
+        "max_abs": 0.00011730194091796875,
+        "native_scores": [
+          -41.197922706604004,
+          -38.22885990142822
+        ],
+        "prediction": 1,
+        "scientific_scores": [
+          -41.19791603088379,
+          -38.22897720336914
+        ]
+      }
+    },
+    "dense": {
+      "archive": {
+        "bytes": null,
+        "sha256": null,
+        "status": "not_run_budget",
+        "unknown_reason": "level9 gzip produced only 84.8 MB partial compressed output in interrupted 192 s pre-ZIP attempt; full-model archive repetition exceeds remaining aggregate cap. Complete tiny dense/rank0/rank2 archives verify deterministic equality and safe extraction accounting.",
+        "unpack_seconds": null
+      },
+      "conversion_load_seconds": 3.7143134999787435,
+      "groups": 30,
+      "manifest_sha256": "14f75968d5f1eb0c1401cb84d8816dad2f28a0a345dfd73f0c5e7eb09db030f0",
+      "mlx_memory": {
+        "active_bytes": 538069247,
+        "cache_bytes": 3090851,
+        "counters_nonadditive_with_rss": true,
+        "peak_bytes": 864848127
+      },
+      "norm_epsilon_preserved": true,
+      "owners": 272,
+      "payload_bytes": 541673931,
+      "rank": 0,
+      "resident_bytes": 538060032,
+      "source_checkpoint_digest": "d53d1af649f05b69b93da6bd848c196fc05e1e68fddb0730ed3c2a36e5ffa9ad",
+      "source_owner_numel": 134515008,
+      "task": {
+        "max_abs": 8.96453857421875e-05,
+        "native_scores": [
+          -10.56462287902832,
+          -15.06069564819336
+        ],
+        "prediction": 0,
+        "scientific_scores": [
+          -10.564533233642578,
+          -15.060616970062256
+        ]
+      }
+    }
+  },
+  "available_memory_before_bytes": 7426326528,
+  "caps": {
+    "generated_disk_bytes": 6442450944,
+    "process_rss_bytes": 6442450944,
+    "unified_compute_bytes": 6442450944,
+    "wall_seconds": 1200
+  },
+  "disk_free_before_bytes": 195428806656,
+  "install": {
+    "bytes": 1303673925,
+    "lock_sha256": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+    "method": "sum all regular non-symlink .venv files, including common runtime packages and caches; conservative entire environment boundary",
+    "python": "3.12.9 (main, Feb  4 2025, 14:38:38) [Clang 16.0.0 (clang-1600.0.26.6)]"
+  },
+  "offline": [
+    {
+      "backend": "torch_cpu",
+      "download_denied": true,
+      "ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30,
+        378,
+        1743,
+        314
+      ],
+      "initial_ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30
+      ],
+      "kind": "dense",
+      "module": "/private/tmp/cgoc-task8-floating-attempt5/dense/runtime/poc-runtime.zip/poc/__init__.py",
+      "ordinary_import_payload_unchanged": true,
+      "os_source_denied": true,
+      "owners": 272,
+      "source_denied": true
+    },
+    {
+      "backend": "mlx_metal",
+      "download_denied": true,
+      "ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30,
+        378,
+        1743,
+        314
+      ],
+      "initial_ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30
+      ],
+      "kind": "dense",
+      "module": "/private/tmp/cgoc-task8-floating-attempt5/dense/runtime/poc-runtime.zip/poc/__init__.py",
+      "ordinary_import_payload_unchanged": true,
+      "os_source_denied": true,
+      "owners": 272,
+      "source_denied": true
+    },
+    {
+      "backend": "torch_cpu",
+      "download_denied": true,
+      "ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30,
+        21224,
+        29417,
+        21224
+      ],
+      "initial_ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30
+      ],
+      "kind": "compact",
+      "module": "/private/tmp/cgoc-task8-floating-attempt5/compact/runtime/poc-runtime.zip/poc/__init__.py",
+      "ordinary_import_payload_unchanged": true,
+      "os_source_denied": true,
+      "owners": 407,
+      "source_denied": true
+    },
+    {
+      "backend": "mlx_metal",
+      "download_denied": true,
+      "ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30,
+        21224,
+        29417,
+        21224
+      ],
+      "initial_ids": [
+        49,
+        1165,
+        1743,
+        12927,
+        253,
+        6330,
+        30
+      ],
+      "kind": "compact",
+      "module": "/private/tmp/cgoc-task8-floating-attempt5/compact/runtime/poc-runtime.zip/poc/__init__.py",
+      "ordinary_import_payload_unchanged": true,
+      "os_source_denied": true,
+      "owners": 407,
+      "source_denied": true
+    }
+  ],
+  "prior_actual_seconds": 243.74867024998923,
+  "prior_attempts": [
+    {
+      "cost": {
+        "available_memory_after_bytes": 8271855616,
+        "generated_disk_peak_bytes": 0,
+        "largest_child_rss_bytes": 0,
+        "parent_peak_rss_bytes": 3061415936,
+        "rss_and_mlx_are_overlapping_not_added": true,
+        "ru_maxrss_bytes": 3162374144,
+        "wall_seconds": 10.949561666988302
+      },
+      "sha256": "30af9fde43c5fcad812c8d4dce60754858bab312574f374ba32fd83e3d0ea1f3",
+      "status": "failed",
+      "summary": "/private/tmp/cgoc-task8-floating-attempt1/summary.json"
+    },
+    {
+      "cost": {
+        "available_memory_after_bytes": 8262107136,
+        "generated_disk_peak_bytes": 626422712,
+        "largest_child_rss_bytes": 1179680768,
+        "parent_peak_rss_bytes": 3038494720,
+        "rss_and_mlx_are_overlapping_not_added": true,
+        "ru_maxrss_bytes": 3038494720,
+        "wall_seconds": 192.05804604198784
+      },
+      "sha256": "6a2639acaf3176613333735773a3bffb481bbd39057abee87a2804cb58dd1247",
+      "status": "failed",
+      "summary": "/private/tmp/cgoc-task8-floating-attempt2/summary.json"
+    },
+    {
+      "cost": {
+        "generated_disk_peak_bytes": 0,
+        "time_source": "exec_command observed elapsed wall time, including Python startup; no model work",
+        "wall_seconds": 0.700669125
+      },
+      "sha256": "e163f7f5bc0d9ad0d8eac2568e9ead8be8a8e65eee3f5d50f086691cf64b88cb",
+      "status": "not_run_memory_headroom",
+      "summary": "/private/tmp/cgoc-task8-floating-attempt3/summary.json"
+    },
+    {
+      "cost": {
+        "aggregate_actual_seconds": 243.74872249999316,
+        "aggregate_generated_disk_bytes": 2098339241,
+        "available_memory_after_bytes": 7843692544,
+        "generated_disk_peak_bytes": 930239566,
+        "largest_child_rss_bytes": 1176616960,
+        "parent_peak_rss_bytes": 3396206592,
+        "prior_generated_disk_bytes": 1168099675,
+        "rss_and_mlx_are_overlapping_not_added": true,
+        "ru_maxrss_bytes": 3396304896,
+        "wall_seconds": 40.0403934160131
+      },
+      "sha256": "6c19c3b16d148e83ed6e1329fcd375cff14cf2aff83bef3227cae9e58f146255",
+      "status": "passed",
+      "summary": "/private/tmp/cgoc-task8-floating-attempt4/summary.json"
+    }
+  ],
+  "resource_observations": {
+    "aggregate_actual_seconds": 285.2765161250136,
+    "aggregate_generated_disk_bytes": 3028593617,
+    "available_memory_after_bytes": 8159789056,
+    "generated_disk_peak_bytes": 930240897,
+    "largest_child_rss_bytes": 1177419776,
+    "parent_peak_rss_bytes": 3339206656,
+    "prior_generated_disk_bytes": 2098352720,
+    "rss_and_mlx_are_overlapping_not_added": true,
+    "ru_maxrss_bytes": 3339206656,
+    "wall_seconds": 41.52779595804168
+  },
+  "rows": [
+    {
+      "context_tokens": 16,
+      "kind": "dense",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.00029754638671875,
+      "native_full_max_abs": 0.00029754638671875,
+      "offset": 7,
+      "scientific_cached_max_abs": 4.3392181396484375e-05,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "60c801db5756159b3a83cc334945a246d09397c8c4002a3583a22e14b4930b39"
+    },
+    {
+      "context_tokens": 128,
+      "kind": "dense",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.00029754638671875,
+      "native_full_max_abs": 0.00026988983154296875,
+      "offset": 7,
+      "scientific_cached_max_abs": 6.103515625e-05,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "33519271f5c11d58bf2aabe4e7d6e8775ba0ebc5738dea10ee87ae47f25d4732"
+    },
+    {
+      "context_tokens": 512,
+      "kind": "dense",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.00029754638671875,
+      "native_full_max_abs": 0.00026988983154296875,
+      "offset": 7,
+      "scientific_cached_max_abs": 6.771087646484375e-05,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "35d1b126d5b2c8aed35911658005e05d9e4a4c8dad3c19ede26e2fa9dc8293e9"
+    },
+    {
+      "context_tokens": 16,
+      "kind": "compact",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.00038176774978637695,
+      "native_full_max_abs": 0.00038176774978637695,
+      "offset": 7,
+      "scientific_cached_max_abs": 9.34600830078125e-05,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "60c801db5756159b3a83cc334945a246d09397c8c4002a3583a22e14b4930b39"
+    },
+    {
+      "context_tokens": 128,
+      "kind": "compact",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.00042557716369628906,
+      "native_full_max_abs": 0.0004845857620239258,
+      "offset": 7,
+      "scientific_cached_max_abs": 0.00011610984802246094,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "33519271f5c11d58bf2aabe4e7d6e8775ba0ebc5738dea10ee87ae47f25d4732"
+    },
+    {
+      "context_tokens": 512,
+      "kind": "compact",
+      "mask": "all valid; targets all adjacent positions",
+      "max_abs_tolerance": {
+        "native": 0.003,
+        "scientific_cache": 0.002,
+        "scientific_export": 1e-06
+      },
+      "native_cached_max_abs": 0.0005626678466796875,
+      "native_full_max_abs": 0.0005862712860107422,
+      "offset": 7,
+      "scientific_cached_max_abs": 0.00011610984802246094,
+      "scientific_export_max_abs": 0.0,
+      "token_ids_sha256": "35d1b126d5b2c8aed35911658005e05d9e4a4c8dad3c19ede26e2fa9dc8293e9"
+    }
+  ],
+  "schema_version": 1,
+  "scope": "floating identity/format only; synthetic tokenizer prompts, no quality advantage or B*",
+  "source_asset_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+  "source_commit": "346f2413d80a5fd19af1c8c5a7636cd020c3ef27",
+  "source_sha256": {
+    "poc/__init__.py": "01873a8282c9a71782c719969f7fbd5710aa2202ecf16e226301e94a2289bc05",
+    "poc/bank.py": "248bd01a2ec8e499e93b85cca73022304063728de92dbebb31e8147a18bec634",
+    "poc/bundle.py": "22a8d55f529d511f00a628d4367ba62b9dc9550d07028b72f89137d3fc88b78a",
+    "poc/contracts.py": "285977d7e175e8bdb4bbd8c11c82f3a57fdc24a50a2f29e75698ebd6cd6acec3",
+    "poc/export.py": "88fa23adbcd5e858277e050b1ce9220a2cd15428054cc0b944d1dee06691dbd5",
+    "poc/runtime/__init__.py": "9bbddea632b86f7661b08ed637e513f57b06aa4bc24342d8e1156fbc23426694",
+    "poc/runtime/mlx_decoder.py": "650d633af5132873151486c134457402a2897444570774ac75058866ba7caa71",
+    "poc/runtime/torch_decoder.py": "fd450352ec159ba2000cff39ff782905a17d2ce216c10ba4ba1f552b92da76a3",
+    "provenance/measure_bundle_deployment.py": "265ab5306c2c6fed17850da77ab0a04ff175a7ee42d72a79dbf7d1e51b20975d",
+    "tests/test_native_parity.py": "ae8e6f4dd2152273cbc9309ed27e525672bc20d56d5cee3dfaaadb58913078dc",
+    "tests/test_offline_bundle.py": "5ae89ed41749a4f8d92ffe3c1f1c41a5ae6aed68422024f73a0e00b48c19e22a"
+  },
+  "status": "passed",
+  "task_bridge": {
+    "boundary_policy": "frozen separate synthetic prompt/continuation IDs; no benchmark outcome or protected data",
+    "continuation_ids": [
+      [
+        253,
+        6330,
+        30
+      ],
+      [
+        253,
+        3187,
+        30
+      ]
+    ],
+    "normalization": "raw sum, FP64 aggregation of FP32 token scores",
+    "policy_sha256": "67e5c450a76971ba6d09f6ec57fa493add5a21c190142c7097de4166986cf7db",
+    "prompt_ids": [
+      504,
+      1165,
+      1743,
+      12927
+    ],
+    "prompt_sha256": "ddf3c41ac433de48f221e74e3ac1715876cb7519aff08eb8032a86fffbbe52fd",
+    "scored_mask": "all continuation tokens, identical across backends"
+  }
+}

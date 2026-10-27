@@ -48,3 +48,14 @@ def run_component_validation() -> int:
         print(result.stderr, end='', file=sys.stderr)
     print(f"WP01 component {'passed' if passed else 'failed'}; full WP00 pending asset provenance; record=artifacts/validation/component.json")
     return 0 if passed else 4
+
+
+def run_export_validation(*, backend: str) -> int:
+    """CPU/component and real MLX controls have separate explicit invocations."""
+    if backend not in ('torch','mlx'): raise ValueError('unknown export validation backend')
+    root = Path(__file__).resolve().parents[1]
+    files = ['tests/test_export.py','tests/test_offline_bundle.py'] if backend == 'torch' else ['tests/test_native_parity.py']
+    command = [sys.executable,'-m','pytest',*files,'-m','cpu' if backend == 'torch' else 'mlx','-q']
+    result = subprocess.run(command,cwd=root)
+    print('scientific export/component controls; native deployment unqualified' if backend == 'torch' else 'explicit native MLX export controls')
+    return 0 if result.returncode == 0 else 4
