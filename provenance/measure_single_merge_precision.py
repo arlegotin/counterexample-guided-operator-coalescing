@@ -45,6 +45,14 @@ class PrecisionRecorder(TrainingPilotRecorder):
         self.plan=p;self._pinned={};self.recovery=tracker.attempt.spec.resolved_config.get('recovery_authorization')
         super().__init__(tracker,p['overall_student_forward_calls'])
         self.followup_wall_at_start=self.phase_totals().wall_seconds
+    def memory(self,label=None):
+        values={'rss_bytes':psutil.Process().memory_info().rss,'mps_allocated_bytes':torch.mps.current_allocated_memory(),'mps_driver_bytes':torch.mps.driver_allocated_memory()}
+        for key,value in values.items():self.memory_highwater[key]=max(self.memory_highwater[key],value)
+        combined=values['rss_bytes']+values['mps_driver_bytes'];now=time.monotonic()
+        if self.phase_key.startswith('task12_precision_evaluate') and (label or now-getattr(self,'_last_memory_sample',0)>=5):
+            with (self.tracker.attempt.path/'memory-samples.jsonl').open('a') as stream:stream.write(json.dumps(values|{'overlapping_rss_plus_driver':combined,'label':label,'elapsed_seconds':now-getattr(self,'started',now)})+'\n')
+            self._last_memory_sample=now
+        return combined
     def _pin(self,path,digest):
         stat=path.stat();stamp=(stat.st_dev,stat.st_ino,stat.st_size,stat.st_mtime_ns,stat.st_ctime_ns)
         if self._pinned.get(str(path))!=stamp:
@@ -76,6 +84,7 @@ class PrecisionRecorder(TrainingPilotRecorder):
         cost=cost or CostRecord();total=self.aggregate();phase=self.phase_totals()
         live=time.monotonic()-self.started
         if self.phase_key=='task12_precision_prepare_resume' and live+cost.wall_seconds>300:raise BudgetExceeded('isolated preparation300s ceiling')
+        if self.phase_key.startswith('task12_precision_evaluate') and (self.tracker.totals.memory_bytes or 0)>int(8.5*1024**3):raise BudgetExceeded('evaluation approaching9GiB guard; stop at8.5GiB observed')
         if max(total.wall_seconds,self.phase_wall_at_start+live)+cost.wall_seconds>self.tracker.budget.wall_seconds:raise BudgetExceeded('Task12 overall live wall ceiling')
         phase_wall=max(phase.wall_seconds,getattr(self,'followup_wall_at_start',phase.wall_seconds)+live)+cost.wall_seconds
         combined=BudgetTracker.combine(total,cost)
@@ -319,19 +328,24 @@ def evaluate(stage,p,config,rec,attempt):
         if path.exists():continue
         state_path=ROOT/item['path']
         if sha256_file(state_path/'metadata.json')!=item['metadata_sha256'] or sha256_file(state_path/'weights.safetensors')!=item['weights_sha256']:raise ValueError('verified state artifact changed')
-        started=time.monotonic();trial=rec.call(lambda:restore_trial_delta(current,teacher,state_path,recorder=rec));require_replay_identity(item['identity'],trial.initialized_digest,trial.model.manifest().checkpoint_digest)
+        baseline_memory=rec.memory(label='before_trial_restore');started=time.monotonic();trial=rec.call(lambda:restore_trial_delta(current,teacher,state_path,recorder=rec));require_replay_identity(item['identity'],trial.initialized_digest,trial.model.manifest().checkpoint_digest)
         donor_rows=_accepted(pool,pair);positions=logical_position_count(score_documents=16,damage_documents=32,depths=2,donor_target_counts=[sum(r.target_mask) for r in donor_rows])
         if _eval_total()+positions>p['evaluated_logical_positions_cap']:raise BudgetExceeded('fresh logical evaluation positions ceiling')
         with (OUT/'logical-positions.jsonl').open('a') as stream:stream.write(json.dumps({'pair':pair,'positions':positions,'scope':'precharged full trial KL/NLL, shared MSE/CKA positions and conditional entropy; failures retain charge'})+'\n');stream.flush();__import__('os').fsync(stream.fileno())
-        natural=natural_metrics(teacher,trial.model,score_batches,rec);activation=activation_scores(teacher,trial,score_batches,rec);probes,probe_rows=probe_observations(teacher,trial,pool,rec,calibration)
+        natural=natural_metrics(teacher,trial.model,score_batches,rec);rec.memory(label='after_natural_score')
+        activation=activation_scores(teacher,trial,score_batches,rec);rec.memory(label='after_activation_score')
+        probes,probe_rows=probe_observations(teacher,trial,pool,rec,calibration);rec.memory(label='after_probe_score')
         original=json.loads((ORIGINAL/'trials-final'/f'{pair[0]:02d}-{pair[1]:02d}.json').read_text());weight=next(iter(original['scores']['weight_distance'].values()));scores={k:{} for k in p['methods']}
         for row in natural:
             c=row['component'];v=probes[c];values=fixed_scores(natural=row['kl_per_target'],student=_mean(v['student']),random_donor=_mean(v['random']),active_donor=_mean(v['active']))|activation[c]|{'weight_distance':weight}
             for name,value in values.items():scores[name][c]=value
-        damage=natural_metrics(teacher,trial.model,damage_batches,rec)
+        damage=natural_metrics(teacher,trial.model,damage_batches,rec);rec.memory(label='after_natural_damage')
         row={'identity':item['identity'],'scores':scores,'natural_damage':{r['component']:r['kl_per_target'] for r in damage},'natural_score_rows':natural,'probe_score_rows':probe_rows,'natural_damage_rows':damage,'logical_positions':positions,'wall_seconds':time.monotonic()-started,'plan_sha256':sha256_file(OUT/'plan.json'),'fixed_data_sha256':sha256_file(OUT/'data.json'),'no_fitting':True,'original_trial_sha256':sha256_file(ORIGINAL/'trials-final'/path.name),'unfiltered_primary':True}
         _write(path,row);completed.append({'pair':pair,'seconds':row['wall_seconds'],'logical_positions':positions});append_event(attempt,dict(kind='fresh_trial_complete',**completed[-1]));print(json.dumps(completed[-1]),flush=True)
         del trial;gc.collect();torch.mps.empty_cache()
+        cleanup_memory=rec.memory(label='after_trial_cleanup');rec.record(CostRecord())
+        completed[-1].update(memory_before_restore=baseline_memory,memory_after_cleanup=cleanup_memory,cleanup_growth_bytes=cleanup_memory-baseline_memory)
+        append_event(attempt,{'kind':'trial_cleanup_memory','pair':pair,'before_restore':baseline_memory,'after_cleanup':cleanup_memory})
         if stage=='evaluate_first':break
     return {'completed':completed,'logical_positions_charged':_eval_total()}
 

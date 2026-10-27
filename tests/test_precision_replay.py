@@ -76,3 +76,18 @@ def test_precision_audit_excludes_flat_secondary_dev_components():
     from provenance import summarize_single_merge_precision as summary
     row={'scores':{'natural_kl':{'score':1.}},'secondary_scores':{'dev-secondary':2.},'natural_damage':{'damage':3.},'intervention_damage':{'intervention':4.}}
     assert summary.prior_components(row)=={'score','dev-secondary','damage','intervention'}
+
+
+def test_evaluation_memory_samples_preserve_separate_overlapping_counters(tmp_path,monkeypatch):
+    from types import SimpleNamespace
+    import json
+    m=api();rec=m.PrecisionRecorder.__new__(m.PrecisionRecorder)
+    rec.tracker=SimpleNamespace(attempt=SimpleNamespace(path=tmp_path));rec.phase_key='task12_precision_evaluate_first'
+    rec.memory_highwater={'rss_bytes':0,'mps_allocated_bytes':0,'mps_driver_bytes':0}
+    monkeypatch.setattr(m.psutil,'Process',lambda:SimpleNamespace(memory_info=lambda:SimpleNamespace(rss=100)))
+    monkeypatch.setattr(m.torch.mps,'current_allocated_memory',lambda:20)
+    monkeypatch.setattr(m.torch.mps,'driver_allocated_memory',lambda:30)
+    assert rec.memory()==130
+    row=json.loads((tmp_path/'memory-samples.jsonl').read_text().splitlines()[0])
+    assert row['rss_bytes']==100 and row['mps_allocated_bytes']==20 and row['mps_driver_bytes']==30
+    assert row['overlapping_rss_plus_driver']==130
