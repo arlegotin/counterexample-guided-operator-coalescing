@@ -468,3 +468,10 @@ class ArchiveRecord:
         _optional_reason('unpack_unknown_reason',self.unpack_unknown_reason)
         if self.unpack_seconds is not None: _number('unpack_seconds', self.unpack_seconds)
         elif not self.unpack_unknown_reason: raise ValueError('unknown unpack time requires reason')
+
+
+@runtime_checkable
+class Recorder(Protocol):
+    """Preflight and append actual expenditure, including failed operations."""
+    def check(self, next_cost: CostRecord) -> None: ...
+    def record(self, actual_cost: CostRecord) -> None: ...

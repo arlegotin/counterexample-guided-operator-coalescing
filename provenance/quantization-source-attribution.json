@@ -1,0 +1,97 @@
+{
+  "pinned_mlx_lm": "0.32.2",
+  "pinned_mlx": "0.32.4",
+  "official_quantizers": "installed mlx_lm.quant gptq/awq/dwq/dynamic_quant callable APIs; Apache/Apple source notices retained in installed common dependencies",
+  "sharvet_revision": "1e479be7f7b5693b668e04d300d1cef35f647d20",
+  "sharvet_paper": "https://aclanthology.org/2026.acl-long.2213.pdf",
+  "sharvet_readme": "https://github.com/snudatalab/SharVeT/blob/1e479be7f7b5693b668e04d300d1cef35f647d20/README.md",
+  "terms": "https://polyformproject.org/licenses/noncommercial/1.0.0",
+  "restricted_source_execution": false,
+  "restricted_source_copied": false,
+  "controller_prior_source_transferred_bytes": 32535,
+  "controller_prior_source_transfer_cap_bytes": 524288,
+  "task9_additional_source_transfer_bytes": 0,
+  "independent_sv_calculation": "Projection matrices are [out,in], vertically stacked for common input/right basis. Full-rank reconstruction algebra is independent NumPy; stage15 owns complete adaptation.",
+  "installed_api_source_hashes": {
+    "gptq": {
+      "sha256": "bd4c08453a24fe41fea8ce5885f433b718628c16c4e7a0596900fc72553daf16",
+      "functions": {
+        "gptq_quantize": "model, data, bits, group_size, fallback_bits, fallback_group_size, batch_size=8"
+      },
+      "loader_imports": [
+        "from mlx_lm.quant.utils import load_data"
+      ]
+    },
+    "awq": {
+      "sha256": "b018eca7079a595fb49cfe923b3cd554033b42bda20fad37ddd2e83997bfc11f",
+      "functions": {
+        "awq_quantize": "model, inputs: mx.array, awq_config: AWQConfig, group_size: int=64, bits: int=3, embed_group_size: int=32, embed_bits: int=4, n_grid: int=20"
+      },
+      "loader_imports": [
+        "from mlx_lm.quant.utils import load_data"
+      ]
+    },
+    "dwq": {
+      "sha256": "b69285f0f86f1fc9c8151bb31a0cd926df8959dda7f315790680adb64b8f6b84",
+      "functions": {
+        "compute_dwq_targets": "model, save_dir, train_data, valid_data, batch_size, max_seq_length, seed",
+        "dwq_quantize": "model, target_fn, opt, train_data, valid_data, batch_size, max_seq_length, seed, dtype: mx.Dtype=mx.bfloat16, gradient_checkpoint: bool=False, temperature: float=2.0",
+        "load_data": "tokenizer, data_path: str, num_samples: int, max_seq_length: int, num_valid_samples: int=32"
+      },
+      "loader_imports": [
+        "from mlx_lm.tuner.datasets import load_dataset"
+      ]
+    },
+    "dynamic_quant": {
+      "sha256": "a1aebc7309cca4bbbeea345624dc06f5d3ab83dfd647e704d850b4c857def5b3",
+      "functions": {
+        "estimate_sensitivities": "model, data, low_bits, low_group_size, high_bits, high_group_size, batch_size: int=4, gradient_accum_dtype: mx.Dtype=mx.float32, gradient_checkpoint: bool=False",
+        "estimate_threshold": "model, sensitivities, target_bpw, low_bits, low_group_size, high_bits, high_group_size"
+      },
+      "loader_imports": [
+        "from mlx_lm.quant.utils import load_data"
+      ]
+    },
+    "utils": {
+      "sha256": "fbae54a7e39b9ae999bedfebf833e865e6912bada29f4c3fe53383b9d8655e58",
+      "functions": {
+        "load_data": "tokenizer, num_samples: int, sequence_length: int"
+      },
+      "loader_imports": []
+    }
+  },
+  "upstream_readonly_source_receipts": {
+    "repository": "https://github.com/snudatalab/SharVeT",
+    "revision": "1e479be7f7b5693b668e04d300d1cef35f647d20",
+    "bounded_transfer_ceiling_bytes": 524288,
+    "total_bytes": 32535,
+    "files": {
+      "commit.json": {
+        "url": "https://api.github.com/repos/snudatalab/SharVeT/commits/main",
+        "bytes": 5575,
+        "sha256": "488dab4fcea127ed97325474cc719af5b438e29e52001b177279f0152cd3d5fa"
+      },
+      "README.md": {
+        "url": "https://raw.githubusercontent.com/snudatalab/SharVeT/1e479be7f7b5693b668e04d300d1cef35f647d20/README.md",
+        "bytes": 3674,
+        "sha256": "24d964bc2e9bcb7d00b1e64c6d6be1396d82397be19503412f16bfd09b9992e1"
+      },
+      "similarity.py": {
+        "url": "https://raw.githubusercontent.com/snudatalab/SharVeT/1e479be7f7b5693b668e04d300d1cef35f647d20/src/similarity.py",
+        "bytes": 9428,
+        "sha256": "5f651e84d1169975e21b65a4c5bc2c256792b18f887e283c82f56571e24bea02"
+      },
+      "model_factory.py": {
+        "url": "https://raw.githubusercontent.com/snudatalab/SharVeT/1e479be7f7b5693b668e04d300d1cef35f647d20/src/model_factory.py",
+        "bytes": 6506,
+        "sha256": "df7316def2d8c27323176bb626c0804c3a7821e0169ade64d6cb671eafa14976"
+      },
+      "polyform-noncommercial-1.0.0.html": {
+        "url": "https://polyformproject.org/licenses/noncommercial/1.0.0",
+        "bytes": 7352,
+        "sha256": "8fb635fd3e464830fd511800aaf65966e0855637e98ed8c1545e66a9c47da733"
+      }
+    },
+    "scope": "Read-only source/terms inspection; no upstream code execution or repository copy."
+  }
+}

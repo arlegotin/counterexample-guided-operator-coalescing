@@ -86,6 +86,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                 return validate_artifact(args.bundle, args.backend)
             from poc.validation import run_export_validation
             return run_export_validation(backend=args.backend)
+        if args.command == "baselines" and args.stage == "format_and_quant":
+            from poc.quantization_stage import run_format_and_quant
+            return run_format_and_quant(load_config(args.config,phase=args.phase))
         if hasattr(args, "config") and args.command != "validate":
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)

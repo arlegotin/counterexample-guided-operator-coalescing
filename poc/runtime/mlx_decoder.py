@@ -1,4 +1,4 @@
-"""Canonical FP32 MLX Metal inference. No per-depth FFN reconstruction or CPU fallback.
+"""Canonical FP32-compute MLX Metal inference with floating or packed owners. No per-depth FFN reconstruction or CPU fallback.
 
 MLX imports are deliberately inside construction. Arrays are materialized once
 per canonical owner; depth dispatch and KV buffers remain independent.
@@ -9,6 +9,17 @@ from types import SimpleNamespace
 
 from poc.contracts import (Batch, Boundary, ByteAccounting, CacheState, ContinuationScore,
                            LayerCache, ModelManifest, thaw)
+
+
+class PackedOwner:
+    """One affine packed matrix; lookup and linear share its exact arrays."""
+    def __init__(self, weight, scales, biases, shape, fmt):
+        self.weight,self.scales,self.biases=weight,scales,biases
+        self.shape,self.bits,self.group_size=tuple(shape),fmt['bits'],fmt['group_size']
+    @property
+    def arrays(self): return (self.weight,self.scales,self.biases)
+    @property
+    def nbytes(self): return sum(a.nbytes for a in self.arrays)
 
 
 class MLXDecoder:
@@ -28,6 +39,11 @@ class MLXDecoder:
         for filename in sorted({o['file'] for o in self.metadata['owners']}):
             self.weights.update(mx.load(str(path/filename)))
         mx.eval(*self.weights.values())
+        from poc.bundle import _read_json
+        self.quantization=_read_json(path/'quantization.json')
+        for name,fmt in self.quantization.get('owners',{}).items():
+            record=next(o for o in self.metadata['owners'] if o['name']==name)
+            self.weights[name]=PackedOwner(*(self.weights.pop(name+suffix) for suffix in ('.packed','.scales','.biases')),record['shape'],fmt)
         self.aliases = {alias:o['name'] for o in self.metadata['owners'] for alias in o['aliases']}
         self.layer_map = tuple(next(i for i,g in enumerate(self.metadata['groups']) if depth in g)
                                for depth in range(self.config.num_hidden_layers))
@@ -59,10 +75,21 @@ class MLXDecoder:
             raise ValueError('native owner state differs from artifact')
         for owner in self.metadata['owners']:
             name = owner['name']; value = self.weights[name]
-            if not isinstance(value,mx.array) or tuple(value.shape) != tuple(owner['shape']) or value.dtype != mx.float32:
-                raise ValueError('native owner shape/dtype differs from artifact')
-            if not bool(mx.all(mx.isfinite(value)).item()): raise ValueError('nonfinite native state')
-            digest.update(name.encode()); digest.update(np.asarray(value).tobytes(order='C'))
+            digest.update(name.encode())
+            if isinstance(value,PackedOwner):
+                fmt=self.quantization['owners'][name]
+                if value.shape!=tuple(owner['shape']) or value.bits!=fmt['bits'] or value.group_size!=fmt['group_size']: raise ValueError('packed owner state differs from artifact')
+                from poc.bundle import _packed_layout
+                layout=_packed_layout(value.shape,value.bits,value.group_size)
+                for a,shape,dtype in zip(value.arrays,(layout['weight_shape'],layout['scale_shape'],layout['scale_shape']),(mx.uint32,mx.float32,mx.float32),strict=True):
+                    if not isinstance(a,mx.array) or tuple(a.shape)!=shape or a.dtype!=dtype: raise ValueError('native packed array state differs from artifact')
+                    if not bool(mx.all(mx.isfinite(a)).item()): raise ValueError('nonfinite native packed state')
+                    digest.update(np.asarray(a).tobytes(order='C'))
+            else:
+                dtype=mx.bfloat16 if owner['dtype']=='bfloat16' else mx.float32
+                if not isinstance(value,mx.array) or tuple(value.shape)!=tuple(owner['shape']) or value.dtype!=dtype: raise ValueError('native owner shape/dtype differs from artifact')
+                if not bool(mx.all(mx.isfinite(value)).item()): raise ValueError('nonfinite native state')
+                digest.update(np.asarray(value.astype(mx.float32)).tobytes(order='C'))
         return digest.hexdigest()
 
     def manifest(self):
@@ -70,7 +97,7 @@ class MLXDecoder:
                              self.metadata['tokenizer_digest'],self._digest(),'float32','mlx_metal')
 
     def resident_accounting(self):
-        self.mx.eval(*self.weights.values())
+        self.mx.eval(*(a for v in self.weights.values() for a in (v.arrays if isinstance(v,PackedOwner) else (v,))))
         if len({id(a) for a in self.weights.values()}) != len(self.weights):
             raise ValueError('duplicate native owner allocation')
         return ByteAccounting(0,resident_bytes=sum(a.nbytes for a in self.weights.values()),resident_unknown_reason=None,
@@ -95,9 +122,18 @@ class MLXDecoder:
         if bool(mx.any(((positions[:,1:]-positions[:,:-1])!=1)&mask[:,1:]).item()): raise ValueError('native positions must be consecutive')
 
     def _linear(self,x,prefix):
-        result = x @ self.owner(prefix+'.weight').T
+        value=self.owner(prefix+'.weight')
+        if isinstance(value,PackedOwner):
+            result=self.mx.quantized_matmul(x,value.weight,value.scales,value.biases,transpose=True,bits=value.bits,group_size=value.group_size)
+        else: result = x @ value.astype(self.mx.float32).T
         if prefix+'.bias' in self.weights: result = result + self.weights[prefix+'.bias']
         return result
+
+    def _embedding(self,ids):
+        value=self.owner('embed_tokens.weight')
+        if isinstance(value,PackedOwner):
+            return self.mx.dequantize(value.weight[ids],value.scales[ids],value.biases[ids],bits=value.bits,group_size=value.group_size)
+        return value[ids]
 
     def _rms(self,x,prefix):
         mx = self.mx
@@ -140,7 +176,7 @@ class MLXDecoder:
             result = self._linear(z,f'bank.{self.layer_map[depth]}.{name}')
             if self.metadata['rank']:
                 prefix = f'layers.{depth}.mlp.residuals.{name}'
-                result = result + (z@self.weights[prefix+'.A'].T)@self.weights[prefix+'.B'].T
+                result = result + (z@self.weights[prefix+'.A'].astype(mx.float32).T)@self.weights[prefix+'.B'].astype(mx.float32).T
             return result
         gate = projection(x,'gate_proj')
         return projection((gate*mx.sigmoid(gate))*projection(x,'up_proj'),'down_proj')
@@ -169,7 +205,7 @@ class MLXDecoder:
     def final_hidden(self,batch, *, cache=None):
         self._validate_batch(batch)
         if cache is not None: self._validate_cache(cache,batch)
-        x = self.owner('embed_tokens.weight')[batch.input_ids]
+        x = self._embedding(batch.input_ids)
         pending = None if cache is None else tuple(LayerCache(c.key,c.value) for c in cache.layers)
         for depth in range(self.config.num_hidden_layers):
             x = self._block(x,batch,depth,None if pending is None else pending[depth])
@@ -195,7 +231,7 @@ class MLXDecoder:
     def prefix_boundary(self,batch,depth):
         self._validate_batch(batch)
         if type(depth) is not int or not 0 <= depth < self.config.num_hidden_layers: raise ValueError('native depth outside model')
-        x = self.owner('embed_tokens.weight')[batch.input_ids]
+        x = self._embedding(batch.input_ids)
         for d in range(depth): x = self._block(x,batch,d); self.mx.eval(x)
         return Boundary(self._attention(x,batch,depth),batch,depth,self._digest())
 

@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "scope": "Task9 finite pilot qualification; final study budgets remain unchosen",
+  "declared_before_actual_teacher_conversion": true,
+  "headroom_basis": {
+    "available_memory_bytes": 7089651712,
+    "disk_free_bytes": 194443800576
+  },
+  "aggregate_caps": {
+    "wall_seconds": 3600,
+    "process_rss_bytes": 5368709120,
+    "mlx_active_bytes": 4294967296,
+    "generated_disk_bytes": 8589934592,
+    "source_transfer_bytes": 0,
+    "unique_fit_components": 40,
+    "calibration_length": 512,
+    "unique_dev_components": 32,
+    "teacher_forward_calls": 640,
+    "student_forward_calls": 4096,
+    "student_backward_calls": 256,
+    "fit_updates": 128,
+    "conversion_attempts": 40,
+    "concurrent_compute_jobs": 1
+  },
+  "synthetic_qualification": {
+    "wall_seconds_included": true,
+    "prior_observed_wall_seconds": 40.62,
+    "separate_tiny_fixture_only": true,
+    "calibration_sequence_presentations_cap": 64,
+    "length_cap": 16
+  },
+  "policy": {
+    "primary_context": 512,
+    "calibration_sequences_per_method": 2,
+    "dwq_internal_valid_sequences": 2,
+    "dwq_temperature": 1.0,
+    "dwq_learning_rate": 1e-05,
+    "dwq_dtype": "float32",
+    "dwq_epochs": 1,
+    "awq_n_grid": 20,
+    "dynamic_low_bits": 4,
+    "dynamic_high_bits": 8,
+    "dynamic_target_bpw": 6.0,
+    "rtn_bits": [
+      2,
+      3,
+      4,
+      8
+    ],
+    "rtn_groups": [
+      32,
+      64,
+      128
+    ],
+    "ranking": "primary dev KL at or below measured B*, lower payload then construction seconds then digest",
+    "no_quality_success_claim_for_anchor": true,
+    "fit_and_dev_selection": "first lexicographic component-distinct FineWeb records in explicit role, metadata token_count>=600; save IDs before content I/O",
+    "dev_windows": "first saved-policy make_windows window per selected dev document; hash existing windows.json without parsing protected tokens",
+    "retries": "all attempts including failed, interrupted, rejected counted; no budget reset",
+    "archives": "not run: Task8 measured level9 cost; B* complete unarchived payload",
+    "dynamic_low_bit_frontier": {
+      "low_bits": 2,
+      "high_bits": 4,
+      "effective_tensor_bpw_targets": [
+        3.5,
+        3.6
+      ],
+      "installed_definition": "compute_bits_per_weight counts actual arrays including scales/offsets; g64 affine2-bit minimum approximately3effective bpw",
+      "byte_only_basis": "actual RTN2 payload54,249,234B,RTN4 payload87,869,540B,B*66,064,401B; targets declared before any learned quantizer outcomes"
+    },
+    "embedding_frontier": {
+      "base_bits": 2,
+      "embedding_bits": 4,
+      "group_size": 64,
+      "methods": [
+        "rtn",
+        "gptq",
+        "awq",
+        "dwq"
+      ],
+      "calibration_sequences": 32,
+      "dwq_internal_valid_sequences": 8,
+      "dev_components": 32,
+      "reason": "upgrade single tied49,152x576 embedding owner by7,077,888 packedbytes; approximately61.33MB complete payload fits66,064,401B B*; declared before outcomes for these configurations"
+    }
+  },
+  "initial_caps_retained_path": "artifacts/quantization/initial-declaration.json",
+  "amendment": "Controller authorized40 conversion attempts after20 actual attempts, preserving all costs and unchanged3600s/memory/disk ceilings: faithful HF5 nested-RoPE bridge repair and supported below-B* learned qualification. Interruption propagation fixed before further actual work.",
+  "frontier": {
+    "fit_sequences_per_method": 32,
+    "dwq_internal_valid_sequences": 8,
+    "development_sequences": 32,
+    "context_tokens": 512,
+    "forecast_policy": "after successful smoke for each learned method, conservatively16x smoke conversion x2 bit choices plus measured32dev extrapolation, within existing cumulative3600s; a missing working smoke cannot authorize its larger qualification",
+    "smoke_eligibility_label": "operation_smoke_only; not strong competitor quality qualification",
+    "teacher_reference_reused": true
+  },
+  "teacher_call_amendment": "Controller authorized640 retaining412 actual source teacher forwards; base2/embed4 RTN/GPTQ/AWQ/DWQ byte-only choices~61.33MB, four conversions yielding38/40 total; no time/memory/disk cap reset."
+}

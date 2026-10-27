@@ -1,11 +1,10 @@
-# Floating canonical deployment bundles
+# Canonical native deployment bundles
 
 `poc.bundle.write_bundle(decoder, destination, runtime)` exports a dense
 `TorchDecoder` or a canonical `BankDecoder`. `RuntimeSpec` explicitly supplies
 local tokenizer and license files plus a pinned dependency lock. These input
 locations never enter output identity. `poc.export.export_native` restricts this
-format to scientific FP32, the qualified MLX floating format. Quantization and
-the measured B* anchor are separate work.
+format to scientific FP32, the qualified MLX floating format. Packed quantization and the measured B* anchor are documented below.
 
 Every artifact carries all backbone, FFN bank and private residual owners,
 actual per-site RMSNorm epsilons, attention configuration, tokenizer, licenses,
@@ -94,3 +93,34 @@ check source denial. Prompts are tokenizer-generated; protected data stays seale
 The finite resource preflight is printed before conversion, and failed attempts
 remain attributable. This is identity/format evidence, not a trained compressed
 candidate or a quality-frontier claim.
+
+Native affine quantization extends the same packaging boundary. Logical owners
+stay canonical; `quantization.json` maps each packed matrix to its actual bits
+and group size. Its safetensors entries are `.packed` (uint32), `.scales` and
+`.biases` (FP32). Residual owners use BF16 storage and FP32 computation. Every
+array, including offsets and headers, counts in measured payload and resident
+storage. No implicit padding or per-depth dequantized bank cache is allowed.
+Packed embedding lookup dequantizes only selected token rows; the tied readout
+uses that same packed owner through `quantized_matmul`. Packed artifacts require
+MLX Metal; requesting scientific reconstruction fails explicitly.
+
+`python -m poc baselines --stage format_and_quant --config configs/135m.yaml`
+uses the explicit finite pilot policy in `protocol/quantization-pilot-caps.json`,
+without filling in final-study budgets. It freezes separate operation-smoke and
+larger preliminary-frontier IDs before content reads. All quantizer data comes
+from component-distinct fit records through the exposure reader. DWQ validation
+uses separate fit components; dev has no optimization role. Imported default
+loaders and socket connections are denied during every upstream invocation.
+The official model adapter exports actual transformed norms and packed owners
+back through the common validated native decoder and checks roundtrip logits.
+
+`make_payload_anchor(teacher, runtime)` initializes the prescribed SEQUENCE
+K15/rank8 model from first-depth medoids and CPU-FP64 SVD seed17, then quantizes
+base matrices at 4-bit/group64 and stores BF16 residuals. An optional `recorder`
+keyword charges the real command; tiny fixtures can omit it. The driver
+independently copies, verifies and atomically publishes the complete artifact
+under ignored `artifacts/payload-anchors/<manifest_sha256>/`, then records its
+actual complete B* and detached digest in `provenance/payload-anchor-135m.json`.
+The receipt is immutable: retries reuse and verify it. Subsequent runtime/code
+changes count in each later artifact and never redefine B*. This is a format
+anchor and carries no training or quality-success claim.

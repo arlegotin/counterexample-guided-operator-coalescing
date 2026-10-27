@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "scope": "Task9 finite pilot qualification; final study budgets remain unchosen",
+  "declared_before_actual_teacher_conversion": true,
+  "headroom_basis": {
+    "available_memory_bytes": 7089651712,
+    "disk_free_bytes": 194443800576
+  },
+  "aggregate_caps": {
+    "wall_seconds": 3600,
+    "process_rss_bytes": 5368709120,
+    "mlx_active_bytes": 4294967296,
+    "generated_disk_bytes": 8589934592,
+    "source_transfer_bytes": 0,
+    "unique_fit_components": 40,
+    "calibration_length": 512,
+    "unique_dev_components": 32,
+    "teacher_forward_calls": 512,
+    "student_forward_calls": 4096,
+    "student_backward_calls": 256,
+    "fit_updates": 128,
+    "conversion_attempts": 24,
+    "concurrent_compute_jobs": 1
+  },
+  "synthetic_qualification": {
+    "wall_seconds_included": true,
+    "prior_observed_wall_seconds": 26.13,
+    "separate_tiny_fixture_only": true,
+    "calibration_sequence_presentations_cap": 64,
+    "length_cap": 16
+  },
+  "policy": {
+    "primary_context": 512,
+    "calibration_sequences_per_method": 2,
+    "dwq_internal_valid_sequences": 2,
+    "dwq_temperature": 1.0,
+    "dwq_learning_rate": 1e-05,
+    "dwq_dtype": "float32",
+    "dwq_epochs": 1,
+    "awq_n_grid": 20,
+    "dynamic_low_bits": 4,
+    "dynamic_high_bits": 8,
+    "dynamic_target_bpw": 6.0,
+    "rtn_bits": [
+      2,
+      3,
+      4,
+      8
+    ],
+    "rtn_groups": [
+      32,
+      64,
+      128
+    ],
+    "ranking": "primary dev KL at or below measured B*, lower payload then construction seconds then digest",
+    "no_quality_success_claim_for_anchor": true,
+    "fit_and_dev_selection": "first lexicographic component-distinct FineWeb records in explicit role, metadata token_count>=600; save IDs before content I/O",
+    "dev_windows": "first saved-policy make_windows window per selected dev document; hash existing windows.json without parsing protected tokens",
+    "retries": "all attempts including failed, interrupted, rejected counted; no budget reset",
+    "archives": "not run: Task8 measured level9 cost; B* complete unarchived payload"
+  },
+  "initial_caps_retained_path": "artifacts/quantization/initial-declaration.json",
+  "amendment": "Controller explicitly requested larger preliminary frontier before real outcomes; unchanged aggregate3600s/memory/disk ceilings, fixture spending retained.",
+  "frontier": {
+    "fit_sequences_per_method": 32,
+    "dwq_internal_valid_sequences": 8,
+    "development_sequences": 32,
+    "context_tokens": 512,
+    "forecast_policy": "after all five smoke operations, conservatively16x each learned smoke conversion,2x for two bit choices, plus measured32dev extrapolation; run larger frontier only if forecast+actual<3600seconds and peaks<declared ceilings",
+    "smoke_eligibility_label": "operation_smoke_only; not strong competitor quality qualification",
+    "teacher_reference_reused": true
+  }
+}

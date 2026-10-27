@@ -1,6 +1,7 @@
-"""Safe tiny bank-state fixtures, requiring a separately supplied exact dense base.
+"""Canonical model storage: external-base tiny fixtures and standalone deployment.
 
-This is not the standalone deployment bundle/exporter specified by R17.
+The legacy bank-state APIs require an exact dense base. Deployment bundles carry
+all canonical floating or packed owners, tokenizer, licenses, and offline runtime.
 """
 import hashlib
 import json
@@ -167,6 +168,19 @@ def _read_json(path):
         raise ValueError('invalid bundle JSON') from exc
 
 
+def _packed_layout(shape, bits, group_size):
+    if (len(shape)!=2 or any(type(n) is not int or n<1 for n in shape)
+            or bits not in (2,3,4,8) or group_size not in (32,64,128)
+            or shape[1]%group_size or shape[1]*bits%32):
+        raise ValueError('unsupported native affine bit/group/shape combination; no padding fallback')
+    # Three-bit groups require a multiple of 32 input values and packing in
+    # blocks of 32. MLX supports it; GPTQ separately restricts to 2/4/8.
+    rows,cols=shape
+    return {'weight_shape':(rows,cols*bits//32),'scale_shape':(rows,cols//group_size),
+            'packed_bytes':rows*cols*bits//8,'scale_bytes':rows*cols//group_size*4,
+            'bias_bytes':rows*cols//group_size*4,'padding_elements':0}
+
+
 def _expected_schema(metadata):
     """Derive permitted tensor owners/shapes from executable architecture, not tensor claims."""
     from poc.runtime.torch_decoder import TinyConfig
@@ -274,7 +288,12 @@ def verify_bundle(path: Path) -> BundleManifest:
             raise ValueError('bundle file size/hash mismatch')
     _verify_runtime_archive(root/RUNTIME_ARCHIVE)
     if _sha(root/'requirements.lock') != raw['dependency_lock_sha256']: raise ValueError('dependency lock mismatch')
-    if _read_json(root/'config.json') != raw['config'] or _read_json(root/'quantization.json') != {'format':'floating','schema_version':1}:
+    quant = _read_json(root/'quantization.json')
+    packed = quant.get('format') == 'mlx-affine'
+    if packed:
+        if set(quant) != {'format','schema_version','method','owners','calibration_manifest_sha256'} or quant['schema_version'] != 1 or quant['method'] not in ('rtn','gptq','awq','dwq','dynamic'):
+            raise ValueError('invalid native quantization metadata')
+    if _read_json(root/'config.json') != raw['config'] or (not packed and quant != {'format':'floating','schema_version':1}):
         raise ValueError('config or floating format metadata mismatch')
     import re
     if raw['source_backend'] not in ('torch_cpu','torch_mps'):
@@ -294,17 +313,31 @@ def verify_bundle(path: Path) -> BundleManifest:
             for key in stream.keys():
                 if key in actual: raise ValueError('duplicate tensor owner across files')
                 view = stream.get_slice(key); actual[key] = (file,tuple(view.get_shape()),view.get_dtype())
-    if set(actual) != set(expected): raise ValueError('missing or extra tensor owner')
+    wanted_tensors=set()
+    if packed and (not isinstance(quant['owners'],dict) or not set(quant['owners']) <= set(expected)):
+        raise ValueError('unknown packed owner')
+    for name in expected:
+        wanted_tensors.update([name+'.packed',name+'.scales',name+'.biases'] if packed and name in quant['owners'] else [name])
+    if set(actual) != wanted_tensors: raise ValueError('missing or extra tensor owner')
     aliases = set()
     for owner in owners:
         if set(owner) != {'name','shape','dtype','category','file','aliases','use_sites','trainable'}:
             raise ValueError('invalid owner record')
         name = owner['name']; shape, category = expected[name]
-        if raw['dtype'] not in ('float32','float64') or owner['dtype'] != raw['dtype']:
-            raise ValueError('unsupported floating dtype')
-        code = {'float32':'F32','float64':'F64'}[owner['dtype']]
+        if packed and name in quant['owners']:
+            fmt=quant['owners'][name]
+            if set(fmt)!={'bits','group_size'} or category=='residual': raise ValueError('invalid packed owner format')
+            layout=_packed_layout(shape,fmt['bits'],fmt['group_size'])
+            if owner['dtype']!='uint32': raise ValueError('packed owner dtype mismatch')
+            for suffix,key,code in (('.packed','weight_shape','U32'),('.scales','scale_shape','F32'),('.biases','scale_shape','F32')):
+                if actual[name+suffix]!=(owner['file'],layout[key],code): raise ValueError('packed tensor shape/dtype mismatch')
+        else:
+            dtype = 'bfloat16' if packed and category=='residual' else raw['dtype']
+            if dtype not in ('float32','float64','bfloat16') or owner['dtype'] != dtype: raise ValueError('unsupported floating dtype')
+            code = {'float32':'F32','float64':'F64','bfloat16':'BF16'}[dtype]
+            if actual[name] != (owner['file'],shape,code): raise ValueError('tensor owner shape/dtype mismatch')
         if (tuple(owner['shape']) != shape or owner['category'] != category or owner['file'] != WEIGHT_FILES[category]
-                or actual[name] != (owner['file'],shape,code) or type(owner['trainable']) is not bool):
+                or type(owner['trainable']) is not bool):
             raise ValueError('tensor owner file/shape/dtype/category mismatch')
         wanted_aliases = [name]
         if name == 'embed_tokens.weight' and raw['config'].get('tie_word_embeddings',False): wanted_aliases.append('lm_head.weight')
@@ -320,6 +353,18 @@ def verify_bundle(path: Path) -> BundleManifest:
         raise ValueError('invalid omitted categories')
     ByteAccounting(sum(p.stat().st_size for p in files.values()), install_bytes=raw['install_bytes'], install_unknown_reason=raw['install_unknown_reason'])
     return BundleManifest(1, entries, raw)
+
+
+def _write_runtime(root):
+    import importlib.resources
+    import zipfile
+    source_root = importlib.resources.files('poc')
+    (root/'runtime').mkdir()
+    with zipfile.ZipFile(root/RUNTIME_ARCHIVE,mode='w',compression=zipfile.ZIP_STORED) as archive:
+        for filename in sorted(RUNTIME_FILES):
+            info = zipfile.ZipInfo('poc/'+filename,date_time=(1980,1,1,0,0,0))
+            info.create_system = 3; info.external_attr = (stat.S_IFREG|0o644)<<16
+            archive.writestr(info,source_root.joinpath(filename).read_bytes())
 
 
 def write_bundle(decoder: DecoderAdapter, destination: Path, runtime: RuntimeSpec) -> BundleRef:
@@ -380,17 +425,7 @@ def write_bundle(decoder: DecoderAdapter, destination: Path, runtime: RuntimeSpe
             if _read_json(temporary/'tokenizer/tokenizer_config.json').get('auto_map'): raise ValueError('remote tokenizer code unsupported')
         shutil.copyfile(runtime.dependency_lock,temporary/'requirements.lock')
         meta['dependency_lock_sha256'] = _sha(temporary/'requirements.lock')
-        # zipimport never writes __pycache__, even with normal caller settings.
-        # Read resources through the package API so a shipped ZIP can re-export.
-        import importlib.resources
-        import zipfile
-        source_root = importlib.resources.files('poc')
-        (temporary/'runtime').mkdir()
-        with zipfile.ZipFile(temporary/RUNTIME_ARCHIVE,mode='w',compression=zipfile.ZIP_STORED) as archive:
-            for filename in sorted(RUNTIME_FILES):
-                info = zipfile.ZipInfo('poc/'+filename,date_time=(1980,1,1,0,0,0))
-                info.create_system = 3; info.external_attr = (stat.S_IFREG|0o644)<<16
-                archive.writestr(info,source_root.joinpath(filename).read_bytes())
+        _write_runtime(temporary)
         meta['file_entries'] = {name:{'bytes':p.stat().st_size,'sha256':_sha(p)}
                                 for name,p in sorted(_regular_files(temporary).items())}
         (temporary/'manifest.json').write_bytes(_canonical(meta))
@@ -406,6 +441,7 @@ def load_bundle(path: Path, *, backend: str, offline: bool = True) -> DecoderAda
     if offline is not True: raise ValueError('bundle loading is local-only; offline must be true')
     manifest = verify_bundle(Path(path))
     if backend == 'torch':
+        if _read_json(Path(path)/'quantization.json')['format']!='floating': raise ValueError('packed bundles require native MLX; scientific dequantization is not a deployment fallback')
         from poc.export import _load_scientific
         return _load_scientific(Path(path),manifest)
     if backend == 'mlx':

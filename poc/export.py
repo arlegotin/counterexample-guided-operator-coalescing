@@ -166,3 +166,28 @@ def validate_artifact(path,backend):
                       'backend':backend,'prompt_tokens':len(ids),'owner_count':measure_resident(decoder).owner_count,
                       'payload_bytes':measure_bundle(path).payload_bytes,'wp03':'not established by a single artifact smoke test'},sort_keys=True))
     return 0
+
+
+def make_payload_anchor(teacher: DecoderAdapter, runtime: RuntimeSpec, *, recorder=None) -> BundleRef:
+    """SEQUENCE K15/rank8, first-depth medoids, CPU FP64 SVD seed17, RTN4/g64.
+
+    Owned temporary output is staging only. The stage driver verifies and
+    atomically publishes a separate immutable durable copy before recording B*.
+    No fitting or quality claim is implied by this prescribed format anchor.
+    """
+    import tempfile
+    import shutil
+    from poc.bank import BankDecoder,canonicalize_partition
+    from poc.quantize import QuantizationSpec,quantize_rtn
+    from poc.bundle import write_bundle
+    depth=len(teacher.layers)
+    if depth!=30: raise ValueError('prescribed primary anchor requires actual depth30')
+    directory=Path(tempfile.mkdtemp(prefix='cgoc-payload-anchor-'))
+    try:
+        compact=BankDecoder(teacher,canonicalize_partition([list(range(i,i+2)) for i in range(0,30,2)],30),8,17)
+        floating=write_bundle(compact,directory/'floating',runtime)
+        result=quantize_rtn(floating,QuantizationSpec('rtn',4,64,str(directory/'packed')),recorder)
+        shutil.rmtree(directory/'floating')
+        return result.bundle
+    except BaseException:
+        shutil.rmtree(directory);raise
