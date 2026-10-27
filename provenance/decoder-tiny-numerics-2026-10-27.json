@@ -1,0 +1,367 @@
+{
+  "date": "2026-10-27",
+  "normalization": "true CPU FP64 RMS/RoPE/softmax reference; scientific FP32 follows Llama FP32 reductions",
+  "procedure": "three seeds times three actual config shapes; three repeated forwards; full versus incremental; central finite difference step=1e-6",
+  "qualification_reference": "provenance/qualification-2026-10-27.json",
+  "rows": [
+    {
+      "config": {
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.049858615129409e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 4.609239865650816e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 1.1102230246251565e-16,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 1.3017729255659916e-12,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.3174543162827206e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 1.01940440830426e-08
+      },
+      "reference_max_abs_gradient": 0.018032703943490946,
+      "reference_max_abs_output": 0.4397401377946951,
+      "seed": 7
+    },
+    {
+      "config": {
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.551673932207123e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 6.281441521441278e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.551115123125783e-17,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 2.802419754588392e-13,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 2.9162531833826222e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.960464477539063e-08,
+        "gradient_reference_error": 3.827619624030554e-09
+      },
+      "reference_max_abs_gradient": 0.017386944862198758,
+      "reference_max_abs_output": 0.3815588063439074,
+      "seed": 17
+    },
+    {
+      "config": {
+        "hidden_size": 16,
+        "intermediate_size": 32,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.843894339801036e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 3.725290298461914e-08,
+        "gradient_reference_error": 4.859035054721186e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.551115123125783e-17,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 7.585191155734528e-13,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 3.888433722232243e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 4.261430063857985e-09
+      },
+      "reference_max_abs_gradient": 0.010660247017106139,
+      "reference_max_abs_output": 0.3960380715067978,
+      "seed": 29
+    },
+    {
+      "config": {
+        "hidden_size": 24,
+        "intermediate_size": 31,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 3,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 1,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.608763187752274e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 5.0470123502005006e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 8.326672684688674e-17,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 6.658024825911824e-13,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 3.2480747078067473e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 4.470348358154297e-08,
+        "gradient_reference_error": 4.872389367460098e-09
+      },
+      "reference_max_abs_gradient": 0.013336089200091753,
+      "reference_max_abs_output": 0.5324730549809765,
+      "seed": 7
+    },
+    {
+      "config": {
+        "hidden_size": 24,
+        "intermediate_size": 31,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 3,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 1,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 6.19465614359882e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.960464477539063e-08,
+        "gradient_reference_error": 6.793678238459916e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.551115123125783e-17,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 8.798404713128427e-13,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 3.402986908929151e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 4.908331713510475e-09
+      },
+      "reference_max_abs_gradient": 0.013346409842545679,
+      "reference_max_abs_output": 0.5589953041499351,
+      "seed": 17
+    },
+    {
+      "config": {
+        "hidden_size": 24,
+        "intermediate_size": 31,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 3,
+        "num_hidden_layers": 3,
+        "num_key_value_heads": 1,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 4.403616077341965e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 2.9802322387695312e-08,
+        "gradient_reference_error": 1.0272722980424198e-08
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 8.326672684688674e-17,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 1.0528314331459399e-12,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 6.13440060970305e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 4.470348358154297e-08,
+        "gradient_reference_error": 5.504305910369878e-09
+      },
+      "reference_max_abs_gradient": 0.02023372414117464,
+      "reference_max_abs_output": 0.5391198432570395,
+      "seed": 29
+    },
+    {
+      "config": {
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 8,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 5.78353347158167e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 7.450580596923828e-08,
+        "gradient_reference_error": 4.371072611503157e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 1.3877787807814457e-16,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 1.1815323025521351e-12,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 5.0559734399158174e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.960464477539063e-08,
+        "gradient_reference_error": 4.858161394873106e-09
+      },
+      "reference_max_abs_gradient": 0.02380517562236961,
+      "reference_max_abs_output": 0.3645536213071099,
+      "seed": 7
+    },
+    {
+      "config": {
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 8,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 5.8126209706577114e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 8.940696716308594e-08,
+        "gradient_reference_error": 4.567716118536458e-09
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 1.942890293094024e-16,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 2.0170148612040553e-12,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 6.312625239202063e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 8.940696716308594e-08,
+        "gradient_reference_error": 4.085017320937245e-09
+      },
+      "reference_max_abs_gradient": 0.014826102231912778,
+      "reference_max_abs_output": 0.4979214618541158,
+      "seed": 17
+    },
+    {
+      "config": {
+        "hidden_size": 32,
+        "intermediate_size": 64,
+        "max_position_embeddings": 128,
+        "num_attention_heads": 4,
+        "num_hidden_layers": 8,
+        "num_key_value_heads": 2,
+        "rms_norm_eps": 1e-06,
+        "rope_theta": 10000.0,
+        "vocab_size": 41
+      },
+      "cpu_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 1.078194058756754e-07,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 9.685754776000977e-08,
+        "gradient_reference_error": 1.3603255756208799e-08
+      },
+      "cpu_fp32_vs_upstream_max_abs_error": 0.0,
+      "cpu_fp64": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 0.0,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 1.249000902703301e-16,
+        "gradient_reference_error": 0.0
+      },
+      "finite_difference_abs_error": 1.4017944791056003e-12,
+      "mps_fp32": {
+        "boundary_reconstruction_error": 0.0,
+        "forward_reference_error": 7.427365061873914e-08,
+        "forward_repeat_error": 0.0,
+        "full_cache_error": 5.960464477539063e-08,
+        "gradient_reference_error": 9.974334058780038e-09
+      },
+      "reference_max_abs_gradient": 0.02900643536933153,
+      "reference_max_abs_output": 0.4992783117103307,
+      "seed": 29
+    }
+  ],
+  "schema_version": 1,
+  "scope": "offline tiny eager Llama only; no assets or gate implied",
+  "tolerance_policy": "8 times max(measured CPU FP32 vs true FP64 error, FP32 epsilon times reference peak), across nine preregistered tiny configs/seeds; absolute only; repeats/boundary reconstruction exact",
+  "tolerances": {
+    "forward_atol": 8.625552470054032e-07,
+    "gradient_atol": 1.0882604604967039e-07,
+    "upstream_fp32_atol": 5.330994645594932e-07
+  }
+}

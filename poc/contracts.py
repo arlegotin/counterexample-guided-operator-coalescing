@@ -140,3 +140,130 @@ class RunSpec:
     def to_dict(self) -> dict:
         return {field.name: (self.budgets.to_dict() if field.name == "budgets" else thaw(getattr(self, field.name)))
                 for field in fields(self)}
+
+
+# These contracts intentionally do not import a numerical backend. Live backend
+# tensors pass through untouched; adapters enforce dtype/device/value semantics.
+from collections.abc import Callable, Sequence
+from typing import Protocol, runtime_checkable
+
+Tensor = Any
+FFNOperator = Callable[[Tensor], Tensor]
+
+
+@dataclass(frozen=True)
+class Batch:
+    input_ids: Tensor
+    attention_mask: Tensor
+    target_mask: Tensor
+    positions: Tensor
+    document_ids: tuple[str, ...]
+    cluster_ids: tuple[str, ...]
+
+    def __post_init__(self) -> None:
+        shape = tuple(self.input_ids.shape)
+        if len(shape) != 2 or min(shape) < 1:
+            raise ValueError('input_ids must be nonempty [B,S]')
+        b, s = shape
+        if tuple(self.attention_mask.shape) != shape or tuple(self.positions.shape) != shape:
+            raise ValueError('attention_mask and positions must be [B,S]')
+        if tuple(self.target_mask.shape) != (b, s - 1):
+            raise ValueError('target_mask must be [B,S-1]')
+        for name in ('document_ids', 'cluster_ids'):
+            values = tuple(getattr(self, name))
+            if len(values) != b or any(type(x) is not str or not x for x in values):
+                raise ValueError(f'{name} must contain one nonempty identity per row')
+            object.__setattr__(self, name, values)
+
+
+@dataclass(frozen=True)
+class Boundary:
+    u: Tensor
+    batch: Batch
+    depth: int
+    model_digest: str
+
+    def __post_init__(self) -> None:
+        if len(self.u.shape) != 3 or tuple(self.u.shape[:2]) != tuple(self.batch.input_ids.shape):
+            raise ValueError('boundary u must be [B,S,d]')
+        if type(self.depth) is not int or self.depth < 0:
+            raise ValueError('boundary depth must be a nonnegative integer')
+        if not re.fullmatch(r'[0-9a-f]{64}', self.model_digest):
+            raise ValueError('boundary requires exact model digest')
+
+
+@dataclass
+class LayerCache:
+    """Mutable inference buffers; never shared between executed depths."""
+    key: Tensor | None = None
+    value: Tensor | None = None
+
+
+@dataclass
+class CacheState:
+    """Inference state, unlike immutable scientific records, mutates once per call."""
+    layers: tuple[LayerCache, ...]
+    start_position: int = 0
+    length: int = 0
+    model_digest: str | None = None
+
+    def __post_init__(self) -> None:
+        self.layers = tuple(self.layers)
+        if not self.layers or len({id(layer) for layer in self.layers}) != len(self.layers):
+            raise ValueError('cache requires distinct per-depth buffers')
+        if type(self.start_position) is not int or self.start_position < 0 or type(self.length) is not int or self.length < 0:
+            raise ValueError('cache positions and length must be nonnegative integers')
+
+
+@dataclass(frozen=True)
+class ModelManifest:
+    config: Mapping
+    owner_use_sites: Mapping
+    tokenizer_digest: str | None
+    checkpoint_digest: str
+    dtype: str
+    backend: str
+
+    def __post_init__(self) -> None:
+        for name in ('config', 'owner_use_sites'):
+            object.__setattr__(self, name, freeze(getattr(self, name)))
+        for digest in (self.tokenizer_digest, self.checkpoint_digest):
+            if digest is not None and not re.fullmatch(r'[0-9a-f]{64}', digest):
+                raise ValueError('manifest requires SHA-256 digests or explicit missing tokenizer')
+
+
+@dataclass(frozen=True)
+class ContinuationRequest:
+    prompt_ids: tuple[int, ...]
+    continuation_ids: tuple[int, ...]
+    boundary_policy_digest: str
+    item_id: str
+
+    def __post_init__(self) -> None:
+        for name in ('prompt_ids', 'continuation_ids'):
+            ids = tuple(getattr(self, name))
+            if not ids or any(type(i) is not int or i < 0 for i in ids):
+                raise ValueError(f'{name} must contain nonnegative token IDs')
+            object.__setattr__(self, name, ids)
+        if not self.boundary_policy_digest or not self.item_id:
+            raise ValueError('continuations require boundary policy and item identity')
+
+
+@dataclass(frozen=True)
+class ContinuationScore:
+    item_id: str
+    log_likelihood: float
+    scored_tokens: int
+
+
+@runtime_checkable
+class DecoderAdapter(Protocol):
+    def final_hidden(self, batch: Batch, *, cache: CacheState | None = None) -> Tensor: ...
+    def readout(self, hidden: Tensor) -> Tensor: ...
+    def logits(self, batch: Batch, *, cache: CacheState | None = None) -> Tensor: ...
+    def prefix_boundary(self, batch: Batch, depth: int) -> Boundary: ...
+    def ff_residual(self, boundary: Boundary, operator: FFNOperator | None = None) -> Tensor: ...
+    def suffix_hidden(self, after_ffn: Tensor, boundary: Boundary) -> Tensor: ...
+    def suffix_logits(self, after_ffn: Tensor, boundary: Boundary) -> Tensor: ...
+    def score_continuations(self, requests: Sequence[ContinuationRequest]) -> list[ContinuationScore]: ...
+    def manifest(self) -> ModelManifest: ...

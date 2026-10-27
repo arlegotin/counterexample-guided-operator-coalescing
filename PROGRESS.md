@@ -1,6 +1,6 @@
 # Project progress
 
-**Updated:** 2026-10-27. **Phase:** Task 2 native qualification. **WP00 compute path passed; full WP00 pending asset provenance.**
+**Updated:** 2026-10-27. **Phase:** Task 3 tiny decoder/boundary oracle implemented. **WP00 compute path passed; full WP00 pending asset provenance.**
 
 ## Current handoff
 
@@ -17,7 +17,11 @@
 - Verification after Task 2: full default CPU suite 103 passed with 2 hardware tests deselected; separate native hardware tests passed. Discovery preserves nulls/reasons, refuses Rosetta/native misclassification, isolates a native MLX child abort, records explicit CPU fallback and caps tiny tensor allocation from measured headroom. Raw identifying OS stdout is ignored.
 - Last successful qualification: WP00 compute-path only. Full WP00 remains `pending_asset_provenance`; immutable model/data revisions and terms remain unresolved. Actual teacher shapes/numerics, quantizer formats, bank anchor, native export and later gates have not passed.
 - Active run/attempt/checkpoint: none.
-- Next implementation action: Task 2 independent review, then Task 3 mathematical tiny fixtures on the current branch; establish immutable asset provenance before asset-dependent execution.
+- Task 3 implementation: backend-neutral decoder/batch/boundary/cache/continuation contracts, offline dynamic eager Llama adapter, per-original-depth GQA/RoPE caches, tied readout, cache-free full-sequence boundaries and differentiable frozen suffixes. Eight-depth 32/64 planted/permuted FFN fixture has an exact unpermuted shared oracle and independent-FFN control; hand-checkable nullspace, missing-coordinate, nontransitive and joint-substitution controls are included.
+- Task 3 numerical evidence: [tiny decoder calibration](provenance/decoder-tiny-numerics-2026-10-27.json) and [offline reproduction script](provenance/measure_decoder_tiny.py). Across nine config/seed pairs, scientific CPU FP32 is bit-exact with independently executed installed Transformers Llama; true CPU FP64 norm/RoPE/softmax references establish max MPS logit error 7.43e-8, suffix input-gradient error 1.02e-8 and CPU central finite-difference error 2.02e-12. Repeat and boundary reconstruction errors are zero. These tiny tolerances do not qualify actual pretrained shapes.
+- Verification after Task 3: full default CPU suite 132 passed, 5 hardware tests deselected; focused decoder CPU 29 passed; explicit native MPS suite 3 passed, 134 deselected. Initial 21 missing-runtime failures, foreign-boundary rejection and MPS on-device FP64 aggregation failures were observed and corrected. No tests remain failing.
+- Boundary provenance: a candidate-produced boundary retains its producer digest when evaluated by the teacher FFN/suffix; structural compatibility is checked. Future probe consumers must compare producer digests against the current candidate to reject stale records. Inference caches separately require the executing decoder digest.
+- Next implementation action: Task 3 independent review, then Task 4 canonical bank ownership and CPU serialization; immutable asset provenance remains mandatory before asset-dependent execution. No checkpoint or dataset was fetched during Task 3.
 - Available qualification command: `.venv/bin/python -m poc doctor --out artifacts/doctor.json`; exits 0 for a passing compute path, 3 for unmet qualification. Host discovery/Metal may require authorized escalation; sandbox denials are not hardware incompatibility.
 - Remaining execution uncertainty: immutable assets/terms, actual loaded shapes, full-model tolerances and WP07 useful-scale calibration. Snapshot: 36 GiB RAM, ~8.53 GiB reclaimable-page estimate, ~20.76 GiB used swap, ~196 GiB free disk. Tiny tensors capped at 64 MiB; physical RAM is not presumed available.
 
