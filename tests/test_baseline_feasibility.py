@@ -122,3 +122,10 @@ def test_registry_reads_measured_eligibility_without_promoting_unimplemented_met
     registry=methods.method_registry()
     assert registry['Q'].status=='eligible' and registry['Q'].supported_formats==('affine2-g64','affine4-g64')
     assert registry['M'].status=='not_yet_implemented'
+
+
+def test_retry_cost_includes_attributed_supplemental_forward_counters(tmp_path):
+    import json
+    from poc.quantization_stage import _prior_costs
+    (tmp_path/'cost-amendments.json').write_text(json.dumps({'amendments':[{'cost':{'student_forward_calls':213}},{'cost':{'student_forward_calls':15}}]}))
+    assert _prior_costs(tmp_path,10.)['student_forward_calls']==228

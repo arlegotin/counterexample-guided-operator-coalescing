@@ -63,7 +63,8 @@ def test_official_dense_adapters_export_transformed_packed_owners(tmp_path,metho
     record=tuple(DocumentRecord(str(i),'f','r','s',i,text=' '.join(['t1','t4','t7','t2']*6)) for i in range(4))
     fit=DataManifest(record,{str(i):'fit' for i in range(4)},{str(i):str(i) for i in range(4)},'s',str(tmp_path/'exposure.jsonl'))
     assert hasattr(api(),'quantize_dense'),'official dense calibration adapter missing'
-    result=api().quantize_dense(floating,api().QuantizationSpec(method,4,64,str(tmp_path/'q'),calibration_count=2,length=16),fit,None)
+    destination=tmp_path/'nested/q' if method=='dynamic' else tmp_path/'q'
+    result=api().quantize_dense(floating,api().QuantizationSpec(method,4,64,str(destination),calibration_count=2,length=16),fit,None)
     loaded=load_bundle(Path(result.bundle.directory),backend='mlx')
     assert loaded.owner('embed_tokens.weight') is loaded.owner('lm_head.weight')
     from test_native_parity import native_batch
@@ -71,6 +72,13 @@ def test_official_dense_adapters_export_transformed_packed_owners(tmp_path,metho
     output=loaded.logits(native_batch(batch([[1,4,7,2]])));mx.eval(output)
     assert bool(mx.all(mx.isfinite(output)).item())
     assert verify_bundle(Path(result.bundle.directory)).metadata['kind']=='dense'
+    if method=='dynamic':
+        import json
+        trace=json.loads(Path(str(destination)+'.allocation-trace.json').read_text())
+        assert trace['sensitivities'] and isinstance(trace['threshold'],float)
+        assert trace['calibration_manifest_sha256'] and trace['seed']==17
+        assert trace['packed_map_sha256']
+
 
 
 @pytest.mark.mlx

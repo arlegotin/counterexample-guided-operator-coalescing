@@ -284,6 +284,10 @@ def _quantize_dense_impl(bundle: BundleRef, spec: QuantizationSpec, calibration:
         elif spec.method=='dynamic':
             sensitivities=dict(module.estimate_sensitivities(model,data,low_bits=spec.bits,low_group_size=spec.group_size,high_bits=spec.dynamic_high_bits,high_group_size=spec.group_size,batch_size=1,gradient_accum_dtype=mx.float32,gradient_checkpoint=False))
             threshold=module.estimate_threshold(model,sensitivities,target_bpw=spec.dynamic_target_bpw,low_bits=spec.bits,low_group_size=spec.group_size,high_bits=spec.dynamic_high_bits,high_group_size=spec.group_size)
+            from poc.bundle import _canonical
+            allocation_trace={'schema_version':1,'source_manifest_sha256':bundle.manifest_sha256,'calibration_manifest_sha256':cal.manifest_sha256,'seed':spec.seed,'low_bits':spec.bits,'high_bits':spec.dynamic_high_bits,'group_size':spec.group_size,'target_effective_bpw':spec.dynamic_target_bpw,'sensitivities':sensitivities,'threshold':float(threshold),'packed_map_sha256':None}
+            Path(spec.destination).parent.mkdir(parents=True,exist_ok=True)
+            Path(spec.destination+'.allocation-trace.json').write_bytes(_canonical(allocation_trace))
             def predicate(path,layer):
                 if not hasattr(layer,'to_quantized'): return False
                 return {'bits':spec.dynamic_high_bits if sensitivities[path]>threshold else spec.bits,'group_size':spec.group_size}
@@ -318,6 +322,9 @@ def _quantize_dense_impl(bundle: BundleRef, spec: QuantizationSpec, calibration:
             formats[name]={'bits':leaf.bits,'group_size':leaf.group_size}
         else: values[name]=getattr(leaf,name.rsplit('.',1)[1]).astype(mx.float32)
     result=_save_packed(source,manifest,spec.destination,values,formats,spec.method,cal.manifest_sha256)
+    if spec.method=='dynamic':
+        allocation_trace['packed_map_sha256']=hashlib.sha256(_canonical(formats)).hexdigest()
+        Path(spec.destination+'.allocation-trace.json').write_bytes(_canonical(allocation_trace))
     # Roundtrip the final actual transformed model against the common inference
     # boundary, after packing, for the same calibration-only prompt.
     restored=load_bundle(Path(result.bundle.directory),backend='mlx')

@@ -362,6 +362,10 @@ def _prior_costs(root,fixture_wall):
                 target='fit_updates' if key=='updates' else key
                 costs[target]=max(costs.get(target,0),value)
         for key,value in costs.items(): prior[key]=prior.get(key,0)+value
+    amendments=root/'cost-amendments.json'
+    if amendments.exists():
+        for entry in json.loads(amendments.read_text())['amendments']:
+            for key,value in entry['cost'].items(): prior[key]=prior.get(key,0)+value
     return prior
 
 
