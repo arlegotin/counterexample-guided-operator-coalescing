@@ -1,38 +1,23 @@
 # Counterexample-guided operator coalescing
 
-A proposed local study of whether candidate-specific counterexamples improve the selection of reusable nonlinear FFNs in a pretrained language model, at measured storage and construction cost.
+This local study asks whether counterexamples help choose which nonlinear FFNs in a pretrained language model can share an operator bank. Any advantage must survive common capability checks and measured storage and construction costs.
 
-**Current state:** Tasks 1–6 provide strict configuration and run records, native tiny-operation qualification, decoder/bank/loss controls, and pinned public assets with outcome-blind data preparation. The prepared natural pool contains 3,072 FineWeb records plus the named benchmark distributions. Actual teacher runtime qualification is next; no model training or compression-quality result is claimed.
+The 135M teacher and scoring harness are now qualified on the local Apple Silicon machine. Development results are uneven: ARC Easy 56.8%, ARC Challenge 32.4%, and BLiMP 79.7% on the declared subset; synthetic arithmetic and composition score 0/16 each under the frozen exact-match protocol. These outcomes remain part of the evidence. **No actual compression advantage has been demonstrated.**
 
-Read in this order:
+The next step is deployment packaging and quantization baselines, followed by the single-merge diagnostic. Final training/search budgets, payload size, protected evaluation and preservation tolerances remain unresolved. Protected readers stay denied until the freeze-verifying evaluator exists.
 
-1. [Critical blueprint review](docs/analysis/2026-10-27-blueprint-review.md) — findings, independently checked arithmetic, source spot-checks, gaps, and proposed resolutions.
-2. [Project specification](docs/superpowers/specs/2026-10-27-cgoc-design.md) — requirements R01–R26, interfaces, scientific controls, artifact contracts, and acceptance gates.
-3. [Implementation plan](docs/superpowers/plans/2026-10-27-cgoc.md) — 25 tasks with dependencies, tests, verification commands, commit boundaries, and traceability.
-4. [Original blueprint](docs/blueprint.md) — preserved research proposal and bibliography.
+Start with [current progress](PROGRESS.md) and [decisions](DECISIONS.md). The [specification](docs/superpowers/specs/2026-10-27-cgoc-design.md) defines the study; the [implementation plan](docs/superpowers/plans/2026-10-27-cgoc.md) orders its tasks. The [original blueprint](docs/blueprint.md) is unchanged, and the [critical review](docs/analysis/2026-10-27-blueprint-review.md) explains its open questions.
 
-[Progress](PROGRESS.md) records the current handoff; [decisions](DECISIONS.md) distinguishes inherited requirements, proposed engineering choices, and unresolved execution gates.
-
-Use native Python 3.12 for this foundation:
+Use the pinned native Python 3.12 environment described in [dependency locks](provenance/dependency-locks/README.md):
 
 ```sh
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -e '.[test]'
 .venv/bin/python -m pytest
-.venv/bin/python -m poc --help
-.venv/bin/python -m poc compile --config configs/pilot.yaml
+.venv/bin/python -m poc validate --suite component
+.venv/bin/python -m poc validate --suite teacher_and_harness
 ```
 
-The last command exits **2** because the pilot deliberately leaves budgets and asset pins unresolved. Commands awaiting implementation return **3**, with their unmet prerequisites. Exit **0** means the requested command completed; **4** means a runtime or data-integrity failure. A command returning 0 never implies a positive scientific result. Preparation and component validation execute their documented work; fitting and evaluation still require later implementations and gates.
+The teacher command requires the pinned private local preparation and native MPS access. It freezes development IDs and policies before scoring, verifies local safetensors/config/tokenizer hashes, and records actual numerical and capability results. `--device cpu` explicitly requests CPU execution; unavailable MPS fails without a fallback. Use a fresh `--out` directory for each attempt.
 
-`load_config(path, phase=...)` rejects unknown or duplicate keys, implicit type coercion, nonfinite numbers, invalid ranges, and manifest paths escaping the repository. Relative configuration and manifest paths resolve against the repository root. `validate_config(config, command=...)` checks command-specific blocking fields. The pilot preserves the blueprint §9.3 values; its additional `budgets` section records unresolved finite ceilings for updates, valid target presentations, teacher/suffix/student calls, search proposals, search and wall seconds, and disk/memory bytes. Counts use integer units; seconds use finite numbers; ceilings are nonnegative and have no unlimited defaults. These fields implement specification R24; WP00 and later gates must supply measured or explicitly approved values.
+[Teacher evidence](provenance/teacher-qualification-2026-10-27.json), [scoring contracts](protocol/task-scoring.md), and [preparation contracts](protocol/data-preparation.md) document measured limits and data access. Preserve the private exposure ledger: development content has now been accessed, so rebuilding or expanding the pool must validate its full history or fail closed. Raw data, weights and prediction rows are not committed.
 
-The primary study requires reported KL temperature **1.0**, primary evaluation context **512**, and residual scale **1.0** in every phase, including preparation. Configuration validation checks bank counts as positive integers; it does not certify compatibility with an unloaded teacher. Tasks 4/7 must use authoritative loaded shapes to enforce `1 <= K <= L`, residual-rank compatibility with projection dimensions, and complete partition coverage before constructing or fitting the bank. Exploratory bank-count sweeps remain possible; protected execution must freeze and reverify the selected valid structure. Repository names are never used as dimension tables.
-
-`RunSpec` snapshots configuration, source/patch/lock/input hashes, hardware policy, seeds, parents, and finite budgets. Its full SHA-256 identity uses sorted UTF-8 JSON with compact separators and one trailing newline. Retries create separate `artifacts/runs/<run_id>/attempts/<attempt_id>/` directories. Events receive monotonically increasing IDs and UTC timestamps. A truncated ledger blocks further writes and remains available for diagnosis.
-
-`BudgetTracker(spec.budgets, attempt).check(next_cost)` preflights each costly operation; `record(actual_cost)` durably records actual expenditure. The shared run ledger retains teacher work across retries and fresh processes. An atomic-operation overrun is recorded before the tracker raises. Disk and memory are high-water observations, while execution counts and seconds accumulate. Unmeasured memory carries a reason. The caller must count recomputation and cache generation again; unique-token increments must count newly seen tokens only. One costly job may be active at a time; checking a budget does not reserve work for concurrent jobs.
-
-With the pinned scientific environment installed, run `.venv/bin/python -m poc prepare --config configs/135m.yaml` to verify the existing private preparation or create it from qualified public sources. The typed `preparation` section records routine byte/record/token/shard ceilings independently of unresolved final study budgets. [Preparation contracts](protocol/data-preparation.md) document role access, windows, exposure lineage and Task 7 interfaces; [retrieval evidence](provenance/preparation-135m-2026-10-27.json) records actual hashes, counts and cost. Protected readers remain denied until the Task 22 freeze-verifying issuer exists.
-
-Actual teacher/harness qualification is next. The current branch is retained. A supported negative or inconclusive experimental outcome is a valid completion of the planned study.
+CLI exits are 0 for completed work, 2 for invalid configuration, 3 for an unmet implementation/prerequisite, and 4 for runtime or integrity failure. Completion never implies a positive scientific result. Work remains on the existing branch.

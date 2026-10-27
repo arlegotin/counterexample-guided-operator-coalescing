@@ -180,6 +180,13 @@ class BankDecoder(TorchDecoder):
         return sum(len(list(layer.mlp.parameters())) for layer in self.layers)
 
     def _digest(self):
+        # Non-tensor wrapper references affect execution; verify before consulting
+        # the tensor snapshot or issuing cache/probe provenance.
+        for depth, layer in enumerate(self.layers):
+            wrapper = layer.mlp
+            if (not isinstance(wrapper, _BankUse) or wrapper._owners_ref() is not self.bank
+                    or wrapper.index != self.partition.reuse_map[depth]):
+                raise ValueError('actual bank mapping/owner violates declared partition')
         payload = (super()._digest(), self.partition.groups, self.rank, self.base_digest)
         return hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
 

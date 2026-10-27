@@ -28,6 +28,9 @@ def _parser() -> argparse.ArgumentParser:
             sub.add_argument("--out", type=Path, required=True)
         if command == "validate":
             sub.add_argument("--suite", choices=("component", "teacher_and_harness", "export", "all"), required=True)
+            sub.add_argument("--config", type=Path, default=Path('configs/135m.yaml'))
+            sub.add_argument("--device", choices=("cpu", "mps"), default="mps")
+            sub.add_argument("--out", type=Path, default=Path('artifacts/validation/teacher_and_harness'))
         if command == "baselines":
             sub.add_argument("--stage", choices=("format_and_quant",), required=True)
         if command == "diagnose":
@@ -61,7 +64,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "validate" and args.suite == "component":
             from poc.validation import run_component_validation
             return run_component_validation()
-        if hasattr(args, "config"):
+        if args.command == "validate" and args.suite == "teacher_and_harness":
+            from poc.teacher_validation import run_teacher_validation
+            return run_teacher_validation(config_path=args.config, device=args.device, out=args.out)
+        if hasattr(args, "config") and args.command != "validate":
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)
         if args.command == "prepare" and config.preparation is not None:
@@ -76,6 +82,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ConfigError as exc:
         print(f"invalid configuration/contract: {exc}", file=sys.stderr)
         return 2
-    except (OSError, RecordError, AssetError) as exc:
+    except (OSError, RecordError, AssetError, ValueError, RuntimeError) as exc:
         print(f"runtime/data-integrity failure: {exc}", file=sys.stderr)
         return 4

@@ -24,8 +24,11 @@ def open_records(manifest: DataManifest, *, purpose: str, permit: EvaluationPerm
     # Never allow exploratory access without preserving immutable exposure lineage.
     if manifest.records and manifest.exposure_path is None:
         raise AccessDenied('exploratory reader requires an append-only exposure ledger')
+    if manifest.records:
+        intent_digest, intent_id = ExposureLedger(manifest.exposure_path).intent(manifest, purpose=purpose)
     materialized = tuple(replace(r,text=r.read_text()) for r in manifest.records)
     if materialized:
         ExposureLedger(manifest.exposure_path).record(replace(manifest,records=materialized),
-                                                      [r.document_id for r in materialized],purpose=purpose)
+                                                      [r.document_id for r in materialized],purpose=purpose,
+                                                      intent_manifest_sha256=intent_digest,intent_id=intent_id)
     yield from materialized

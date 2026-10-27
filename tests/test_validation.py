@@ -33,3 +33,26 @@ def test_component_cli_runs_real_controls_and_records_wp01():
     assert record['returncode'] == 0 and 'passed' in record['stdout']
     assert all(len(digest) == 64 for digest in record['source_sha256'].values())
     assert 'WP01 component passed' in result.stdout
+
+
+def test_teacher_cli_routes_explicit_local_device_and_output(tmp_path,monkeypatch):
+    import poc.cli as cli
+    try:
+        import poc.teacher_validation as validation
+    except ImportError:
+        raise AssertionError('teacher validation route is missing')
+    def execute(**kwargs):
+        assert kwargs['device']=='cpu'
+        assert kwargs['out']==tmp_path
+        return 4
+    monkeypatch.setattr(validation,'run_teacher_validation',execute)
+    assert cli.main(['validate','--suite','teacher_and_harness','--device','cpu','--out',str(tmp_path)])==4
+
+
+import pytest
+
+
+@pytest.mark.parametrize('suite',['export','all'])
+def test_unimplemented_validation_suites_keep_explicit_prerequisite_status(suite):
+    from poc.cli import main
+    assert main(['validate','--suite',suite])==3

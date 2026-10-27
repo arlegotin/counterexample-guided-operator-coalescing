@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Iterable
+from collections import Counter
+from uuid import uuid4
 
 from poc.records import canonical_json, locked_ledger, read_rows, write_row, timestamp
 
@@ -113,17 +115,39 @@ class ExposureLedger:
     def __init__(self, path: Path):
         self.path = Path(path)
 
-    def record(self, manifest: DataManifest, ids: Iterable[str], *, purpose: str):
+    def intent(self, manifest: DataManifest, *, purpose: str):
+        """Durably identify all exposed components before the first text read.
+
+        An interrupted read leaves an incomplete intent, which blocks rebuilds.
+        Completed fingerprint rows remain the authority for duplicate matching.
+        """
+        digest = manifest.digest()
+        intent_id = uuid4().hex
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        with locked_ledger(self.path) as stream:
+            existing = read_rows(stream)
+            for r in manifest.records:
+                write_row(stream, {'event_id':len(existing)+1, 'timestamp':timestamp(),
+                                   'purpose':purpose, 'event':'exposure_intent',
+                                   'intent_id':intent_id,
+                                   'manifest_sha256':digest, 'document_id':r.document_id,
+                                   'component_id':manifest.membership[r.document_id]})
+                existing.append({})
+        return digest, intent_id
+
+    def record(self, manifest: DataManifest, ids: Iterable[str], *, purpose: str,
+               intent_manifest_sha256: str | None = None, intent_id: str | None = None):
         from poc.data.dedup import fingerprint
         selected = set(ids)
         exposed_components = {manifest.membership[i] for i in selected}
         rows = [r for r in manifest.records if manifest.membership[r.document_id] in exposed_components]
-        manifest_sha256 = manifest.digest()
+        manifest_sha256 = intent_manifest_sha256 or manifest.digest()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with locked_ledger(self.path) as stream:
             existing = read_rows(stream)
             for r in rows:
                 write_row(stream, {'event_id':len(existing)+1, 'timestamp':timestamp(), 'purpose':purpose,
+                                   'intent_id':intent_id,
                                    'manifest_sha256':manifest_sha256, 'document_id':r.document_id,
                                    'component_id':manifest.membership[r.document_id], **fingerprint(r)})
                 existing.append({})
@@ -134,6 +158,13 @@ class ExposureLedger:
             return
         with locked_ledger(self.path) as stream:
             exposures = read_rows(stream)
+        key = lambda r: (r.get('intent_id'),r['manifest_sha256'],r['document_id'])
+        completed = Counter(key(r) for r in exposures if 'normalized_sha256' in r)
+        intents = Counter(key(r) for r in exposures if r.get('event') == 'exposure_intent')
+        # Counts also fail closed for legacy rows lacking a per-read intent ID.
+        if intents - completed:
+            raise ExposureError('incomplete exploratory exposure prevents safe rebuild')
+        exposures = [r for r in exposures if 'normalized_sha256' in r]
         # Compare exact shingle intersections, not approximate MinHash screening.
         for r in manifest.records:
             if manifest.roles[r.document_id] in {'confirm_A','confirm_B','protected_benchmark'}:

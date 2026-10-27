@@ -16,6 +16,8 @@ from torch.nn import functional as F
 from poc.contracts import (Batch, Boundary, CacheState, ContinuationRequest,
                            ContinuationScore, FFNOperator, LayerCache, ModelManifest)
 
+EXECUTION_PROFILE = 'eager-llama-hf-fp32-reciprocal-true-fp64-v2'
+
 
 @dataclass(frozen=True)
 class TinyConfig:
@@ -91,8 +93,27 @@ class TorchDecoder(nn.Module):
     def dtype(self):
         return self.embed_tokens.weight.dtype
 
+    def invalidate_state_snapshot(self) -> None:
+        """Invalidate after external storage writes (including unsafe .data/NumPy).
+
+        Normal no-grad in-place edits, optimizers, state loads, module replacement,
+        config edits and dtype/device moves are also detected by the signature.
+        External writers must call this before any digest/probe/cache operation.
+        """
+        self._state_snapshot = None
+
     def _digest(self) -> str:
-        digest = hashlib.sha256(json.dumps(self.config.to_dict(), sort_keys=True, default=str).encode())
+        config = json.dumps(self.config.to_dict(), sort_keys=True, default=str)
+        tensors = list(self.named_parameters(remove_duplicate=False)) + list(self.named_buffers(remove_duplicate=False))
+        signature = (EXECUTION_PROFILE, config, self.head_dim, self.rope_theta,
+                     tuple((name, id(t), t.data_ptr(), t._version, str(t.dtype), str(t.device),
+                            tuple(t.shape), tuple(t.stride())) for name, t in tensors))
+        snapshot = getattr(self, '_state_snapshot', None)
+        if snapshot is not None and snapshot[0] == signature:
+            return snapshot[1]
+        digest = hashlib.sha256(config.encode())
+        digest.update(json.dumps([EXECUTION_PROFILE, self.head_dim,
+                                  self.rope_theta, str(self.device)]).encode())
         # Hash detached snapshots only; live candidate activations never cross NumPy.
         for name, tensor in self.state_dict().items():
             value = tensor.detach().cpu().contiguous()
@@ -105,7 +126,9 @@ class TorchDecoder(nn.Module):
         for name, parameter in self.named_parameters(remove_duplicate=False):
             owners.setdefault(id(parameter), []).append(name)
         digest.update(json.dumps(list(owners.values()), sort_keys=True).encode())
-        return digest.hexdigest()
+        result = digest.hexdigest()
+        self._state_snapshot = (signature, result)
+        return result
 
     def manifest(self) -> ModelManifest:
         owners = {}
@@ -149,7 +172,12 @@ class TorchDecoder(nn.Module):
 
     def _rope(self, x, positions):
         work_dtype = torch.float64 if x.dtype == torch.float64 else torch.float32
-        inv = self.rope_theta ** (-torch.arange(0, self.head_dim, 2, device=x.device, dtype=work_dtype)/self.head_dim)
+        exponents = torch.arange(0, self.head_dim, 2, device=x.device, dtype=work_dtype)/self.head_dim
+        # Match original HF operation order in scientific FP32. Negative powers
+        # differ by an ulp at real head widths and amplify through 30 blocks.
+        # Preserve the true FP64 reference's original high-precision arithmetic.
+        inv = (self.rope_theta ** -exponents if work_dtype == torch.float64
+               else 1.0 / (self.rope_theta ** exponents))
         angles = positions.to(work_dtype)[..., None] * inv
         angles = torch.cat((angles, angles), dim=-1)[:, None]
         left, right = x.chunk(2, dim=-1)
