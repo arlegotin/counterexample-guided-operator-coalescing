@@ -65,6 +65,14 @@ class TrainingPilotRecorder(PilotRecorder):
             total=observed if total is None else BudgetTracker.combine(total,observed)
         return total
 
+    def validate(self):
+        self.aggregate()
+        for tracker in self._phase_trackers.values():tracker.validate()
+
+    def finish_attempt(self,result,*,elapsed):
+        self.validate()
+        return super().finish_attempt(result,elapsed=elapsed)
+
     def disk(self):
         # Retained diagnostics, all generations and transient files share the cap.
         return sum(p.stat().st_size for p in (ROOT/'artifacts/training/task11').rglob('*') if p.is_file())

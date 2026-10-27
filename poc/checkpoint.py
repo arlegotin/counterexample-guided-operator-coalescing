@@ -105,6 +105,9 @@ def save_checkpoint(state,root: Path,*,recorder=None) -> CheckpointRef:
     if not isinstance(state,TrainingState) or not state.safe_boundary or state.spec is None:
         raise ValueError('checkpoint requires RunSpec and complete safe update boundary')
     root=Path(root);root.mkdir(parents=True,exist_ok=True)
+    boundary_recorder=recorder
+    while boundary_recorder is not None and not hasattr(boundary_recorder,'validate') and hasattr(boundary_recorder,'recorder'):boundary_recorder=boundary_recorder.recorder
+    if boundary_recorder is not None and hasattr(boundary_recorder,'validate'):boundary_recorder.validate()
     import time
     from poc.contracts import CostRecord
     started=time.monotonic()

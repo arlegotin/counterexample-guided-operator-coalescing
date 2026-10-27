@@ -210,6 +210,9 @@ def test_student_forward_cost_is_compatible_with_legacy_rows_and_durable(tmp_pat
     rows=[json.loads(line) for line in tracker.path.read_text().splitlines()]
     rows[0]['cost'].pop('student_forward_calls')
     tracker.path.write_text(''.join(json.dumps(row)+'\n' for row in rows))
+    # A genuine legacy ledger is opened by a new process/Tracker; an already
+    # verified append-only prefix cannot be rewritten beneath its reader.
+    tracker=BudgetTracker(identity.budgets,attempt)
     tracker.record(CostRecord(student_forward_calls=2))
     fresh=BudgetTracker(identity.budgets,attempt)
     assert fresh.totals.teacher_forward_calls==1 and fresh.totals.student_forward_calls==2

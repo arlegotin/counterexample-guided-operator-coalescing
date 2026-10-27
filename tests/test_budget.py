@@ -116,3 +116,45 @@ def test_cached_ledger_rejects_malformed_partial_or_nonmonotonic_tail(tmp_path,t
     before=a.path.read_bytes()
     with pytest.raises(RecordError):_=a.totals
     assert a.path.read_bytes()==before
+
+
+def test_full_fit_call_charges_setup_failure_time_and_successive_calls(tmp_path,monkeypatch):
+    import time
+    t=api();identity=spec(budgets=budget(),resolved_config={'training':t.TrainingConfig(max_updates=1).identity()})
+    recorder=BudgetTracker(identity.budgets,start_attempt(identity,tmp_path));teacher,student=models()
+    recorder.record(CostRecord(wall_seconds=2))
+    original=t.configure_trainable_owners
+    def fail_after_setup(*args,**kwargs):
+        time.sleep(.02)
+        raise ValueError('setup failure')
+    monkeypatch.setattr(t,'configure_trainable_owners',fail_after_setup)
+    for _ in range(2):
+        with pytest.raises(ValueError,match='setup'):
+            t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),t.TrainingConfig(max_updates=1,run_spec=identity),identity.budgets,recorder)
+    assert recorder.attempt_cost.wall_seconds>=2.04
+    monkeypatch.setattr(t,'configure_trainable_owners',original)
+    before=recorder.attempt_cost.wall_seconds;started=time.monotonic()
+    t.fit_model(student,teacher,t.TrainingSources(natural=(batch(),)),t.TrainingConfig(max_updates=1,run_spec=identity),identity.budgets,recorder)
+    elapsed=time.monotonic()-started
+    assert abs(recorder.attempt_cost.wall_seconds-before-elapsed)<.02
+
+
+def test_same_size_edit_with_restored_mtime_and_inode_replacement_are_detected(tmp_path):
+    import json,os
+    from poc.records import canonical_json,RecordError
+    identity=spec(budgets=budget());a=BudgetTracker(identity.budgets,start_attempt(identity,tmp_path));a.record(CostRecord(wall_seconds=1));_=a.totals
+    old=a.path.stat();raw=json.loads(a.path.read_text());raw['cost']['wall_seconds']=0
+    edited=canonical_json(raw);assert len(edited)==old.st_size
+    a.path.write_bytes(edited);os.utime(a.path,ns=(old.st_atime_ns,old.st_mtime_ns))
+    with pytest.raises(RecordError,match='prefix'):_=a.totals
+    b=BudgetTracker(identity.budgets,start_attempt(identity,tmp_path/'separate'));b.record(CostRecord(wall_seconds=1));_=b.totals
+    raw=json.loads(b.path.read_text());raw['cost']['wall_seconds']=0
+    replacement=b.path.with_suffix('.replacement');replacement.write_bytes(canonical_json(raw));os.replace(replacement,b.path)
+    with pytest.raises(RecordError,match='prefix'):_=b.totals
+
+
+def test_explicit_full_validation_and_durable_own_append_preserve_totals(tmp_path):
+    identity=spec(budgets=budget());a=BudgetTracker(identity.budgets,start_attempt(identity,tmp_path))
+    for _ in range(10):a.record(CostRecord(wall_seconds=.01));a.check(CostRecord())
+    assert a.validate()==a.totals
+    assert a.validate().wall_seconds==pytest.approx(.1)

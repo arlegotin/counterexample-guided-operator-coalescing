@@ -63,12 +63,13 @@ def read_rows(stream, *, first_event_id: int = 1) -> list[dict]:
     return rows
 
 
-def write_row(stream, row: Mapping) -> None:
+def write_row(stream, row: Mapping) -> bytes:
     encoded = canonical_json(row)
     stream.seek(0, os.SEEK_END)
     stream.write(encoded)
     stream.flush()
     os.fsync(stream.fileno())
+    return encoded
 
 
 def timestamp() -> str:

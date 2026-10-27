@@ -207,3 +207,18 @@ def test_pointer_previous_cannot_escape_checkpoint_root_during_pruning(tmp_path)
     raw['previous']={'generation':'../outside/'+Path(victim.directory).name,'manifest_sha256':victim.manifest_sha256};pointer.write_text(json.dumps(raw))
     with pytest.raises(ValueError,match='pointer'):c.save_checkpoint(state,tmp_path/'root')
     assert Path(victim.directory).exists()
+
+
+@pytest.mark.parametrize('field,value',[
+    ('scheduler',{'completed_updates':999}),('step',999),('target_cursor',17),('probe_cursor',1),
+    ('order',(('other-doc',),)),('probe_order',('other-probe',)),('visited',()),
+])
+def test_resume_rejects_inconsistent_recovery_metadata_before_tensor_mutation(field,value):
+    t=api();teacher,student=models();cfg=bound_config(max_updates=4,epochs=4,run_spec=spec(budgets=budget()))
+    sources=t.TrainingSources(natural=(batch(),))
+    first=t.fit_model(student,teacher,sources,replace(cfg,stop_after_updates=2),budget(),MemoryRecorder())
+    _,fresh=models();before={n:p.clone() for n,p in fresh.named_parameters()}
+    bad=replace(first.state,**{field:value})
+    with pytest.raises(ValueError,match='recovery|scheduler|cursor|order|visited|step'):
+        t.fit_model(fresh,teacher,sources,replace(cfg,resume=bad),budget(),MemoryRecorder(first.state.budget_totals))
+    assert all(torch.equal(p,before[n]) for n,p in fresh.named_parameters())

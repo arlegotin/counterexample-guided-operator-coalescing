@@ -179,7 +179,7 @@ class MethodResult:
     checkpoint: object | None = None
 
 
-def configure_trainable_owners(student: BankDecoder, config: TrainingConfig) -> dict:
+def configure_trainable_owners(student: BankDecoder, config: TrainingConfig, *, apply=True) -> dict:
     if not isinstance(student,BankDecoder): raise ValueError('common fitter requires canonical BankDecoder')
     census=owner_census(student); parameters=dict(student.named_parameters())
     selected=set(config.affected_depths)
@@ -194,10 +194,11 @@ def configure_trainable_owners(student: BankDecoder, config: TrainingConfig) -> 
         if config.phase!='global':
             if row.category=='bank': train=any(site.startswith(tuple(f'layers.{d}.' for d in selected)) for site in row.use_sites)
             elif row.category=='residual': train=any(row.name.startswith(f'layers.{d}.') for d in selected)
-        p=parameters[row.name];p.requires_grad_(train);p.grad=None
+        p=parameters[row.name]
+        if apply:p.requires_grad_(train);p.grad=None
         if train: owners[row.name]=p
     if not owners or len({id(p) for p in owners.values()})!=len(owners): raise ValueError('unique trainable owners required')
-    student.eval()
+    if apply:student.eval()
     return owners
 
 
@@ -378,11 +379,46 @@ def _saved_digest(student,values,*,device_override=None):
     return hashlib.sha256(json.dumps((h.hexdigest(),student.partition.groups,student.rank,student.base_digest),sort_keys=True).encode()).hexdigest()
 
 
+def _recovery_cursors(sources,config,step):
+    if step==0:return 0,0
+    batches=sources.natural if config.phase=='global' else tuple(p.template for p in sources.probes)
+    counts=[int(b.target_mask.sum().item()) for b in batches]
+    completed=cursor=probes=0
+    for _ in range(config.epochs):
+        remaining=config.target_count
+        for count in counts:
+            while count:
+                take=min(remaining,count);count-=take;remaining-=take;cursor+=take
+                if config.phase!='global':probes+=1
+                if remaining==0:
+                    completed+=1
+                    if completed==step:return cursor,probes
+                    remaining=config.target_count
+        if remaining<config.target_count:
+            completed+=1
+            if completed==step:return cursor,probes
+    raise ValueError('recovery step exceeds saved source order')
+
+
 def _restore(state,student,optimizer,config,sources,teacher_digest):
     if not state.safe_boundary:raise ValueError('only complete update boundaries can resume')
     if state.spec!=config.run_spec or state.config_hash!=hashlib.sha256(canonical_json(config.identity())).hexdigest() or state.source_hash!=sources.digest():raise ValueError('resume lineage mismatch: config/data/source')
     if state.partition!=student.partition.groups or state.teacher_digest!=teacher_digest:raise ValueError('resume lineage mismatch: map/teacher')
-    if state.model_schema!=_model_schema(student):raise ValueError('resume owner/schema mismatch')
+    expected_schema=_model_schema(student)
+    desired={n for group in optimizer.param_groups for n in group['owner_ids']}
+    for owner in expected_schema['owners']:owner['trainable']=owner['name'] in desired
+    if state.model_schema!=expected_schema:raise ValueError('resume owner/schema mismatch')
+    if type(state.step) is not int or not 0<=state.step<=config.max_updates:raise ValueError('invalid recovery step')
+    if any(type(v) is not int or v<0 for v in (state.target_cursor,state.probe_cursor)):raise ValueError('invalid recovery cursor')
+    if state.order!=tuple(b.document_ids for b in sources.natural) or state.probe_order!=tuple(p.identity for p in sources.probes):raise ValueError('recovery order mismatch')
+    if (state.target_cursor,state.probe_cursor)!=_recovery_cursors(sources,config,state.step):raise ValueError('recovery cursor mismatch')
+    import re
+    if (len(state.visited)!=state.step or any(type(d) is not str or not re.fullmatch('[0-9a-f]{64}',d) for d in state.visited)
+            or state.step and state.visited[-1]!=state.candidate_digest):raise ValueError('recovery visited history mismatch')
+    updates=[e for e in state.events if e.get('kind')=='update']
+    if [e.get('step') for e in updates]!=list(range(1,state.step+1)) or sum(e.get('valid_targets',0) for e in updates)!=state.target_cursor:raise ValueError('recovery event cursor mismatch')
+    if state.scheduler!=_schedule(optimizer,state.step,config.max_updates):raise ValueError('recovery scheduler mismatch')
+    CostRecord(**state.budget_totals)
     parameters=dict(student.named_parameters())
     if parameters.keys()!=state.model.keys():raise ValueError('resume owner set mismatch')
     # All validation, including owner-indexed moments and RNG schema, precedes
@@ -395,7 +431,7 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
         if set(group)-{'params'}!=set(saved):raise ValueError('optimizer fields mismatch')
         for key in set(saved)-{'lr','owner_ids'}:
             if saved[key]!=group[key]:raise ValueError('optimizer hyperparameter mismatch')
-        if not math.isfinite(saved['lr']) or saved['lr']<0:raise ValueError('invalid optimizer LR')
+        if saved['lr']!=group['lr']:raise ValueError('optimizer scheduler LR mismatch')
         for n,p in zip(group['owner_ids'],group['params'],strict=True):
             moments=state.optimizer['state'][n]
             if moments and set(moments)!={'step','exp_avg','exp_avg_sq'}:raise ValueError('optimizer moment fields mismatch')
@@ -411,7 +447,11 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
     import random,numpy as np
     random.Random().setstate(state.rng['python']);np.random.RandomState().set_state(state.rng['numpy'])
     torch.Generator().set_state(state.rng['torch'])
-    if 'mps' in state.rng and (not torch.backends.mps.is_available() or state.rng['mps'].dtype!=torch.uint8):raise ValueError('invalid saved MPS RNG')
+    if 'mps' in state.rng:
+        if not torch.backends.mps.is_available() or state.rng['mps'].dtype!=torch.uint8:raise ValueError('invalid saved MPS RNG')
+        previous_rng=torch.mps.get_rng_state()
+        try:torch.mps.set_rng_state(state.rng['mps'])
+        finally:torch.mps.set_rng_state(previous_rng)
     with torch.no_grad():
         for n,p in parameters.items():p.copy_(state.model[n].to(p.device))
     for group,saved in zip(optimizer.param_groups,state.optimizer['groups'],strict=True):
@@ -446,7 +486,7 @@ def finish_attempt_cost(recorder,*,elapsed):
         if extra:recorder.record(CostRecord(wall_seconds=extra))
 
 
-def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSources,
+def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSources,
               config: TrainingConfig, budget: Budget, recorder: Recorder) -> MethodResult:
     if config.run_spec is not None:
         if config.run_spec.budgets!=budget:raise ValueError('immutable RunSpec budget mismatch')
@@ -457,7 +497,7 @@ def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSourc
     if student.dtype not in (torch.float32,torch.float64):raise ValueError('scientific fitting requires FP32 or CPU FP64 reference')
     if student.dtype==torch.float64 and student.device.type!='cpu':raise ValueError('FP64 reference is CPU only')
     if list(student.named_buffers()):raise ValueError('unmodeled persistent buffers are unsupported')
-    owners=configure_trainable_owners(student,config);optimizer=_optimizer(owners,config)
+    owners=configure_trainable_owners(student,config,apply=config.resume is None);optimizer=_optimizer(owners,config)
     guard=_Guard(recorder,budget);teacher_digest=teacher.manifest().checkpoint_digest
     step=cursor=probe_cursor=0;events=[];visited=[];metrics=[];checkpoint_ref=None
     if config.resume is not None:
@@ -468,6 +508,7 @@ def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSourc
             if k not in ('memory_bytes','disk_bytes','memory_unavailable_reason','estimation_method') and isinstance(v,(int,float)) and current<v:
                 raise ValueError('authoritative spending cannot roll back to checkpoint')
         _restore(saved,student,optimizer,config,data,teacher_digest)
+        configure_trainable_owners(student,config)
         step,cursor,probe_cursor=saved.step,saved.target_cursor,saved.probe_cursor
         events=list(saved.events);visited=list(saved.visited)
     schedule=_schedule(optimizer,step,config.max_updates)
@@ -523,3 +564,18 @@ def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSourc
     outcome='invalid' if not cursor else 'exhausted'
     reason='no_valid_targets' if not cursor else 'declared bounded fitting completed; compression target not evaluated'
     return MethodResult(outcome,reason,state,tuple(metrics),checkpoint_ref)
+
+
+def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSources,
+              config: TrainingConfig, budget: Budget, recorder: Recorder) -> MethodResult:
+    """Charge the entire call, including setup failures and final snapshots."""
+    started=time.monotonic()
+    baseline=recorder.attempt_cost.wall_seconds if isinstance(recorder,BudgetTracker) else 0
+    result=None
+    try:
+        result=_fit_model(student,teacher,data,config,budget,recorder)
+        return result
+    finally:
+        if isinstance(recorder,BudgetTracker):
+            finish_attempt_cost(recorder,elapsed=baseline+time.monotonic()-started)
+            if result is not None:result.state.budget_totals=recorder.totals.to_dict()
