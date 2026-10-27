@@ -93,6 +93,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         if hasattr(args, "config") and args.command != "validate":
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)
+        if args.command == "diagnose" and args.kind == "single_merge":
+            import json
+            from dataclasses import asdict
+            from poc.diagnostics import run_single_merge
+            result = run_single_merge(config)
+            print(json.dumps(asdict(result), sort_keys=True))
+            return 0 if result.status in ('complete', 'profile_complete') else 4
         if args.command == "prepare" and config.preparation is not None:
             import json
             from poc.data.prepare import run_prepare

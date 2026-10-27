@@ -73,3 +73,18 @@ def test_pairwise_success_does_not_establish_joint_success():
     assert controls['joint_failure']=={'first_only':0.,'second_only':0.,'joint':1.}
     assert controls['planted_selected_regret']==0 and controls['bad_selected_regret']>0
     assert controls['null_regret']==0
+
+
+def test_fixed_score_formulas_are_finite_and_not_tuned_to_damage():
+    a=api();v=a.fixed_scores(natural=2.,student=4.,random_donor=6.,active_donor=10.)
+    assert v=={'natural_kl':2.,'random_donor':7.,'active_1':9.,'active_01':2.7}
+    with pytest.raises(ValueError):a.fixed_scores(natural=2.,student=4.,random_donor=float('nan'),active_donor=10.)
+
+
+def test_single_merge_cli_routes_profile_status_without_claiming_full_completion(monkeypatch,capsys):
+    from poc import cli
+    a=api()
+    assert hasattr(a,'DiagnosticResult'), 'typed diagnostic result missing'
+    monkeypatch.setattr(a,'run_single_merge',lambda config:a.DiagnosticResult('profile_complete','fixture/result.json'))
+    code=cli.main(['diagnose','--kind','single_merge','--config','configs/pilot.yaml'])
+    assert code==0 and 'profile_complete' in capsys.readouterr().out

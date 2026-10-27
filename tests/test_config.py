@@ -23,11 +23,12 @@ def write_config(tmp_path, changes):
     return path
 
 
-def test_pilot_is_typed_but_compile_blocks_unresolved_budget():
+def test_pilot_resolves_diagnostic_but_compile_still_blocks_final_search():
     config = load_config(PILOT, phase="exploratory")
     assert config.training.context_tokens == 512
-    assert config.teacher.revision is None
-    with pytest.raises(ConfigError, match="budget"):
+    assert config.teacher.revision is not None
+    validate_config(config, command="diagnose")
+    with pytest.raises(ConfigError, match="teacher_query_budget"):
         validate_config(config, command="compile")
     validate_config(config, command="prepare")
 

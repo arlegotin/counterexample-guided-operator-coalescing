@@ -52,7 +52,9 @@ def _fit_batches(fit,teacher):
     for row in open_records(fit,purpose='fit'):
         data=Path(row.token_path).read_bytes()
         if hashlib.sha256(data).hexdigest()!=row.token_sha256:raise ValueError('fit token hash mismatch')
-        raw=json.loads(data);tokens=raw['token_ids'] if isinstance(raw,dict) else raw
+        raw=json.loads(data)
+        if raw['document_id']!=row.document_id:raise ValueError('fit token document mismatch')
+        tokens=raw['fields']['text']
         windows=make_windows(TokenDocument(row.document_id,tuple(tokens)),WindowPolicy())
         if not windows or not windows[0].target_indices:raise ValueError('empty fit window')
         from poc.teacher_validation import _batch
@@ -104,7 +106,7 @@ def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,i
                     target=_call(recorder,lambda:teacher.ff_residual(boundary),teacher_forward_calls=1)
                     actual=_call(recorder,lambda:teacher.ff_residual(boundary,candidate.layers[depth].mlp),student_forward_calls=1)
                     mask=b.target_mask
-                    error=(actual[:,:-1]-target[:,:-1]).double().square().mean(-1)[mask]
+                    error=(actual[:,:-1]-target[:,:-1]).detach().cpu().double().square().mean(-1)[mask.cpu()]
                     if not error.numel():raise ValueError('nonempty fit activation mask required')
                     sums.append(float(error.mean().item()))
         score=sum(sums)/len(sums);parent=groups[index][0]
@@ -126,7 +128,59 @@ def fit_trial(trial:MergeTrial,schedule:TrainingConfig,budget:Budget)->MergeTria
     if schedule.phase!='local' or tuple(schedule.affected_depths)!=trial.affected_depths:raise ValueError('common local schedule must cover exact merged group')
     if trial.sources is None or trial.recorder is None:raise ValueError('auditable training sources and recorder required')
     result=fit_model(trial.model,trial.teacher,trial.sources,schedule,budget,trial.recorder)
+    trial.recorder.record(CostRecord())  # observe transient full model/Adam snapshot while still live
     if result.state.step!=schedule.max_updates or result.state.target_cursor!=schedule.max_updates*8192:raise ValueError('incomplete common exact-target fitting allowance')
     trial.fitted_digest=result.state.candidate_digest
     trial.fit_summary=dict(updates=result.state.step,targets=result.state.target_cursor,metrics=result.metrics)
     return trial
+
+
+def initializer_sensitivity_control():
+    """A real nonlinear permutation fixture separates capacity from raw-SVD error."""
+    from poc.synthetic import make_planted_teacher
+    from poc.bank import make_bank
+    fixture=make_planted_teacher(23)
+    partition=canonicalize_partition([[0,2,3,6],[1,4,5,7]],8)
+    x=torch.cat((torch.eye(32,dtype=torch.float64),torch.randn((64,32),generator=torch.Generator().manual_seed(731),dtype=torch.float64)))
+    errors={}
+    with torch.no_grad():
+        for label,rank in [('whole_medoid',0),('truncated_svd',2),('full_rank',32)]:
+            candidate=make_bank(fixture.teacher,partition,rank,17)
+            errors[label+'_max_error']=max(float((candidate.layers[d].mlp(x)-fixture.teacher.layers[d].mlp(x)).abs().max()) for d in range(8))
+            del candidate
+    return errors|{'interpretation':'raw SVD is not neuron alignment','fixture_seed':23,'evaluation_seed':731,'evaluation_positions':96}
+
+
+def save_trial_delta(trial,current,path):
+    """Keep only changed owners for delayed damage evaluation, never Adam/full model."""
+    import json
+    from pathlib import Path
+    from safetensors.torch import save_file
+    if trial.fitted_digest!=trial.model.manifest().checkpoint_digest:raise ValueError('fitted trial changed')
+    path=Path(path);path.mkdir(parents=True,exist_ok=False)
+    index=trial.model.partition.reuse_map[trial.pair[0]]
+    selected={n:p.detach().cpu().contiguous() for n,p in trial.model.named_parameters() if n.startswith(f'bank.{index}.') or any(n.startswith(f'layers.{d}.mlp.residuals.') for d in trial.affected_depths)}
+    save_file(selected,str(path/'weights.safetensors'))
+    metadata=dict(base_digest=current.manifest().checkpoint_digest,teacher_digest=trial.teacher.manifest().checkpoint_digest,pair=trial.pair,affected_depths=trial.affected_depths,selected_parent=trial.selected_parent,medoid_scores=trial.medoid_scores,initialized_digest=trial.initialized_digest,fitted_digest=trial.fitted_digest,fit_summary=trial.fit_summary,weights_sha256=hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest())
+    (path/'metadata.json').write_text(json.dumps(metadata,sort_keys=True)+'\n')
+
+
+def restore_trial_delta(current,teacher,path,*,recorder=None):
+    import json
+    from pathlib import Path
+    from safetensors.torch import load_file
+    path=Path(path);metadata=json.loads((path/'metadata.json').read_text())
+    if metadata['base_digest']!=current.manifest().checkpoint_digest or metadata['teacher_digest']!=teacher.manifest().checkpoint_digest:raise ValueError('delta base identity changed')
+    if hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest()!=metadata['weights_sha256']:raise ValueError('delta weights hash mismatch')
+    pair=tuple(metadata['pair']);affected=tuple(metadata['affected_depths']);indices={current.partition.reuse_map[d] for d in pair}
+    merged=canonicalize_partition([g for k,g in enumerate(current.partition.groups) if k not in indices]+[affected],len(current.layers))
+    candidate=deepcopy(current);old={g:current.bank[k] for k,g in enumerate(current.partition.groups)}
+    candidate.bank=nn.ModuleList([deepcopy(current.bank[current.partition.reuse_map[pair[0]]] if g==affected else old[g]) for g in merged.groups]);candidate.partition=merged
+    for depth,layer in enumerate(candidate.layers):layer.mlp.index=merged.reuse_map[depth];layer.mlp._owners_ref=weakref.ref(candidate.bank)
+    values=load_file(str(path/'weights.safetensors'));parameters=dict(candidate.named_parameters())
+    expected={n for n in parameters if n.startswith(f'bank.{merged.reuse_map[pair[0]]}.') or any(n.startswith(f'layers.{d}.mlp.residuals.') for d in affected)}
+    if set(values)!=expected:raise ValueError('delta changed-owner schema mismatch')
+    with torch.no_grad():
+        for n,v in values.items():parameters[n].copy_(v)
+    if candidate.manifest().checkpoint_digest!=metadata['fitted_digest']:raise ValueError('restored fitted state digest mismatch')
+    return MergeTrial(candidate,teacher,pair,affected,metadata['selected_parent'],tuple(metadata['medoid_scores']),metadata['initialized_digest'],metadata['fitted_digest'],recorder=recorder,fit_summary=metadata['fit_summary'])

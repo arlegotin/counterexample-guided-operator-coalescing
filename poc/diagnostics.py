@@ -162,3 +162,20 @@ def run_controls():
     null=DamageTable(ids,('d',),((1.,),)*3,'fixture-null')
     return dict(planted_selected_regret=selected_merge_regret(s,d).regret,bad_selected_regret=selected_merge_regret(bad,d).regret,
         null_regret=selected_merge_regret(s,null).regret,joint_failure={'first_only':c.joint_suffix(True,False),'second_only':c.joint_suffix(False,True),'joint':c.joint_suffix(True,True)})
+
+
+def fixed_scores(*,natural,student,random_donor,active_donor):
+    if not all(math.isfinite(v) for v in (natural,student,random_donor,active_donor)):raise ValueError('all fixed score sources must be finite')
+    return dict(natural_kl=natural,random_donor=natural+.5*(student+random_donor),active_1=natural+.5*(student+active_donor),active_01=natural+.05*(student+active_donor))
+
+
+@dataclass(frozen=True)
+class DiagnosticResult:
+    status: str
+    result_path: str
+
+
+def run_single_merge(config) -> DiagnosticResult:
+    from provenance.measure_single_merge import run
+    result=run(config)
+    return DiagnosticResult(result['status'],result['attempt']+'/result.json')

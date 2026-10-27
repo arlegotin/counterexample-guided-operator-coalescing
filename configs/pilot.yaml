@@ -1,11 +1,12 @@
+# Task12 finite exploratory diagnostic caps; final training/search settings remain unresolved.
 schema_version: 1
 study: cgoc_smol135
 phase: exploratory
 teacher:
   repository: HuggingFaceTB/SmolLM2-135M
-  revision: null                 # full repository revision resolved by WP00
-  weights_sha256: null          # digest of actual canonical asset manifest
-  tokenizer_revision: null
+  revision: 93efa2f097d58c2a74874c7e644dbc9b0cee75a2
+  weights_sha256: 9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083
+  tokenizer_revision: 93efa2f097d58c2a74874c7e644dbc9b0cee75a2
   trust_remote_code: false
 numerics:
   scientific_backend: torch_mps
@@ -28,7 +29,9 @@ training:
   target_valid_tokens_per_update: 8192
   bank_learning_rate: 0.0001
   residual_learning_rate: 0.0003
-  adam_betas: [0.9, 0.95]
+  adam_betas:
+  - 0.9
+  - 0.95
   nll_weight: 0.1
   gradient_clip_norm: 1.0
   final_target_presentations: null
@@ -56,15 +59,14 @@ evaluation:
   timing_pair_count: null
   analysis_freeze_sha256: null
 budgets:
-  updates: null
-  valid_target_presentations: null
-  teacher_forward_calls: null
-  suffix_backward_calls: null
-  student_backward_calls: null
-  search_proposals: null
-  search_seconds: null
-  wall_seconds: null
-  disk_bytes: null
-  memory_bytes: null
-
+  updates: 22
+  valid_target_presentations: 180224
+  teacher_forward_calls: 350000
+  suffix_backward_calls: 1000
+  student_backward_calls: 1000
+  search_proposals: 10000
+  search_seconds: 900
+  wall_seconds: 7200
+  disk_bytes: 2147483648
+  memory_bytes: 8589934592
 preparation: null
