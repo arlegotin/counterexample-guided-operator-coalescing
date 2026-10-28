@@ -28,7 +28,7 @@ def main():
     for path in sorted((OUT/'runs').glob('*/attempts/*/result.json')):
         result=json.loads(path.read_text());spec=json.loads((path.parents[2]/'spec.json').read_text())
         for name,digest in spec['resolved_config']['source_sha256'].items():assert sha(path.parent/'source'/name)==digest;sources+=1
-        attempts.append({'path':str(path.relative_to(ROOT)),'stage':result['stage'],'status':result['status'],'cost':result['cost'],'source_commit':result['source_commit'],'failure':result.get('failure_reason')})
+        attempts.append({'path':str(path.relative_to(ROOT)),'stage':result['stage'],'status':result['status'],'cost':result['cost'],'source_commit':result['source_commit'],'failure':result.get('failure_reason'),'memory_observed_highwaters':result['memory_observed_highwaters'],'memory_guard_note':result['memory_guard_note'],'effective_phase_caps':spec['resolved_config'].get('effective_phase_caps',plan['phase_caps']),'run_memory_cap_bytes':spec['budgets']['memory_bytes']})
         hashes[str(path.relative_to(ROOT))]=sha(path);hashes[str((path.parents[2]/'costs.jsonl').relative_to(ROOT))]=sha(path.parents[2]/'costs.jsonl')
     by_pair=[];score_components=None;damage_components=None;donors=passed=students=0
     for item in states['states']:
@@ -48,14 +48,25 @@ def main():
     summaries={}
     for key in ('fresh_repeat','fresh_original18_secondary','pooled_exploratory_secondary'):
         value=analysis[key];summaries[key]={k:v for k,v in value.items() if k!='uncertainty'};summaries[key]['uncertainty']=uncertainty(value['uncertainty'],value['pairs'])
-    for name in ('plan.json','data.json','pool.json','windows.json','verified-states.json','logical-positions.jsonl','analysis.json'):
+    for name in ('plan.json','data.json','pool.json','windows.json','verified-states.json','logical-positions.jsonl','analysis.json','source-amendment-v2.json','recovery-authorization.json','evaluation-profile-amendment.json','accounting-authorization.json','remaining18-forecast.json','memory-diagnosis.json','accounting-profile.json','disk-census-benchmark.json','preparation-memory.jsonl'):
         path=OUT/name;hashes[str(path.relative_to(ROOT))]=sha(path)
     positions=sum(json.loads(line)['positions'] for line in (OUT/'logical-positions.jsonl').read_text().splitlines());assert positions<=2500000
     assert final['aggregate_phase_cost']['updates']==40 and final['aggregate_phase_cost']['valid_target_presentations']==327680
     result={'schema_version':1,'status':'fixed_precision_repeat_complete','scope':'exploratory; original study remains original primary; no protected confirmation or extension until significance','original_receipt_sha256':plan['parent_result_sha256'],'summaries':summaries,'pair_rows':by_pair,'aggregate_cost':final['aggregate_phase_cost'],'followup_cost':final['followup_phase_cost'],'attempts':attempts,'audit':{'all20_primary_fitted_digests_exact':True,'reconstruction_updates':18,'original_primary_candidate_updates':1,'fresh_score_components':16,'fresh_damage_components':32,'no_old_component_overlap':True,'source_bodies_checked':sources,'positive_target_and_producer_guards':True,'donor_rows':donors,'threshold_pass_rows':passed,'student_rows':students,'logical_evaluation_positions_charged':positions},'shared_query_note':'all scorers use same generation/evaluation pool; active requires all donor rows, random requires one per component/depth (32 per trial), natural needs only natural rows; no intrinsically max-selection random pipeline claim','new_intervention_damage':False,'artifact_sha256':hashes,'analysis_source_sha256':sha(Path(__file__)),'retained_disk_bytes':sum(p.stat().st_size for p in OLD.rglob('*') if p.is_file())}
+    result['cap_history']={'followup_wall_seconds':[2400,3600,4800],'overall_wall_seconds':7200,'overall_student_calls':[30000,50000],'optimizer_operations':[22,40],'training_presentations':[180224,327680],'memory_bytes':[8589934592,9663676416],'old_RunSpecs_and_receipts_unchanged':True}
+    result['source_component_counts']={'original_main_score':8,'original_canonical_secondary':8,'original_natural_damage':16,'original_intervention_damage':16,'fresh_main_score':16,'fresh_natural_damage':32,'fresh_intervention_damage':0,'pooled_main_score':24,'pooled_natural_damage':48}
+    result['data_eligibility']={'score_candidate_checks':len(data['score_eligibility']),'score_candidates_selected':len(data['score_entries']),'damage_candidate_checks':len(data['damage_eligibility']),'damage_candidates_selected':sum(r['eligible'] for r in data['damage_eligibility']),'damage_rejections':[r for r in data['damage_eligibility'] if not r['eligible']]}
+    result['separately_charged_cpu_diagnoses']={name:json.loads((OUT/name).read_text())['wall_seconds'] for name in ('memory-diagnosis.json','accounting-profile.json','disk-census-benchmark.json')}
+    result['diagnosis_seconds_already_in_aggregate']=sum(result['separately_charged_cpu_diagnoses'].values())
+    result['limitations']=['one-update states and one initialization/training seed; extra-step controls show remaining optimization headroom','raw SVD does not align neuron permutations; this does not test absence of functional redundancy','fixed exploratory component repeat after original uncertainty, not protected confirmation or extension until significance','percentile-zero spikes do not establish equivalence; no practical preservation/superiority/equivalence threshold supplied','repeated-role-reader/serialization RSS growth unresolved; isolation succeeded without a proven leak fix','equal-pool scoring comparison, not an efficient random-only acquisition pipeline; no compiler or joint trained composition tested']
+    audits=ROOT/'provenance/task12-controller-audits-2026-10-27.json'
+    result['controller_audits']={'path':str(audits.relative_to(ROOT)),'sha256':sha(audits),'evidence':json.loads(audits.read_text())}
     result['audit_wall_seconds_separate']=time.monotonic()-started
     result['overall_wall_seconds_including_this_audit']=result['aggregate_cost']['wall_seconds']+result['audit_wall_seconds_separate']
     result['followup_wall_seconds_including_this_audit']=result['followup_cost']['wall_seconds']+result['audit_wall_seconds_separate']
+    assert result['overall_wall_seconds_including_this_audit']<=7200 and result['followup_wall_seconds_including_this_audit']<=4800
+    assert result['aggregate_cost']['teacher_forward_calls']<=350000 and result['aggregate_cost']['student_forward_calls']<=50000
+    assert result['followup_cost']['teacher_forward_calls']<=160000 and result['followup_cost']['student_forward_calls']<=24000
     destination=ROOT/'provenance/single-merge-precision-135m-2026-10-27.json';destination.write_text(json.dumps(result,sort_keys=True,indent=2)+'\n')
     print(json.dumps({'receipt':str(destination.relative_to(ROOT)),'aggregate':result['aggregate_cost'],'followup':result['followup_cost'],'audit':result['audit'],'audit_seconds':result['audit_wall_seconds_separate']}))
 
