@@ -1,0 +1,75 @@
+schema_version: 1
+protocol: protocol/continuation-v1.md
+output_schema: cgoc-continuation-v1
+audited_commit: 162579679f8baa47d2cb4445d3d82f396e685baa
+seed: 17
+teacher:
+  repository: HuggingFaceTB/SmolLM2-135M
+  revision: 93efa2f097d58c2a74874c7e644dbc9b0cee75a2
+  trust_remote_code: false
+  asset_manifest_sha256: 9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083
+  raw_weights_sha256: 80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1
+numerical:
+  device: cpu
+  dtype: float64
+  execution_profile: eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3
+  equivalence_atol: 1.0e-12
+  kl_floor_per_target: 0.0
+  scientific_qualification: null
+pilot:
+  pairs: [[0, 15]]
+  rank: 8
+  arms:
+    - {id: A, initialization: parent_svd, mixture: {natural: 0.5, student: 0.25, donor: 0.25}}
+    - {id: B, initialization: parent_svd, mixture: {natural: 1.0}}
+    - {id: C, initialization: parent_zero_product, mixture: {natural: 1.0}}
+  parent_policy: fit_only_two_parent_mse_once
+  practical_margin: null
+training:
+  max_updates: 16
+  epochs: 1
+  target_count: 8192
+  chunk_size: 32
+  observation_steps: [1, 4, 8, 16]
+  step_zero: separately_charged_before_fit
+  optimizer: {name: AdamW, betas: [0.9, 0.95], bank_lr: 0.0001, residual_lr: 0.0003, weight_decay: 0}
+  scheduler: existing_warmup_cosine_continuous
+data:
+  fit: null
+  fit_calibration: null
+  pilot_validation: null
+  exposure_lineage: null
+  ordered_target_plan: null
+gates:
+  archive: null
+  mechanism_controls: null
+  acquisition_controls: null
+  teacher_assets: null
+  tokenizer: null
+  lineage_review: null
+  numerical_floor: null
+  resource_forecast: null
+  native_qualification: null
+  pilot_executor_review: null
+budgets:
+  updates: 48
+  valid_target_presentations: 393216
+  teacher_forward_calls: 200000
+  suffix_backward_calls: 100000
+  student_backward_calls: 100000
+  search_proposals: 10000
+  search_seconds: 1200
+  wall_seconds: 3600
+  disk_bytes: 4000000000
+  memory_bytes: 8000000000
+owned_caps:
+  updates: 2
+  valid_target_presentations: 16384
+  teacher_forward_calls: 100000
+  suffix_backward_calls: 100000
+  student_backward_calls: 100000
+  search_proposals: 10000
+  search_seconds: 60
+  wall_seconds: 120
+  disk_bytes: 100000000
+  memory_bytes: 2000000000

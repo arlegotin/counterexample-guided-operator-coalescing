@@ -59,7 +59,8 @@ def initialize_residual(delta: torch.Tensor, rank: int, seed: int) -> tuple[torc
         u, singular, vh = torch.linalg.svd(work, full_matrices=False)
         root = singular[:rank].sqrt()
         a, b = root[:, None] * vh[:rank], u[:, :rank] * root[None, :]
-    return a.to(device=delta.device, dtype=delta.dtype), b.to(device=delta.device, dtype=delta.dtype)
+    return (a.to(device=delta.device, dtype=delta.dtype).contiguous(),
+            b.to(device=delta.device, dtype=delta.dtype).contiguous())
 
 
 class _Factors(nn.Module):

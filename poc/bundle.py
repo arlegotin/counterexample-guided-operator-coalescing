@@ -56,6 +56,8 @@ def write_bank_state(bank: BankDecoder, destination: Path) -> BankStateRef:
                     'checkpoint_digest': bank.manifest().checkpoint_digest,
                     'depth': bank.partition.depth, 'groups': bank.partition.groups, 'rank': bank.rank,
                     'files': files}
+        from poc.runtime.torch_decoder import EXECUTION_PROFILE
+        manifest['execution_profile'] = EXECUTION_PROFILE
         (temporary / 'state.json').write_text(json.dumps(manifest, sort_keys=True, separators=(',', ':')) + '\n')
         digest = _sha(temporary / 'state.json')
         # Do not overwrite an existing fixture; callers use a fresh destination.
@@ -86,7 +88,10 @@ def load_bank_state(ref: BankStateRef, base: TorchDecoder) -> BankDecoder:
         manifest = json.loads(manifest_path.read_text(), object_pairs_hook=_unique_object)
     except (TypeError, json.JSONDecodeError) as exc:
         raise ValueError('invalid state metadata') from exc
-    expected_keys = {'schema', 'kind', 'base_digest', 'checkpoint_digest', 'depth', 'groups', 'rank', 'files'}
+    from poc.runtime.torch_decoder import EXECUTION_PROFILE
+    if not isinstance(manifest, dict) or manifest.get('execution_profile') != EXECUTION_PROFILE:
+        raise ValueError('unsupported bank state execution profile')
+    expected_keys = {'schema', 'kind', 'base_digest', 'checkpoint_digest', 'depth', 'groups', 'rank', 'files', 'execution_profile'}
     if (not isinstance(manifest, dict) or set(manifest) != expected_keys or type(manifest['schema']) is not int
             or manifest['schema'] != 1 or manifest['kind'] != 'external-base-bank-state'):
         raise ValueError('unsupported bank state schema')

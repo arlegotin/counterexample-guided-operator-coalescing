@@ -204,6 +204,9 @@ def load_checkpoint(ref: CheckpointRef,expected: RunSpec):
     identity=_spec(raw['spec'])
     if run_id(identity)!=run_id(expected):raise ValueError('checkpoint lineage mismatch')
     raw['spec']=identity;state=TrainingState(**raw)
+    from poc.runtime.torch_decoder import EXECUTION_PROFILE
+    if state.model_schema.get('execution_profile') != EXECUTION_PROFILE:
+        raise ValueError('unsupported checkpoint execution profile')
     if not state.safe_boundary or type(state.step) is not int or state.step<0 or type(state.target_cursor) is not int or state.target_cursor<0:raise ValueError('invalid update-boundary state')
     if not state.model or not state.source_hash or not state.config_hash or not state.rng:raise ValueError('incomplete recovery state')
     return state
@@ -226,6 +229,9 @@ def checkpoint_decoder(state):
     from poc.export import _load_scientific
     from poc.train import _saved_digest
     schema=state.model_schema
+    from poc.runtime.torch_decoder import EXECUTION_PROFILE
+    if schema.get('execution_profile') != EXECUTION_PROFILE:
+        raise ValueError('unsupported checkpoint execution profile')
     raw=dict(schema,kind='compact',source_backend=schema['backend'],source_checkpoint_digest=state.candidate_digest)
     expected=_expected_schema(raw)
     if set(expected)!=set(state.model):raise ValueError('checkpoint canonical owner set mismatch')

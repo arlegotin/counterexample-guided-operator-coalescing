@@ -16,7 +16,7 @@ from torch.nn import functional as F
 from poc.contracts import (Batch, Boundary, CacheState, ContinuationRequest,
                            ContinuationScore, FFNOperator, LayerCache, ModelManifest)
 
-EXECUTION_PROFILE = 'eager-llama-hf-fp32-reciprocal-true-fp64-v2'
+EXECUTION_PROFILE = 'eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3'
 
 
 @dataclass(frozen=True)

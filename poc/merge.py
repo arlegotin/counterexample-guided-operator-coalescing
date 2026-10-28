@@ -65,6 +65,8 @@ def _fit_batches(fit,teacher):
 
 def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,int],fit:DataManifest,seed:int,*,batches:Sequence[Batch]|None=None,recorder=None)->MergeTrial:
     if not isinstance(current,BankDecoder):raise ValueError('canonical bank required')
+    if current.base_digest != teacher.manifest().checkpoint_digest:
+        raise ValueError('merge teacher lineage differs from current base_digest')
     if any(role!='fit' for role in fit.roles.values()):raise PermissionError('medoid selection requires fit records')
     if not fit.records:raise ValueError('nonempty fit population required')
     if len(pair)!=2 or any(type(x) is not int for x in pair) or not 0<=pair[0]<pair[1]<len(current.layers):raise ValueError('canonical depth pair required')
@@ -161,7 +163,9 @@ def save_trial_delta(trial,current,path):
     index=trial.model.partition.reuse_map[trial.pair[0]]
     selected={n:p.detach().cpu().contiguous() for n,p in trial.model.named_parameters() if n.startswith(f'bank.{index}.') or any(n.startswith(f'layers.{d}.mlp.residuals.') for d in trial.affected_depths)}
     save_file(selected,str(path/'weights.safetensors'))
-    metadata=dict(base_digest=current.manifest().checkpoint_digest,teacher_digest=trial.teacher.manifest().checkpoint_digest,pair=trial.pair,affected_depths=trial.affected_depths,selected_parent=trial.selected_parent,medoid_scores=trial.medoid_scores,initialized_digest=trial.initialized_digest,fitted_digest=trial.fitted_digest,fit_summary=trial.fit_summary,weights_sha256=hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest())
+    from poc.runtime.torch_decoder import EXECUTION_PROFILE
+    metadata=dict(execution_profile=EXECUTION_PROFILE,base_digest=current.manifest().checkpoint_digest,teacher_digest=trial.teacher.manifest().checkpoint_digest,pair=trial.pair,affected_depths=trial.affected_depths,selected_parent=trial.selected_parent,medoid_scores=trial.medoid_scores,initialized_digest=trial.initialized_digest,fitted_digest=trial.fitted_digest,fit_summary=trial.fit_summary,weights_sha256=hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest())
+    metadata['owner_trainability']={n:p.requires_grad for n,p in trial.model.named_parameters()}
     (path/'metadata.json').write_text(json.dumps(metadata,sort_keys=True)+'\n')
 
 
@@ -170,6 +174,8 @@ def restore_trial_delta(current,teacher,path,*,recorder=None):
     from pathlib import Path
     from safetensors.torch import load_file
     path=Path(path);metadata=json.loads((path/'metadata.json').read_text())
+    from poc.runtime.torch_decoder import EXECUTION_PROFILE
+    if metadata.get('execution_profile') != EXECUTION_PROFILE:raise ValueError('unsupported delta execution profile')
     if metadata['base_digest']!=current.manifest().checkpoint_digest or metadata['teacher_digest']!=teacher.manifest().checkpoint_digest:raise ValueError('delta base identity changed')
     if hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest()!=metadata['weights_sha256']:raise ValueError('delta weights hash mismatch')
     pair=tuple(metadata['pair']);affected=tuple(metadata['affected_depths']);indices={current.partition.reuse_map[d] for d in pair}
@@ -178,9 +184,13 @@ def restore_trial_delta(current,teacher,path,*,recorder=None):
     candidate.bank=nn.ModuleList([deepcopy(current.bank[current.partition.reuse_map[pair[0]]] if g==affected else old[g]) for g in merged.groups]);candidate.partition=merged
     for depth,layer in enumerate(candidate.layers):layer.mlp.index=merged.reuse_map[depth];layer.mlp._owners_ref=weakref.ref(candidate.bank)
     values=load_file(str(path/'weights.safetensors'));parameters=dict(candidate.named_parameters())
+    flags=metadata.get('owner_trainability')
+    if not isinstance(flags,dict) or set(flags)!=set(parameters) or any(type(v) is not bool for v in flags.values()):
+        raise ValueError('delta owner trainability schema mismatch')
     expected={n for n in parameters if n.startswith(f'bank.{merged.reuse_map[pair[0]]}.') or any(n.startswith(f'layers.{d}.mlp.residuals.') for d in affected)}
     if set(values)!=expected:raise ValueError('delta changed-owner schema mismatch')
     with torch.no_grad():
         for n,v in values.items():parameters[n].copy_(v)
+        for n,p in parameters.items():p.requires_grad_(flags[n])
     if candidate.manifest().checkpoint_digest!=metadata['fitted_digest']:raise ValueError('restored fitted state digest mismatch')
     return MergeTrial(candidate,teacher,pair,affected,metadata['selected_parent'],tuple(metadata['medoid_scores']),metadata['initialized_digest'],metadata['fitted_digest'],recorder=recorder,fit_summary=metadata['fit_summary'])
