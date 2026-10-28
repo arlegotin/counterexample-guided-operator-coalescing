@@ -24,7 +24,8 @@ from poc.continuation_plan import digest
 from poc.records import run_id
 from poc.teacher import sha256_file
 from poc.train import _call
-from provenance.recovery_pilot import NativeTracker,write,finalize_costs
+from provenance.recovery_pilot import NativeTracker,write,finalize_costs,raise_for_accounting_error,subprocess_memory_bound
+from poc.continuation_budget import process_peak_bytes
 
 ROOT=Path(__file__).resolve().parents[1]
 ASSETS=Path('/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing')
@@ -110,7 +111,7 @@ def main():
             if row['teacher_forward_calls']!=136 or row['student_forward_calls']!=238:raise ValueError('native operation counts differ from frozen precharge')
             if row['valid_targets']!=4088:raise ValueError('common validation denominator differs')
             result['rows'].append({'label':artifact['label'],**row})
-            memory=row['memory']['process_peak_rss_bytes']+row['memory']['torch_mps_driver_bytes']+row['memory']['mlx_peak_bytes']
+            memory=subprocess_memory_bound(process_peak_bytes()+torch.mps.driver_allocated_memory(),row['memory'])
             recorder.record(CostRecord(memory_bytes=memory))
             print(json.dumps({'event':'native_result','label':artifact['label'],'bytes':row['payload_bytes'],'KL':row['kl_per_target']}),flush=True)
             write(out/'result.json',result)
@@ -125,6 +126,7 @@ def main():
     finally:
         finalize_costs(result,ledger.tracker,elapsed=time.monotonic()-started)
         write(out/'result.json',result)
+        raise_for_accounting_error(result)
 
 
 if __name__=='__main__':main()

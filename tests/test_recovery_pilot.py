@@ -104,6 +104,15 @@ def test_final_cost_overrun_cannot_leave_success_status(tmp_path):
     runner.finalize_costs(result,ledger.tracker,elapsed=2)
     assert result['status']=='failed_accounting'
     assert ledger.tracker.totals.wall_seconds==2
+    from poc.budget import BudgetExceeded
+    assert hasattr(runner,'raise_for_accounting_error'), 'CLI final accounting failure guard missing'
+    with pytest.raises(BudgetExceeded):runner.raise_for_accounting_error(result)
+
+
+def test_subprocess_resource_bound_adds_concurrent_parent_and_child():
+    from provenance import recovery_pilot as runner
+    assert hasattr(runner,'subprocess_memory_bound'), 'concurrent resource bound missing'
+    assert runner.subprocess_memory_bound(100,{'process_peak_rss_bytes':200,'torch_mps_driver_bytes':30,'mlx_peak_bytes':40})==370
 
 
 def test_local_weighted_objective_uses_each_source_own_denominator():

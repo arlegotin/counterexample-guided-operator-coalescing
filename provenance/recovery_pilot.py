@@ -54,6 +54,16 @@ def finalize_costs(result,tracker,*,elapsed):
         result['aggregate_cost']=tracker.totals.to_dict()
 
 
+def raise_for_accounting_error(result):
+    if result.get('status')=='failed_accounting':
+        raise BudgetExceeded(result['accounting_error'])
+
+
+def subprocess_memory_bound(parent_bytes,child):
+    """Concurrent processes add; their unified-memory counters may overlap."""
+    return parent_bytes+sum(child[k] for k in ('process_peak_rss_bytes','torch_mps_driver_bytes','mlx_peak_bytes'))
+
+
 class NativeTracker(BudgetTracker):
     def __init__(self,budget,attempt,out):
         super().__init__(budget,attempt);self.out=out;self.last_disk=0;self.disk_peak=0;self.memory_peak=0;self.projected_disk_peak=0
@@ -316,6 +326,7 @@ def run(config, *, profile_only=False):
         finalize_costs(result,ledger.tracker,elapsed=elapsed)
         result['wall_seconds']=elapsed;result['query_cost_graph']=ledger.graph()
         write(out/'result.json',result)
+        raise_for_accounting_error(result)
 
 
 def main(argv=None):
