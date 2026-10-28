@@ -1,0 +1,28 @@
+schema_version: 2
+study: exploratory_recovery_v2
+asset_root: /Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing
+out: artifacts/continuation-v2/recovery
+pair: [0, 15]
+rank: 8
+seed: 17
+updates: 16
+observations: [1, 4, 8, 16]
+device: mps
+kl_floor_per_target: 0.000002
+decision_resolution: 0.00002
+practical_margin: null
+arms:
+  A: {zero_product: false, mixture: {natural: 0.5, student: 0.25, donor: 0.25}}
+  B: {zero_product: false, mixture: {natural: 1.0}}
+  C: {zero_product: true, mixture: {natural: 1.0}}
+budget:
+  updates: 49
+  valid_target_presentations: 401408
+  teacher_forward_calls: 200000
+  suffix_backward_calls: 100000
+  student_backward_calls: 100000
+  search_proposals: 10000
+  search_seconds: 1200
+  wall_seconds: 3600
+  disk_bytes: 6442450944
+  memory_bytes: 8589934592

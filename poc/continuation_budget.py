@@ -43,6 +43,10 @@ class _ChildTracker(BudgetTracker):
         try:self.parent.record(cost)
         finally:super().record(cost)
 
+    def disk(self):
+        """Checkpoint preflight includes sibling arms and shared preparation."""
+        return self.parent.disk() if hasattr(self.parent,'disk') else self.parent.totals.disk_bytes
+
 
 class PilotLedger:
     def __init__(self, spec, root, *, observe_resources=False):
@@ -90,12 +94,14 @@ class PilotLedger:
             self.tracker.check(cost)
             op=uuid4().hex
             self._append(kind='begin',operation_id=op,key=key,dependencies=list(dependencies),child_run_id=None)
-            started=time.monotonic();status='failed'
+            started=time.monotonic();status='failed';baseline=self.tracker.attempt_cost.wall_seconds
             try:
                 self.tracker.record(replace(cost,wall_seconds=0))
                 result=operation();status='complete';return result
             finally:
-                try:self.tracker.record(CostRecord(wall_seconds=time.monotonic()-started))
+                try:
+                    already=self.tracker.attempt_cost.wall_seconds-baseline
+                    self.tracker.record(CostRecord(wall_seconds=max(0,time.monotonic()-started-already)))
                 except BaseException:
                     status='failed'
                     raise

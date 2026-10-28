@@ -116,8 +116,10 @@ class TrainingConfig:
     stop_after_updates: int | None = None
     observation_steps: tuple[int,...] = ()
     on_update: Callable[[int],None] | None = None
+    record_norms: bool = False
 
     def __post_init__(self):
+        if type(self.record_norms) is not bool:raise ValueError('record_norms must be boolean')
         for name in ('max_updates','epochs','target_count','chunk_size'):
             if type(getattr(self,name)) is not int or getattr(self,name)<1: raise ValueError(name+' must be positive')
         if self.target_count != 8192: raise ValueError('primary fitting requires exactly8192 targets/update')
@@ -143,7 +145,7 @@ class TrainingConfig:
             alpha=self.alpha,bank_lr=self.bank_lr,residual_lr=self.residual_lr,weight_decay=self.weight_decay,
             lr_factor=self.lr_factor,phase=self.phase,affected_depths=list(self.affected_depths),
             mixture_weights=dict(self.mixture_weights),kl_floor_per_target=self.kl_floor_per_target,
-            numerical_profile=self.numerical_profile,epoch_tail_policy='actual_denominator_v1',observation_steps=list(self.observation_steps))
+            numerical_profile=self.numerical_profile,epoch_tail_policy='actual_denominator_v1',observation_steps=list(self.observation_steps),record_norms=self.record_norms)
 
 
 @dataclass
@@ -552,8 +554,15 @@ def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSour
                     sums=backward_update(student,teacher,update,config,guard,probe_sources=data.probes)
                     if any(p.grad is not None and not torch.isfinite(p.grad).all().item() for p in owners.values()):raise FloatingPointError('nonfinite owner gradient')
                     if not any(p.grad is not None for p in owners.values()):raise ValueError('update has no trainable gradient')
+                    if config.record_norms:
+                        gradient_norm=math.sqrt(math.fsum(float(p.grad.detach().float().square().sum().item()) for p in owners.values() if p.grad is not None))
+                        before_step={n:p.detach().clone() for n,p in owners.items()}
                     torch.nn.utils.clip_grad_norm_(list(owners.values()),1,error_if_nonfinite=True)
                     _call(guard,optimizer.step,updates=1)
+                    if config.record_norms:
+                        update_norm=math.sqrt(math.fsum(float((p.detach()-before_step[n]).float().square().sum().item()) for n,p in owners.items()))
+                        del before_step
+                        if not math.isfinite(gradient_norm) or not math.isfinite(update_norm):raise FloatingPointError('nonfinite optimizer norm')
                     if any(not torch.isfinite(p).all().item() for p in owners.values()):raise FloatingPointError('nonfinite updated owner; no checkpoint')
                 except BaseException:
                     optimizer.zero_grad(set_to_none=True)
@@ -566,6 +575,12 @@ def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSour
                     kl_sum=math.fsum(s.kl for s in sums),nll_sum=math.fsum(s.nll for s in sums),
                     source_counts={s:sum(int(b.target_mask.sum().item()) for b,(i,_,_) in zip(update.batches,update.slices,strict=True) if (s=='natural' if config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights})
                 events.append(row);metrics.append(row)
+                source_sums={s:math.fsum(m.kl for m,(i,_,_) in zip(sums,update.slices,strict=True)
+                    if (s=='natural' if config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights}
+                row['source_kl_sums']=source_sums
+                row['weighted_objective']=((row['kl_sum']+config.alpha*row['nll_sum'])/update.valid_targets
+                    if config.phase=='global' else math.fsum(config.mixture_weights[s]*source_sums[s]/row['source_counts'][s] for s in config.mixture_weights))
+                if config.record_norms:row.update(gradient_norm_pre_clip=gradient_norm,parameter_update_norm=update_norm)
                 visited.append(student.manifest().checkpoint_digest)
                 if config.checkpoint_root is not None:
                     from poc.checkpoint import save_checkpoint
