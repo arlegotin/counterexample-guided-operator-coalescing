@@ -22,8 +22,13 @@ abstract: >-
   the same pair within each fixed analysis; the selected pair changes on fresh
   documents. Active selection has no demonstrated advantage. The completed
   diagnostic is inconclusive because near-best selection uncertainty and fitting
-  sensitivity remain unresolved. No trained native shared model at the target
-  byte ceiling, protected capability result or runtime advantage is established.
+  sensitivity remain unresolved. A separately bounded continuation repairs one
+  merge over sixteen updates: ordinary-text fitting reduces validation KL from
+  0.2232 to 0.1893, slightly outperforming the counterexample mixture. Matched
+  native measurements favor dense 8-bit quantization over the new floating
+  shared artifact. Trained shared quantizations fit the target byte ceiling but
+  retain poor fidelity. No useful compression win, protected capability result
+  or runtime advantage is established.
   Public receipts and nontext metric metadata support report-only regeneration
   without model weights or corpus access.
 keywords:

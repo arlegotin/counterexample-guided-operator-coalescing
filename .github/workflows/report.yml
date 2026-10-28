@@ -10,12 +10,14 @@ permissions:
 
 jobs:
   report:
+    name: Historical report at audited source
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          ref: 162579679f8baa47d2cb4445d3d82f396e685baa
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.12.9'
@@ -27,3 +29,20 @@ jobs:
         run: python -m poc report --include-failures
       - name: Check generated evidence is current
         run: git diff --exit-code -- REPORT.md results/summary.json results/regressions.parquet artifacts/release_manifest.json
+  continuation:
+    name: Current continuation metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.12.9'
+      - name: Verify public hashes and numeric reductions without dependencies
+        run: python provenance/verify_public_continuation.py
+      - name: Install test dependency
+        run: python -m pip install 'pytest==9.1.1'
+      - name: Test evidence rejection controls
+        run: python -m pytest tests/test_public_continuation.py -q

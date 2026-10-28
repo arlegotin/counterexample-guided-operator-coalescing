@@ -2,9 +2,9 @@
 
 CGOC tests whether a language model can reuse feed-forward weights across layers, and whether deliberately difficult examples help choose which layers to merge. The goal is a smaller stored model that keeps the original model's behavior.
 
-Sharing learns back some of that behavior. **The hard-example selector hasn't beaten ordinary examples in this study.** Four functional scoring rules choose the same merge within each fixed analysis; fresh documents change the winner. The local study finishes inconclusive, with a working implementation, controlled comparisons and the evidence needed to inspect the result.
+Sharing learns back some of that behavior. **The tested sharing recipes still do not offer a compelling quality–storage tradeoff against ordinary quantization.** A new bounded recovery pilot reduced teacher disagreement by 15.2% with ordinary-text fitting; the counterexample mixture did slightly worse. The original selector study remains inconclusive, and active selection has no demonstrated advantage.
 
-[Results](#results) · [How it works](#how-it-works) · [Quick check](#quick-check) · [Full report](REPORT.md) · [Reproduce](docs/reproduction.md) · [Citation](CITATION.cff)
+[Results](#results) · [How it works](#how-it-works) · [Quick check](#quick-check) · [Continuation report](provenance/continuation-v2/REPORT.md) · [Historical report](REPORT.md) · [Reproduce](docs/reproduction.md) · [Citation](CITATION.cff)
 
 ## How it works
 
@@ -16,7 +16,35 @@ The original model (the teacher) is a frozen **SmolLM2-135M** with 30 layers; th
 
 ## Results
 
-### Sharing can recover behavior; choosing the merge remains unresolved
+### Continuation: some recovery, a weak practical tradeoff
+
+The new exploratory pilot compares three separate 16-update trajectories for pair **(0,15)**, rank 8, seed 17, with a frozen SmolLM2-135M teacher. All use the same chosen parent; the first two start with identical weights. Validation uses eight previously exposed development components outside the twelve fitting components.
+
+| Fitting recipe | Initial KL | Final KL |
+| --- | ---: | ---: |
+| Parent-SVD, natural/student/donor mixture | 0.223229 | 0.192125 |
+| Same parent-SVD, ordinary text only | 0.223229 | **0.189272** |
+| Same parent, zero-product corrections, ordinary text only | 0.369757 | 0.338294 |
+
+Lower KL means less disagreement with the original next-token distribution. The 15.2% reduction in the natural-only arm is a fidelity improvement, not an accuracy gain. All eight validation components improve, but the curves are still falling at step 16. One pair, one seed and previously used development data do not establish convergence or generalization. The mixture comparison changes source allocation at equal logical targets; it does not isolate donor harm.
+
+Complete native exports were then evaluated on the same eight windows and 4,088 targets:
+
+| Artifact | Complete size (decimal MB) | KL/target ↓ |
+| --- | ---: | ---: |
+| New shared model, natural fitting | 537.217 | 0.189272 |
+| Dense RTN 8-bit | **155.110** | **0.002529** |
+| Historical trained K15, shared RTN 2-bit / embedding 4-bit | 49.484 | 10.474141 |
+| Historical trained K15, shared RTN 4-bit / embedding 2-bit | 58.995 | 9.233236 |
+| Dense DWQ 2-bit / embedding 4-bit | 61.327 | 4.441507 |
+
+The dense 8-bit artifact is about 3.46 times smaller than the new shared model, with about 75 times less KL. The smaller trained shared exports meet the historical 66,064,401-byte ceiling but have poor fidelity. The dense 61.3-MB point has better fidelity than those shared points while using more bytes; it does not strictly dominate every smaller artifact. No useful quality margin or capability result is established at the ceiling.
+
+This continuation also recovers the original raw scoring arrays from hash-verified local records. Ordinary, random-donor, active and added student-only scores select the same point-estimate winner within each fixed analysis. The evidence supports ordinary natural KL as the default for further research, without establishing equivalence or independent acquisition efficiency.
+
+[Full continuation report](provenance/continuation-v2/REPORT.md) · [Learning curves](provenance/continuation-v2/learning-curves.csv) · [Eight native points, memory and descriptive timings](provenance/continuation-v2/native-frontier.csv) · [Raw score/damage matrices](provenance/continuation-v2/recovered-scores.json) · [Claims and limits](provenance/continuation-v2/CLAIMS.json)
+
+### Original study: sharing recovery and unresolved selection
 
 A 15-bank shared model reduced teacher-distribution KL from **13.06 to 6.49 nats per target** during the recorded global fit, measured on eight development documents outside fitting. Lower is better. This measures agreement with the original model's next-token distribution; substantial error remains and the learning curve hadn't saturated. [Training receipt](provenance/training-135m-2026-10-27.json)
 
@@ -32,11 +60,11 @@ Excess damage is selection regret in nats per target, relative to the best of th
 
 The uncertainty matters. In the fresh-document bootstrap, the active setting with counterexample weight 1 and ordinary scoring choose different pairs in **80 of 2,000** component resamples: active does better in 49 and worse in 31. Their percentile contrast interval still reads `[0, 0]` because most resamples tie. That isn't evidence of equivalence. Near-best uncertainty and one-update fitting limit what this diagnostic can decide. [Original evidence](provenance/single-merge-original-135m-2026-10-27.json) · [Fresh evaluation and uncertainty](provenance/single-merge-precision-135m-2026-10-27.json)
 
-### A practical compression win is still unproven
+### Original storage comparison and stopping point
 
-The untrained shared-format anchor sets a **66,064,401-byte** ceiling. A preliminary dense quantization baseline already fits in **61,327,184 bytes**. There is no trained native shared model at the ceiling, matched quality win, measured speedup or protected capability result. The global-fit and quantization KL measurements use different populations and cannot establish a head-to-head win. [Payload anchor](provenance/payload-anchor-135m.json) · [Dense baseline evidence](provenance/quantization-135m-2026-10-27.json)
+At the original stop, the untrained shared-format anchor set a **66,064,401-byte** ceiling and a preliminary dense baseline fit in **61,327,184 bytes**. There was no trained native shared model at the ceiling or matched quality comparison. Those historical losses used different populations. The continuation above adds matched native measurements and trained shared exports, while preserving this original evidence. A useful compression win, speedup and protected capability result remain unproven. [Payload anchor](provenance/payload-anchor-135m.json) · [Dense baseline evidence](provenance/quantization-135m-2026-10-27.json)
 
-The study stopped at its selection diagnostic. The later compiler, protected evaluation and independent replication stages were not run. The result leaves the broader sharing idea open, but gives no reason yet to prefer active selection over the simpler functional score.
+The original study stopped at its selection diagnostic. Its later compiler, protected evaluation and independent replication stages were not run. The separately authorized continuation does not change that stop or resume those historical stages.
 
 ## What you can reuse
 
@@ -45,13 +73,23 @@ The study stopped at its selection diagnostic. The later compiler, protected eva
 - **Storage and numerical checks:** real native payload bytes, dense quantization baselines, backend parity and offline bundle validation. Stored size, output fidelity and capability remain separate measurements.
 - **An inspectable result:** 290 source-bound report claims, 2,278 measured metric rows, six explicitly unexecuted rows, and retained failures. Public report regeneration needs no weights or corpus access.
 
-The [full report](REPORT.md) carries the qualifications and costs. The [machine summary](results/summary.json), [metric table](results/regressions.parquet) and [evidence index](provenance/report-evidence-2026-10-28.json) let you follow the numbers back to their receipts.
+The [continuation report](provenance/continuation-v2/REPORT.md) and [numeric summary](provenance/continuation-v2/summary.json) carry the new results, costs and limitations. The original [historical report](REPORT.md), [machine summary](results/summary.json), [metric table](results/regressions.parquet) and [evidence index](provenance/report-evidence-2026-10-28.json) remain unchanged.
 
 ## Quick check
 
-From a checkout, use **Python 3.12** to install just the reporting and test dependencies:
+From the current checkout, verify continuation hashes, raw numeric reductions, all five scoring formulas and selected pairs with **Python 3.12**, using only its standard library:
 
 ```sh
+python3.12 provenance/verify_public_continuation.py
+```
+
+This needs no model weights, private corpus, network or Apple hardware. It checks the published measurements; it does not rerun training or native inference.
+
+For byte-identical regeneration of the original report, use the audited source:
+
+```sh
+git worktree add --detach ../cgoc-historical-report 162579679f8baa47d2cb4445d3d82f396e685baa
+cd ../cgoc-historical-report
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[test,report]'
@@ -59,7 +97,7 @@ python -m poc report --include-failures
 python -m pytest tests/test_report.py -q
 ```
 
-This regenerates the report from public evidence and checks reporting integrity. It doesn't train a model, fetch a corpus or reproduce the scientific experiments. [Report CI](https://github.com/arlegotin/counterexample-guided-operator-coalescing/actions/workflows/report.yml) checks the same path. The [reproduction guide](docs/reproduction.md) separates this quick check from the full native environment and its exact dependency lock.
+This regenerates the historical report from public evidence and checks reporting integrity. [Report CI](https://github.com/arlegotin/counterexample-guided-operator-coalescing/actions/workflows/report.yml) checks historical replay at the audited commit and continuation metadata at the current commit separately. The [reproduction guide](docs/reproduction.md) explains the private-input and native-environment requirements for scientific runs.
 
 For the research history, start with the [original blueprint](docs/blueprint.md), [implementation plan](docs/superpowers/plans/2026-10-27-cgoc.md) and [decision appendix](docs/analysis/2026-10-28-decision-appendix.md). [Publication scope](docs/PUBLICATION.md) describes what the public evidence can reproduce.
 

@@ -1,0 +1,131 @@
+{
+  "authorization": "Owner requested publication of the completed continuation results; supersedes the previous local-only publication restriction.",
+  "checked_publication_files": {
+    ".github/workflows/report.yml": "784b193df7644d15f9fdbccb17e85acb3c39144a9a824dee9f0a9c0a42bba634",
+    "CITATION.cff": "1318ce6a666fbb5e9d218e1cc2942cb9f964fdc9cc3881fac362b9522fa9fc52",
+    "README.md": "ffec147437717598b63d09db5e9b5078e8328b98825664e9547eb0eb3536f012",
+    "docs/PUBLICATION.md": "47ccb5e45447f7c87c6f66b4bd28f81fcd86bd8b994fab303924a3f7afbabd85",
+    "docs/reproduction.md": "d0c51eae31bdb56187dbbd2510f02614f91266ce1ad1aef6cb489b4bc6d41c44",
+    "provenance/verify_public_continuation.py": "38a463898564146f524c0c7caf20c7d9ffe2ec46363acaf3fdb4a708f6111066",
+    "tests/test_public_continuation.py": "98eafae0307f4cf419446bcbb452d5effae7b08821ca610ca9aeb62f5b0bfad9"
+  },
+  "checks": {
+    "current_cpu": "618 passed,1 skipped,39 deselected",
+    "current_native": "39 passed,619 deselected",
+    "historical_report_artifacts_unchanged": true,
+    "historical_reporting": "65 passed;290 checked claims;20 records;byte-identical outputs",
+    "original_working_tree_unchanged": true,
+    "stdlib_isolated_metadata_verification": true
+  },
+  "commands": [
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/verify_public_continuation.py"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "environment": {},
+      "exit_code": 0,
+      "log": "metadata-verification.log",
+      "log_sha256": "f7d197a23da599de731d300f3d21d01516c049d5539678170e9aac6751a101e9"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-I",
+        "provenance/verify_public_continuation.py"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "environment": {},
+      "exit_code": 0,
+      "log": "isolated-metadata-verification.log",
+      "log_sha256": "f7d197a23da599de731d300f3d21d01516c049d5539678170e9aac6751a101e9"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "environment": {},
+      "exit_code": 1,
+      "log": "cpu-tests-missing-pythonpath.log",
+      "log_sha256": "9a6e8cc30da167dc1ee71a82341c3e5b97f95d26ec0f70b66e0ea150ee362034"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "environment": {
+        "PYTHONPATH": "."
+      },
+      "exit_code": 0,
+      "log": "cpu-tests.log",
+      "log_sha256": "4a5ed696c94d31ef309e1236199242a8abbde449ed08099ac92e4dfb64d4da4f"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-o",
+        "addopts=",
+        "-m",
+        "mps or mlx",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "environment": {
+        "PYTHONPATH": "."
+      },
+      "exit_code": 0,
+      "log": "native-tests.log",
+      "log_sha256": "bda7391d6fbf973dc7c55cfbf88f4fdcd317268218b2f3fd27119c2728af2e04"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "tests/test_report.py",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-audit-1625796",
+      "environment": {
+        "PYTHONPATH": "."
+      },
+      "exit_code": 0,
+      "log": "historical-tests.log",
+      "log_sha256": "87ac6393c67985539a22168138c1745e0c464faeff9be13100e37282f50a5f2c"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "poc",
+        "report",
+        "--include-failures"
+      ],
+      "cwd": "/private/tmp/cgoc-audit-1625796",
+      "environment": {
+        "PYTHONPATH": "."
+      },
+      "exit_code": 0,
+      "log": "historical-regeneration.log",
+      "log_sha256": "e9b36be482e298633375aee8bf9ef5751e4bd8991044aa3963c7f0eb451cf02d"
+    }
+  ],
+  "experiment_evidence_commit": "d72159d17aa9ef7794177e48131c937b83ff528c",
+  "historical_audited_commit": "162579679f8baa47d2cb4445d3d82f396e685baa",
+  "invocation_correction": "First CPU invocation omitted required PYTHONPATH=.; its subprocess used the environment editable install bound to the untouched original checkout and could not import poc.continuation. Corrected only the invocation; failure log retained. No scientific source or result changed.",
+  "limits": "Public integrity/arithmetic checks do not rerun science, establish active superiority, protected capability, convergence or independent scientific replication.",
+  "publication_scope": "Implementation, protocols, public numeric receipts and reader-facing summary on public repository main; no weights, private corpus, tokens or credentials. No new scientific fitting/evaluation.",
+  "review": "review.md",
+  "schema_version": 1
+}

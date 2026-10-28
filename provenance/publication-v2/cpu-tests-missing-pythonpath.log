@@ -1,0 +1,26 @@
+........................................................................ [ 11%]
+........................................................................ [ 23%]
+................................................................F....... [ 34%]
+........................................................................ [ 46%]
+........................................................................ [ 58%]
+........................................................................ [ 69%]
+........................................................................ [ 81%]
+........................................................................ [ 93%]
+.......................s...................                              [100%]
+=================================== FAILURES ===================================
+___________________ test_cli_help_validate_and_blocked_pilot ___________________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1576/test_cli_help_validate_and_blo0')
+
+    def test_cli_help_validate_and_blocked_pilot(tmp_path):
+        assert SCRIPT.exists(), 'continuation runner missing'
+        base=[sys.executable,str(SCRIPT),'--config','configs/continuation-recovery-v1.yaml']
+        result=subprocess.run([*base,'--help'],capture_output=True,text=True)
+>       assert result.returncode==0 and 'owned-controls' in result.stdout
+E       AssertionError: assert (1 == 0)
+E        +  where 1 = CompletedProcess(args=['/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/py...ec, pilot_blockers, installed_requirements, sha256, ROOT\nModuleNotFoundError: No module named \'poc.continuation\'\n').returncode
+
+tests/test_continuation_runner.py:18: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_runner.py::test_cli_help_validate_and_blocked_pilot
+1 failed, 617 passed, 1 skipped, 39 deselected in 27.83s

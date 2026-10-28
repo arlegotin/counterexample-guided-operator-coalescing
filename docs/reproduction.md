@@ -1,8 +1,28 @@
 # Local reproduction and release boundaries
 
-The terminal outcome is diagnosed inconclusive at WP04. No trained native shared model at B* exists. Tasks13–24 were not run. Public report regeneration requires the checkout and Python 3.12 with reporting dependencies. It does not require model weights, corpus access, a network connection after installation, or Metal. It reads only retained public receipts and whitelist-only metric metadata:
+## Current continuation
+
+The separately authorized continuation has a real three-arm recovery pilot, matched complete native artifact comparisons and recovered historical scoring vectors. It is exploratory: one pair/seed on previously used development data, with no protected capability, convergence, repeated real merges, transfer or second-environment scientific replication claim. Trained shared exports now exist below B*, but their quality is poor. Original WP04 and Tasks13–24 keep their historical statuses.
+
+Run this from current source with Python 3.12 and no third-party dependencies:
 
 ```sh
+python3.12 provenance/verify_public_continuation.py
+```
+
+It checks all 92 evidence hashes, three recovery trajectories, source-weighted objectives, eight native raw reductions on common windows, and all five fixed scoring formulas/selections for both historical 20-candidate populations. It opens only public metadata. It does not rerun training, native inference or the conditional bootstrap. The full default CPU suite also needs `.[test,report,science]`; native tests need the qualified Apple environment.
+
+[Continuation report](../provenance/continuation-v2/REPORT.md), [environment](../provenance/continuation-v2/environment.json), [executed commands](../provenance/continuation-v2/commands.json), [exact states and private-input reconstruction requirements](../provenance/continuation-v2/REPRODUCE.md). The scientific pilot executed `22c1b8fd62e7dff13f7981089161c19f51e5ed99`; later accounting guards did not change its numerical training/observation code. Old artifacts replay under their packaged v2 runtime; new artifacts use the actual v3 execution profile. Never force-load or relabel old states.
+
+## Original report replay at the audited source
+
+At the historical stop, the outcome was diagnosed inconclusive at WP04; no trained native shared model at B* existed and Tasks13–24 were not run. That report is preserved unchanged. Use its exact source for byte-identical report/summary/Parquet/inventory regeneration. The current source has a different release census; running the old generator there would refresh the inventory against changed files.
+
+Public historical replay requires Python 3.12 with reporting dependencies, without model weights, corpus access, a network connection after installation, or Metal:
+
+```sh
+git worktree add --detach ../cgoc-historical-report 162579679f8baa47d2cb4445d3d82f396e685baa
+cd ../cgoc-historical-report
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e '.[test,report]'
@@ -10,7 +30,7 @@ python -m poc report --include-failures
 python -m pytest tests/test_report.py -q
 ```
 
-This minimal environment runs the reporting tests only. The full default CPU suite needs the scientific dependencies as well (`.[test,report,science]`); hardware-specific tests additionally need the Apple dependencies and native gates below. The [CI workflow](../.github/workflows/report.yml) pins Python 3.12.9, PyYAML 6.0.3, PyArrow 26.0.0 and pytest 9.1.1 for public report replay. These reporting checks are separate from the original machine-specific scientific lock.
+This minimal environment runs the reporting tests only. The full default CPU suite needs the scientific dependencies as well (`.[test,report,science]`); hardware-specific tests additionally need the Apple dependencies and native gates below. The [CI workflow](../.github/workflows/report.yml) pins Python 3.12.9, PyYAML 6.0.3, PyArrow 26.0.0 and pytest 9.1.1 for historical report replay. A separate current-source CI job verifies continuation metadata and rejection controls. These reporting checks are separate from the original machine-specific scientific lock.
 
 The command verifies receipt SHA256s and exact claim pointers, emits `REPORT.md`, `results/summary.json`, `results/regressions.parquet`, and `artifacts/release_manifest.json`, and exits zero for a completed report even when the scientific outcome is inconclusive. Corrupt/missing evidence fails with exit4. The original Task25 verification record (historical f07b3fb) under `provenance/task25-verification-2026-10-28.json` retains the exact tested command, exit, stdout/stderr and tested source/config hashes. Its provenance separates actual Task25 output files from the preserved historical Task12 tool-output transcription.
 

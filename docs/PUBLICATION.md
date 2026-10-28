@@ -1,6 +1,8 @@
 # Public release scope
 
-This repository publishes the completed local CGOC diagnostic and its original software. The scientific outcome is **diagnosed inconclusive**. Active-counterexample selection has no demonstrated advantage. Later compiler, protected capability evaluation and independent replication stages remain unexecuted.
+This repository publishes the original local CGOC diagnostic, a separately authorized bounded continuation, and their software. The original WP04 outcome remains **diagnosed inconclusive**. The continuation demonstrates scoped single-merge recovery but no compelling practical quality–storage win; active-counterexample selection has no demonstrated advantage. Compiler, protected capability evaluation and independent scientific replication remain unexecuted.
+
+The [continuation report](../provenance/continuation-v2/REPORT.md), [raw numeric summary](../provenance/continuation-v2/summary.json), [claim ledger](../provenance/continuation-v2/CLAIMS.json) and [reconstruction instructions](../provenance/continuation-v2/REPRODUCE.md) are the current results. They preserve negative outcomes, a failed conversion attempt, accounting corrections and replay costs. Earlier continuation-v1 blocked and "not published" receipts describe their capture time; the continuation-v2 report records the resolved archive/OS gates. Publication was subsequently requested by the owner.
 
 ## Included and excluded material
 
@@ -8,15 +10,15 @@ The Git checkout contains source, tests, protocols, configuration, dependency pr
 
 Downloaded corpus text, token arrays, teacher and fitted model weights, optimizer checkpoints, restricted upstream source and credentials are excluded. The native models and fitting states used in the experiments are not downloadable from this repository. The metrics retain sums, denominators and hashed document/component identities, not the source text or tokens.
 
-The [release manifest](../artifacts/release_manifest.json) is a focused, hash-bound report inventory. It is not an inventory of every historical Git object and does not claim that all original scientific artifacts are public. Subsequent review and verification records that hash that manifest stay outside its inventory to avoid a digest cycle.
+The [historical release manifest](../artifacts/release_manifest.json) is a focused, hash-bound inventory at audited commit `162579679f8baa47d2cb4445d3d82f396e685baa`. Its source/document hashes describe that revision. The separate [continuation manifest](../provenance/continuation-v2/SHA256.json) binds all 92 continuation evidence files; the publication verifier and CI check it without private inputs. Neither manifest inventories every historical Git object or claims that all scientific artifacts are public.
 
 ## Levels of reproduction
 
 1. **Inspect the result.** Read [REPORT.md](../REPORT.md), [results/summary.json](../results/summary.json) and the numeric [Parquet table](../results/regressions.parquet). No installation is required to read the Markdown or JSON.
-2. **Regenerate the report.** Python 3.12 plus `.[test,report]` verifies the retained public source hashes and claim pointers and regenerates the report, summary, Parquet and inventory. This needs no model, corpus, network access after installation or Apple hardware. CI exercises this reporting path; it does not rerun model experiments.
+2. **Verify or regenerate public metadata.** On current source, `python3.12 provenance/verify_public_continuation.py` checks continuation hashes, raw reductions and selections using only the standard library. To regenerate the original report, use the audited commit with Python 3.12 plus `.[test,report]`; CI pins that replay to its historical source. Neither check reruns model experiments.
 3. **Reconstruct the scientific runs.** This requires separately acquiring licensed model/data assets, preserving split/exposure lineage, rebuilding the qualified native environment and satisfying the original numerical and resource gates. Selected public receipts describe those runs, but the excluded raw assets and fitted states prevent treating report regeneration as full raw-experiment replay. A clean native rebuild and independent replication were not completed in the study.
 
-The [reproduction guide](reproduction.md) records the original machine, exact dependency lock, source revisions, qualification gates and limitations. A fresh experiment would require a new protocol; publishing the existing evidence does not resume the stopped study.
+The [reproduction guide](reproduction.md) records both scopes. New scientific work requires its own bounded protocol and reconciled exposure lineage; publishing this continuation does not resume the stopped historical study. Models and corpora remain excluded. The new native bundles were measured locally and are described by manifests and numeric receipts, not distributed here.
 
 ## Licensing and attribution
 

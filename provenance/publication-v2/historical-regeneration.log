@@ -1,0 +1,1 @@
+{"audit": {"claims_checked": 290, "errors": [], "ok": true, "records_checked": 20}, "outcome": "diagnosed_inconclusive", "outputs": ["REPORT.md", "results/summary.json", "results/regressions.parquet", "artifacts/release_manifest.json"]}
