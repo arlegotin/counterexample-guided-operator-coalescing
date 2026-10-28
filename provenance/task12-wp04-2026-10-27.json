@@ -1,0 +1,151 @@
+{
+  "analysis_status": {
+    "fresh16score32damage": "fixed exploratory precision repeat; complete20",
+    "original18_only": "fixed secondary in original and fresh studies",
+    "original8score16damage": "original primary study; unchanged",
+    "pooled24score48damage": "exploratory secondary; does not replace original or fresh"
+  },
+  "controller_adjudicated": true,
+  "costs": {
+    "followup": {
+      "disk_bytes": 1282831488,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 8618934272,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 6796,
+      "processed_tokens": 3542963,
+      "search_proposals": 100,
+      "search_seconds": 1.2990725379786454,
+      "student_backward_calls": 306,
+      "student_forward_calls": 22038,
+      "suffix_backward_calls": 306,
+      "teacher_forward_calls": 142702,
+      "unique_tokens": 0,
+      "updates": 18,
+      "valid_target_presentations": 147456,
+      "wall_seconds": 4285.678173583117
+    },
+    "followup_wall_including_audit_seconds": 4286.824123374128,
+    "fresh_logical_evaluation_positions": 2233840,
+    "memory_history": "failed8GiB attempt retained at8618934272bytes; only subsequent RunSpecs use9GiB",
+    "overall": {
+      "disk_bytes": 1282831488,
+      "estimated_operations": 0,
+      "estimation_method": null,
+      "memory_bytes": 8618934272,
+      "memory_unavailable_reason": null,
+      "processed_inputs": 12412,
+      "processed_tokens": 6587057,
+      "search_proposals": 284,
+      "search_seconds": 4.91101024398813,
+      "student_backward_calls": 680,
+      "student_forward_calls": 39858,
+      "suffix_backward_calls": 680,
+      "teacher_forward_calls": 257236,
+      "unique_tokens": 0,
+      "updates": 40,
+      "valid_target_presentations": 327680,
+      "wall_seconds": 6410.7569431260945
+    },
+    "overall_wall_including_audit_seconds": 6411.902892917105,
+    "physical_optimizer_operations": 40,
+    "scientific_updates_per_primary_candidate": 1,
+    "strict_exact_reconstruction_operations": 18
+  },
+  "decision": "inconclusive",
+  "evidence_sha256": {
+    "artifacts/diagnostics/task12/calibration.json": "4b0253e6dec556f4481d306ace5a0d90b0dc0a80f5f9c60fbf5063d459857aac",
+    "artifacts/diagnostics/task12/pairs-amended.json": "84b035dfd8ad95a39e2718d712b013d55d195f4d2546f2e58bf9da8356fffc5a",
+    "artifacts/diagnostics/task12/precision-v1/accounting-authorization.json": "a179be102a5e124fa10d3c46abd17664be6516b4a66fdb47b2babddf267dce08",
+    "artifacts/diagnostics/task12/precision-v1/analysis.json": "e6896aee2ca7315d2de57dbe014853c88b4d3a6dbcf39e90427b30fc03952d78",
+    "artifacts/diagnostics/task12/precision-v1/data.json": "c02da5257fc85bd347edafe3fd1ad69a6f6acb17918d8af55e608aa8524ade27",
+    "artifacts/diagnostics/task12/precision-v1/plan.json": "f0d8309c09e9d04b34fc527fc8b8655d2bb4812194342cd7f281efa9732f0363",
+    "artifacts/diagnostics/task12/precision-v1/verified-states.json": "2447dbb18c1d77d8ab99195876294ddc19469592ed69469081dfc429ad4a56f3",
+    "provenance/single-merge-original-135m-2026-10-27.json": "0c375d81aa8c22e8fab1dbb984500866bd197ac801ccf5e61088071e7362c359",
+    "provenance/single-merge-precision-135m-2026-10-27.json": "ff94788d307c579e4a2fed7a7783ce5636b4dfb21b14ee6d9633ff1d3ede921c",
+    "provenance/task12-controller-audits-2026-10-27.json": "ddcb6ae5f2fb28d01e7176ebd8dc365bf923541ffcf78a9236f39f5d4505c75d"
+  },
+  "fresh_evidence": {
+    "active_better_draws": 49,
+    "active_minus_natural_interval": [
+      0,
+      0
+    ],
+    "active_natural_selection_differences": 80,
+    "active_regret_interval": [
+      0,
+      0.02986082265576356
+    ],
+    "active_worse_draws": 31,
+    "bootstrap_resamples": 2000,
+    "common_functional_selected_pair": [
+      4,
+      6
+    ],
+    "natural_regret_interval": [
+      0,
+      0.030228403658440237
+    ],
+    "oracle_natural_damage": 0.14138184564366732,
+    "sampled_oracle_pair": [
+      12,
+      20
+    ],
+    "selected_natural_damage": 0.15121223012061968,
+    "selected_regret": 0.009830384476952364
+  },
+  "gate": "WP04",
+  "next_allowed_action": "Task25 honest final reporting after Task12 independent review",
+  "not_claimed": [
+    "active superiority",
+    "practical equivalence or precise null",
+    "absence of functional redundancy or operator reuse",
+    "capability preservation",
+    "native payload/deployment advantage",
+    "convergence",
+    "efficient random-only acquisition pipeline"
+  ],
+  "pooled_secondary_evidence": {
+    "active_better_draws": 23,
+    "active_natural_selection_differences": 46,
+    "active_regret_interval": [
+      0,
+      0.01885234200701223
+    ],
+    "active_worse_draws": 23,
+    "common_functional_selected_pair": [
+      12,
+      20
+    ],
+    "natural_regret_interval": [
+      0,
+      0.01892796829403593
+    ],
+    "point_regret": 0
+  },
+  "prohibited_continuations": [
+    "third sample expansion",
+    "compiler/search Tasks13\u201324",
+    "protected confirmation",
+    "extra fitting or endpoint tuning"
+  ],
+  "reason": "All four functional rules select the same candidate within each fixed analysis, but the fresh choice flips and near-best selection/regret remains uncertain. Discrete-zero intervals hide both favorable and unfavorable choices; one-update fitting and raw unaligned SVD still limit sensitivity. No observable consistent active advantage or concrete measured joint-composition result justifies compiler continuation.",
+  "schema_version": 1,
+  "task12_independent_review": "pending",
+  "terminal": true,
+  "unexecuted_tasks": [
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ]
+}

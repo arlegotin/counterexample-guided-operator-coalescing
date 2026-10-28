@@ -157,3 +157,84 @@ share one aggregate budget. No convergence or active-refit efficacy claim follow
 from these two additional steps. Full phase was approved against a conservative
 ~3006s eighteen-trial forecast with ample margin under7200s; the20-trial amendment
 and two extra updates remain within those existing caps.
+
+
+## Fixed fresh-component precision repeat and terminal WP04
+
+The preceding proposals and full-phase cap statements describe their historical
+stages. Later authorization files version the changes below; historical plans,
+RunSpecs, failures and receipts were not rewritten.
+
+After original20+2 completion, the controller fixed one exploratory precision
+repeat on the same20 primary one-update states. Freeze seed19 data order before
+text eligibility: up to48 new probe_score candidates, at most4 deterministic edit
+attempts per candidate, first16 eligible full512/reset0 recipients with positive
+after-patch target masks;32 new canonical dev damage components, using a saved
+64-candidate order. These populations exclude all prior selected score/damage/dev8
+components. Preserve rejected/underfilled attempts without quality filtering.
+All16 score components filled;33 dev eligibility checks yielded32 full windows
+and one preserved508-token rejection. The frozen pool has1890 accepted and1
+rejected rows. No new intervention-damage expansion was performed.
+
+All formulas, temperature1, full vocabulary/head chunk32, per-component weights,
+random donor policy and2000-resample component bootstrap stay fixed. Every
+resample reselects candidates and recomputes oracle/regret. Original study stays
+original primary; fresh20 repeat is separately labeled; original18-only remains
+a fixed secondary in both studies; pooled24score/48damage is explicitly an
+exploratory secondary. Report all seven main methods regardless of outcome.
+Canonical dev8 remains an original secondary, not fresh data. Shared query
+allocation is not the necessary cost of an efficient random-only pipeline.
+
+Only2 original compact primary states had been retained. The controller explicitly
+authorized18 fully charged exact reconstructions, first(12,20), with no retries
+on digest mismatch: original initialized and fitted digests, data/masks/order,
+seed/schedule/numerics must match. All18 matched, and all20 saved state identities
+and40 metadata/weight hashes were verified before any fresh predictions. Compact
+deltas now remain on disk. Replays are measurement/reproducibility work, not extra
+primary learning. Primary exposure stays one update; two sensitivity states stay
+separate. No new optimization was used for the precision comparison.
+
+Cumulative caps changed22→40 physical optimizer operations and180224→327680
+training presentations; student forwards30000→50000. Teacher350000,1000backwards
+of each kind,2GiB generated disk,0fetch and overall7200s remain unchanged.
+Follow-up authorization initially2400s then3600s including reconstruction, finally
+4800s after measured accounting overhead, with<=160000additionalT/24000S,
+<=2000new proposals/300search seconds and2.5M fresh logical evaluation positions
+separate from training presentations. Explicit source/cap amendments are
+`task12-precision-{amendment,durability-amendment,memory-amendment,evaluation-amendment,accounting-amendment}.json`.
+
+The failed8GiB preparation attempt remains failed with observed RSS+driver
+8,618,934,272bytes. Only subsequent authorized RunSpecs use9GiB, conditional on
+fresh available RAM>=12GiB. RSS, MPS allocated and driver values remain separate;
+the conservative RSS+driver sum may overlap allocations and is not physical
+unique memory. Reuse saved edit pools/windows exactly; persist every eligibility
+attempt before advancing. Fresh isolated evaluation uses frozen tokens/JSON and
+no role readers. Repeated-reader/serialization growth remains unresolved.
+
+The first fresh evaluation cost283.925990s and was retained. CPU-only diagnoses
+identified exact disk census overhead. A tested direct scandir recursion preserves
+old Path.rglob/is_file behavior, including file symlinks, hidden entries, broken
+links and no following directory symlinks. No caching, guard skipping, numerical
+or statistical change was introduced. One charged identical-inventory benchmark
+showed2.37x census speedup. The next fixed pair qualified throughput178.355143s;
+a one-process remaining18 forecast included20% trial margin and90s analysis,
+and all remaining trials completed under hard guards. CPU diagnoses17.757186291s
+are carried exactly once. Original failed printing was similarly repaired only
+in logging, without repeating its completed neural work.
+
+Final receipts report6411.902893s overall including1.145950s separate receipt
+audit; follow-up4286.824123s;257236T/39858S;680backwards each;40physical operations;
+327680training presentations;2233840fresh evaluation positions. Zero legacy
+unique-token/operation counters mean unavailable, not zero work. All failed
+attempts remain part of cost/history. Scientific floating merge bytes are not
+native payload qualification, and B* remains66,064,401bytes.
+
+The controller-adjudicated evidence-digested terminal gate is
+[`WP04=INCONCLUSIVE`](../provenance/task12-wp04-2026-10-27.json). Fresh choices
+flip relative to original, all four functional rules coincide within each point
+analysis, and near-best regret intervals remain broad. Percentile-zero contrast
+intervals hide both better and worse choices. One-update fitting and unaligned
+raw-SVD limitations remain. No active superiority, precise equivalence, general
+reuse-negative or capability/native claim follows. Next allowed action is Task25
+honest reporting after Task12 independent review. Tasks13–24 remain unexecuted;
+no third expansion, compiler continuation or protected confirmation is authorized.
