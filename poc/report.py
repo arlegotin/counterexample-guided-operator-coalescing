@@ -523,7 +523,7 @@ def report_command(*, include_failures: bool, root: Path | None = None) -> int:
     (root/'results/summary.json').write_bytes(canonical_json({**bundle.summary, 'audit': asdict(audit)}))
     files = sorted(set(evidence.release_files) | {'REPORT.md', 'results/summary.json', 'results/regressions.parquet',
                                                 'provenance/report-evidence-2026-10-28.json'})
-    manifest = {'schema_version': 1, 'scope': 'Local report handoff; no deployable trained shared model, external publication or rights grant',
+    manifest = {'schema_version': 1, 'scope': 'Public report evidence inventory; no deployable trained shared model; licensing scope in LICENSING.md',
                 'outcome': bundle.summary['outcome'], 'files': [
                     {'path': name, 'bytes': _relative(root,name).stat().st_size, 'sha256': sha256_file(_relative(root,name)),
                      'distribution': 'owned project report/code or metadata only; third-party rights unchanged'} for name in files],

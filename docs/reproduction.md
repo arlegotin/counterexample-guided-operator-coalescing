@@ -1,13 +1,16 @@
 # Local reproduction and release boundaries
 
-The terminal outcome is diagnosed inconclusive at WP04. No trained native shared model at B* exists. Tasks13–24 were not run. Public report regeneration requires the checkout and the pinned local Python environment; it does not require model weights, corpus access, a network connection, or Metal. It reads only retained public receipts and whitelist-only metric metadata:
+The terminal outcome is diagnosed inconclusive at WP04. No trained native shared model at B* exists. Tasks13–24 were not run. Public report regeneration requires the checkout and Python 3.12 with reporting dependencies. It does not require model weights, corpus access, a network connection after installation, or Metal. It reads only retained public receipts and whitelist-only metric metadata:
 
 ```sh
+python3.12 -m venv .venv
 source .venv/bin/activate
+python -m pip install -e '.[test,report]'
 python -m poc report --include-failures
 python -m pytest tests/test_report.py -q
-python -m pytest
 ```
+
+This minimal environment runs the reporting tests only. The full default CPU suite needs the scientific dependencies as well (`.[test,report,science]`); hardware-specific tests additionally need the Apple dependencies and native gates below. The [CI workflow](../.github/workflows/report.yml) pins Python 3.12.9, PyYAML 6.0.3, PyArrow 26.0.0 and pytest 9.1.1 for public report replay. These reporting checks are separate from the original machine-specific scientific lock.
 
 The command verifies receipt SHA256s and exact claim pointers, emits `REPORT.md`, `results/summary.json`, `results/regressions.parquet`, and `artifacts/release_manifest.json`, and exits zero for a completed report even when the scientific outcome is inconclusive. Corrupt/missing evidence fails with exit4. The original Task25 verification record (historical f07b3fb) under `provenance/task25-verification-2026-10-28.json` retains the exact tested command, exit, stdout/stderr and tested source/config hashes. Its provenance separates actual Task25 output files from the preserved historical Task12 tool-output transcription.
 
@@ -25,7 +28,7 @@ Required inherited native/asset gates are explicitly preserved: source qualifica
 
 ## Files and rights
 
-The release manifest is an explicit inventory of owned code, reports, tests, config/lock documents and nontext metric metadata. It excludes itself from its hash list to avoid a cycle. It is a local handoff inventory, not a packaged model or a blanket license grant. Public receipt hashes can refer to private local artifacts without redistributing them. Model weights, optimizer checkpoints, private corpus text, token IDs, restricted upstream source and credentials are excluded. The historical floating/archive proofs retain their existing scope; full archive bytes/unpack times remain unknown.
+The release manifest is an explicit inventory of owned code, reports, tests, config/lock documents and nontext metric metadata. It excludes itself from its hash list to avoid a cycle. It is a report evidence inventory, not a packaged model or a blanket license grant. [LICENSING.md](../LICENSING.md) defines the grants and [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) preserves upstream terms. Public receipt hashes can refer to private local artifacts without redistributing them. Model weights, optimizer checkpoints, private corpus text, token IDs, restricted upstream source and credentials are excluded. The historical floating/archive proofs retain their existing scope; full archive bytes/unpack times remain unknown.
 
 Fetch restricted or licensed sources only from the pinned upstream locations with their recorded terms; do not copy them into this handoff. FineWeb database terms do not clear underlying web rights. WikiText card metadata and prose disagree about license version; no redistribution conclusion is invented. SharVeT's pinned PolyForm Noncommercial source was privately inspected, neither copied nor executed; the full SV baseline is unexecuted. The original blueprint and critical review retain prior-art references; no novelty or external publication claim is made here.
 

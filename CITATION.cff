@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software or its reported results, please cite this repository and record the commit used."
+type: software
+title: "Counterexample-guided operator coalescing: a controlled study of LLM weight sharing"
+authors:
+  - family-names: Legotin
+    given-names: Artem
+version: 0.1.0
+date-released: "2026-10-28"
+repository-code: "https://github.com/arlegotin/counterexample-guided-operator-coalescing"
+url: "https://github.com/arlegotin/counterexample-guided-operator-coalescing"
+license:
+  - AGPL-3.0-only
+  - CC-BY-4.0
+abstract: >-
+  Research software for sharing nonlinear feed-forward operators across
+  transformer layers with low-rank per-layer corrections. The local SmolLM2-135M
+  study compares seven merge-scoring rules on the same twenty fitted candidate
+  states, with fresh-document evaluation, source-component bootstrap selection
+  uncertainty, exact fitted-state replay and native payload accounting.
+  Ordinary natural KL, random-donor and two active-counterexample rules select
+  the same pair within each fixed analysis; the selected pair changes on fresh
+  documents. Active selection has no demonstrated advantage. The completed
+  diagnostic is inconclusive because near-best selection uncertainty and fitting
+  sensitivity remain unresolved. No trained native shared model at the target
+  byte ceiling, protected capability result or runtime advantage is established.
+  Public receipts and nontext metric metadata support report-only regeneration
+  without model weights or corpus access.
+keywords:
+  - language model compression
+  - weight sharing
+  - counterexamples
+  - low-rank adaptation
+  - reproducible research
+  - inconclusive results

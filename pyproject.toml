@@ -1,13 +1,22 @@
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "cgoc-poc"
 version = "0.1.0"
 description = "Local counterexample-guided operator coalescing research harness"
+readme = "README.md"
+authors = [{name = "Artem Legotin"}]
+license = "AGPL-3.0-only AND CC-BY-4.0"
+license-files = ["LICENSE", "NOTICE", "LICENSING.md", "THIRD_PARTY_NOTICES.md", "licenses/*.txt"]
 requires-python = ">=3.12,<3.13"
 dependencies = ["PyYAML>=6.0.2,<7"]
+
+[project.urls]
+Repository = "https://github.com/arlegotin/counterexample-guided-operator-coalescing"
+Report = "https://github.com/arlegotin/counterexample-guided-operator-coalescing/blob/main/REPORT.md"
+Citation = "https://github.com/arlegotin/counterexample-guided-operator-coalescing/blob/main/CITATION.cff"
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
