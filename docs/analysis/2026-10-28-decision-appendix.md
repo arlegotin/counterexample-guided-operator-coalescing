@@ -1,8 +1,8 @@
 # Controller decision appendix
 
-Exactly 35 lines containing the literal `Ruling:` occur in the saved ledger, in original order. This includes the later directive about preserving the earlier rulings. These are controller decisions under existing user authorization, not requests for additional user permission.
+Exactly 36 lines containing the literal `Ruling:` occur in the final saved ledger, in original order. This includes the later directive about preserving the earlier rulings. These are controller decisions under existing user authorization, not requests for additional user permission.
 
-Source: `.superpowers/sdd/2026-10-27-cgoc/progress.md`; SHA256 `a03065526640eb29cf315aa509fac2f0f80ab172e7dfbb4e56c081348559d2fe`. Historical counts, budgets and pending states below remain verbatim; later receipts govern current scientific claims.
+Source: [durable implementation ledger](../../provenance/implementation-ledger-2026-10-28.md); SHA256 `f572466b8ccc19ccd886685756b3f04f8650f021c90f74f3e4bbf0c5127a6fad`. The original 35-entry snapshot is its first 139044 bytes, SHA256 `a03065526640eb29cf315aa509fac2f0f80ab172e7dfbb4e56c081348559d2fe`; the final entry records the scoped-review residual. Historical counts, budgets and pending states below remain verbatim; later receipts govern current scientific claims.
 
 ## 1. Ledger line 5
 
@@ -353,3 +353,13 @@ Final-review.md read in advance: whole implementation review afterTask25 uses ex
 Explanation: Preserve the full decision history and downstream review evidence.
 
 Cost if wrong: Loss of reconstructible approval/audit history or circular provenance.
+
+## 36. Ledger line 580
+
+```text
+Final: parked (Minor) — oversized malformed metric/overview integers may raise OverflowError and traceback/exit1 instead of integrity exit4 — Ruling: defer this nonblocking out-of-range-input robustness case: the committed bounded metric data and all required scientific/report outputs are verified, and the failure remains closed; if wrong, a malformed client input can cause a confusing error and need a small future boundary patch, with no effect on measured results or payloads. Preserve this limitation in the final review record and decision appendix; do not describe the parser as universally hardened.
+```
+
+Explanation: Keep the verified current-data handoff while explicitly recording a rare malformed-input robustness limitation.
+
+Cost if wrong: A metric input with an integer beyond floating-point range can produce a traceback instead of the documented integrity response; measured results stay unchanged and no unsupported result is emitted.
