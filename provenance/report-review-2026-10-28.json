@@ -1,0 +1,56 @@
+{
+  "controller_evidence": {
+    "data": {
+      "artifact_sha256": {
+        "REPORT.md": "d44979cfae74dc35ba1b04b79c7d111bbecedd5fd5691fdda7b5e4919fe03f33",
+        "artifacts/release_manifest.json": "b441fb09f1e668f0182439d568110d3a0c0984342df9f1e3719341a6848d50e7",
+        "docs/analysis/2026-10-28-decision-appendix.md": "3931f77a2c9b378030b0c8d7ea04de244d0fa4a95055e3d5452de17a164b74ef",
+        "provenance/report-evidence-2026-10-28.json": "fcf91b1b7e66f52e17f5977b12c5b9720fef4c22731c8419ee55fe57b4204614",
+        "provenance/task25-verification-2026-10-28.json": "4c8d94d4cf8d04ed6295aebd5b2b14f80831455710bfe9ca0a72174918441985",
+        "results/regressions.parquet": "046c07b0dab6fa63829ba63790e5f78d3bf95b540e4a24179fc37b264f3545a6",
+        "results/summary.json": "d92e50c23f144d42072bdd3f50c30e29b989a2b7f2c17a21664b3a4f6e589708"
+      },
+      "exact_claim_pointers_verified": 290,
+      "head": "f07b3fb02c7b5f9cb0ba9a6589ef7b22323ba096",
+      "immutable_evidence_hashes_verified": 20,
+      "measured_denominators_positive_sums_finite": true,
+      "outcome": "diagnosed_inconclusive",
+      "parquet_rows": 2284,
+      "parquet_status_counts": {
+        "measured": 2278,
+        "unexecuted": 6
+      },
+      "release_files_byte_hash_verified": 140,
+      "release_self_cycle_excluded": true,
+      "retained_command_exit_codes": [
+        0,
+        0,
+        0
+      ],
+      "ruling_lines_verbatim_and_in_order": 35,
+      "scope": "read-only artifact/source-pointer/retained-stdout audit; no CLI/test/model/census rerun",
+      "status": "passed",
+      "summary_claims_equal_by_id": true,
+      "tested_source_hashes_verified": 169,
+      "unexecuted_nulls_and_reasons_verified": true,
+      "wall_seconds_separate": 0.22681725001893938
+    },
+    "source_sha256": "4f0101791aab26ee5742bd678da3c95ceee5c34f8481781149a0e1f6cfcb7374"
+  },
+  "critical_findings": 0,
+  "important_findings": 0,
+  "inherited_evidence_resolution": "Prior native/assets/offline proofs remain inherited, explicitly stated. Reporting did no model/data/protected activity; existing bundle census checked files/bytes/hash and retained proof bytes. Task12 inherited-prerequisites record is preserved in task25-downstream-audits. No new deployment/capability qualification is claimed.",
+  "minor_findings": [
+    "Malformed evidence-index structure can raise uncaught KeyError/TypeError; carry to final wholebranch review."
+  ],
+  "reviewed_base": "9a13b70136dcd1550b4519ab0fae73064440e80c",
+  "reviewed_head": "f07b3fb02c7b5f9cb0ba9a6589ef7b22323ba096",
+  "schema_version": 1,
+  "scope": "Post-report software/evidence review of f07b3fb. This record is downstream of the self-hashing report/release inventory; it does not alter scientific results or claim new neural qualification.",
+  "spec_compliance": "approved",
+  "task_quality": "approved",
+  "task_review": {
+    "source_sha256": "ea1334c3e8fbd2e4de1bb0c630a232420a2d1d5c41893a7375a45fc96852b333",
+    "text": "### Spec Compliance\n\n- \u2705 Spec compliant for an evidence-limited terminal report under R01/R16/R20/R25/R26. The four required outputs, reporting interfaces, CLI integration, tests, reproduction instructions and progress/decision updates are present (`poc/report.py:43`, `poc/report.py:151`, `poc/report.py:212`, `poc/report.py:327`; `docs/reproduction.md:3`; `PROGRESS.md:3`). The actual outcome is diagnosed inconclusive; Tasks13\u201324 and unavailable protected/capability/runtime outcomes stay explicit (`REPORT.md:3`, `REPORT.md:377`; `results/summary.json:1`).\n- \u2705 Qualified, independently replicated deployment improvement may classify as confirmed scoped improvement while attribution remains false; unconfirmed deployment alone does not become mechanism evidence. Early stops, inadequate sensitivity, unresolved SV, budget-limited learning and capability regression have meaningful authored cases (`poc/report.py:43`, `poc/report.py:53`; `tests/test_report.py:16`, `tests/test_report.py:39`, `tests/test_report.py:47`, `tests/test_report.py:159`).\n- \u26a0\ufe0f Historical native/asset qualification, original experiment execution, frozen data controls and prior offline inference proofs are inherited evidence, not independently requalified by this reporting diff. Their explicit enumeration and preserved downstream audits satisfy the handoff boundary; retain those proofs and the protected seals (`docs/reproduction.md:19`, `docs/reproduction.md:23`; `provenance/task25-downstream-audits-2026-10-28.json:1`). The recorded 25-bundle byte census is a file/hash check, not a new inference or capability result (`provenance/report-bundle-census-2026-10-28.json:1`).\n\n### Strengths\n\n- Scientific conclusions match the stopped study: original primary, fresh exploratory, eighteen-pair restrictions and pooled secondary remain distinct; component resampling, discrete zero spikes and sampled-oracle limits are explained. Global8doc, denseQ32doc and conditional local/intervention endpoints are separated; no active advantage, equivalence, native trained-at-B*, capability preservation or novelty claim is manufactured (`REPORT.md:15`, `REPORT.md:21`, `REPORT.md:23`, `REPORT.md:25`, `REPORT.md:29`).\n- Rendering and auditing share a source-bound claim model, and tests reject altered values, origins, text and summary. The compact table reuses the detailed claims instead of creating a second set of hand-entered numbers (`poc/report.py:151`, `poc/report.py:212`; `tests/test_report.py:165`, `tests/test_report.py:188`, `tests/test_report.py:211`).\n- Raw Parquet retains genuine sums, positive actual denominators, source pointers/hashes, hashed identifiers and state/model scope; unavailable outcomes become nulls. The preservation step whitelists metadata and keeps conditional intervention scope explicit (`poc/report.py:275`; `provenance/prepare_terminal_report.py:101`; `tests/test_report.py:174`).\n- Reporting is separate from model/data execution. Bundle inspection verifies existing inventories without loading models; public regeneration consumes retained metadata, while the scratch-dependent preservation step is explicitly historical (`poc/report.py:297`; `provenance/prepare_terminal_report.py:164`; `docs/reproduction.md:15`). The reporting and preparation modules have distinct responsibilities and manageable size.\n- Subsequent review/controller/test records are preserved downstream without rewriting the receipts they hash. All 35 literal rulings have an ordered human-readable appendix and consequences. The release inventory excludes itself, preventing a digest cycle (`provenance/prepare_terminal_report.py:28`, `provenance/prepare_terminal_report.py:48`; `docs/analysis/2026-10-28-decision-appendix.md:3`; `poc/report.py:340`).\n\n### Issues\n\n#### Critical (Must Fix)\n\n- None identified.\n\n#### Important (Should Fix)\n\n- None identified.\n\n#### Minor (Nice to Have)\n\n- `poc/report.py:137`, `poc/report.py:142`, `poc/report.py:145`: malformed evidence-index structure can raise `KeyError` or `TypeError` before the integrity audit, while the CLI catches neither (`poc/cli.py:119`). For example, valid JSON `{}` reaches the direct `value['records']` access. This still fails closed, but produces a traceback/exit1 instead of the documented runtime-integrity message/exit4 (`docs/reproduction.md:12`). Validate required index fields/types and normalize schema errors to `ValueError`; a tiny malformed-index fixture would cover the promised behavior. This does not affect the valid committed report.\n\n### Checks and Evidence Limits\n\n- Reviewed the supplied single-commit package from `9a13b70136dcd1550b4519ab0fae73064440e80c` to `f07b3fb02c7b5f9cb0ba9a6589ef7b22323ba096`, including every implementation/test/document hunk. Large generated JSON and repetitive report ledger rows were inspected through schema/count/source-pointer reductions; cut-off output was recovered in bounded portions. No git recomputation, suite rerun, model job, protected read, download or retained-bundle census was performed.\n- Independent diff-based checks found all 290 detailed rendered claim values and evidence-index entries exact, all compact table cells consistent with those same claims, and summary claims/stages/gates/analysis/records/failures consistent with the evidence index (`REPORT.md:13`, `REPORT.md:417`; `provenance/report-evidence-2026-10-28.json:1`; `results/summary.json:1`). New referenced JSON record digests match their exact canonical bytes, including the final newline.\n- Named binary-serialization risk: inspected `results/regressions.parquet` because its diff is binary. All 2,284 serialized rows exactly match the diff's declared metadata under the actual Arrow schema: 2,278 measured rows and six unexecuted rows, with null KL/NLL/denominator outcomes in every unavailable row. All measured sums/denominators and original path/hash/pointer bindings agree with the 145 retained source snapshots (`provenance/report-metric-sources-2026-10-28.json:1`; `poc/report.py:275`).\n- Named origin-binding risk: read only origin hash tables/result references in the unchanged original/precision/training/quantization public receipts. Every one of the 145 snapshot origins matches an immutable receipt binding; no original private artifact or experiment was reopened (`provenance/report-metric-sources-2026-10-28.json:1`). Recursive reductions found no raw text/token/mask payload keys in the evidence index, metric snapshot or preserved downstream audit artifact.\n- Named classification risk: checked R01/R25/R26 directly in the unchanged specification (`docs/superpowers/specs/2026-10-27-cgoc-design.md:13`, `docs/superpowers/specs/2026-10-27-cgoc-design.md:320`, `docs/superpowers/specs/2026-10-27-cgoc-design.md:336`). Diagnosed inconclusive completion at WP04 is expressly permitted. Named error-contract risk: checked only the unchanged CLI exception boundary (`poc/cli.py:119`), yielding the minor issue above.\n- Retained final subprocess evidence records 28 focused passes; 531 CPU passes, one explicit-assets skip and 39 deselections; and a successful 290-claim/20-record report audit. Each command has exit0, exact stdout, empty stderr and no warning, with 169 tested source/config/document bindings. Native qualification is explicitly inherited (`provenance/task25-verification-2026-10-28.json:1`; `provenance/verify_terminal_report.py:29`, `provenance/verify_terminal_report.py:42`). No unresolved scientific or implementation doubt required an additional test run.\n\n### Assessment\n\n**Task quality:** Approved.\n\n**Reasoning:** The evidence-only reporting path preserves actual measurements, unavailable stages, scientific limits and acyclic review provenance, with substantive tamper/traceability tests and retained verification. The malformed-index exit-code inconsistency is nonblocking; the report supports the restricted terminal outcome and no broader deployment claim.\n"
+  }
+}
