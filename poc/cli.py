@@ -90,6 +90,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "baselines" and args.stage == "format_and_quant":
             from poc.quantization_stage import run_format_and_quant
             return run_format_and_quant(load_config(args.config,phase=args.phase))
+        if args.command == "report":
+            from poc.report import report_command
+            return report_command(include_failures=args.include_failures)
         if hasattr(args, "config") and args.command != "validate":
             config = load_config(args.config, phase=args.phase)
             validate_config(config, command=args.command)
