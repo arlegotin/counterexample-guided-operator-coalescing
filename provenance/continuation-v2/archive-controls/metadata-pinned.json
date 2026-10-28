@@ -1,0 +1,167 @@
+{
+  "audited_commit": "162579679f8baa47d2cb4445d3d82f396e685baa",
+  "python_version": "3.12.9 (main, Feb  4 2025, 14:38:38) [Clang 16.0.0 (clang-1600.0.26.6)]",
+  "source_sha256": {
+    "provenance/report-metric-sources-2026-10-28.json": "d0497229f3fd4fb5cd9579afae899ef08caca7aca8e14cda27fdeb8500b875c4",
+    "provenance/single-merge-original-135m-2026-10-27.json": "0c375d81aa8c22e8fab1dbb984500866bd197ac801ccf5e61088071e7362c359",
+    "provenance/single-merge-precision-135m-2026-10-27.json": "ff94788d307c579e4a2fed7a7783ce5636b4dfb21b14ee6d9633ff1d3ede921c"
+  },
+  "scope": "metadata-only arithmetic/statistical recomputation, not scientific experiment replication",
+  "numpy_version": "2.5.4",
+  "counts": {
+    "measured": 2278,
+    "unexecuted": 6
+  },
+  "studies": {
+    "original_primary": {
+      "score_components": 8,
+      "damage_components": 16,
+      "candidate_pairs": 20,
+      "selected": [
+        12,
+        20
+      ],
+      "sampled_oracle": [
+        4,
+        6
+      ],
+      "regret": 0.0001156671144024457,
+      "natural_bootstrap_interval": [
+        0.0,
+        0.030152995737885525
+      ],
+      "natural_bootstrap_selection_counts": {
+        "[0, 15]": 380,
+        "[4, 6]": 91,
+        "[5, 7]": 76,
+        "[5, 26]": 1,
+        "[12, 20]": 1051,
+        "[14, 21]": 401
+      },
+      "max_absolute_report_reduction_error": 1.7763568394002505e-15,
+      "mean_score_pearson_with_natural": {
+        "activation_mse": -0.04490946142135528,
+        "active_01": 0.9999999218841338,
+        "active_1": 0.9999961698505607,
+        "cka": -0.5139738734628299,
+        "natural_kl": 1.0,
+        "random_donor": 0.9999890125404998,
+        "weight_distance": -0.09670980501411644
+      },
+      "mean_score_spearman_with_natural": {
+        "activation_mse": 0.14887218045112782,
+        "active_01": 1.0,
+        "active_1": 0.9909774436090225,
+        "cka": -0.37293233082706767,
+        "natural_kl": 1.0,
+        "random_donor": 0.9954887218045112,
+        "weight_distance": 0.1609022556390977
+      },
+      "active_minus_random_score_gap_range": [
+        0.0005079450945472685,
+        0.03724960640241903
+      ],
+      "active_minus_random_score_gap_mean": 0.004474075641257065,
+      "top_two_natural_score_pairs": [
+        [
+          12,
+          20
+        ],
+        [
+          14,
+          21
+        ]
+      ],
+      "top_two_natural_score_margin": 0.004426008772010215,
+      "mean_natural_score_range": [
+        0.1526527122800364,
+        8.826502910098917
+      ],
+      "active_01_formula_max_error": 8.881784197001252e-16,
+      "scope_of_correlations": "20 dependent finite candidates; descriptive only, no significance or population extrapolation"
+    },
+    "fresh_exploratory": {
+      "score_components": 16,
+      "damage_components": 32,
+      "candidate_pairs": 20,
+      "selected": [
+        4,
+        6
+      ],
+      "sampled_oracle": [
+        12,
+        20
+      ],
+      "regret": 0.009830384476952364,
+      "natural_bootstrap_interval": [
+        0.0,
+        0.030228403658440237
+      ],
+      "natural_bootstrap_selection_counts": {
+        "[3, 12]": 68,
+        "[4, 6]": 891,
+        "[5, 7]": 225,
+        "[12, 20]": 808,
+        "[14, 21]": 8
+      },
+      "max_absolute_report_reduction_error": 4.440892098500626e-16,
+      "mean_score_pearson_with_natural": {
+        "activation_mse": -0.0381053209408587,
+        "active_01": 0.9999999463750653,
+        "active_1": 0.999997374024177,
+        "cka": -0.48470591658582896,
+        "natural_kl": 1.0,
+        "random_donor": 0.9999969055603443,
+        "weight_distance": -0.08967168759464683
+      },
+      "mean_score_spearman_with_natural": {
+        "activation_mse": 0.5533834586466165,
+        "active_01": 1.0,
+        "active_1": 0.9954887218045112,
+        "cka": -0.10375939849624059,
+        "natural_kl": 1.0,
+        "random_donor": 0.9969924812030074,
+        "weight_distance": 0.38345864661654133
+      },
+      "active_minus_random_score_gap_range": [
+        0.0002001780454907176,
+        0.01886394913230305
+      ],
+      "active_minus_random_score_gap_mean": 0.002690958049202988,
+      "top_two_natural_score_pairs": [
+        [
+          4,
+          6
+        ],
+        [
+          12,
+          20
+        ]
+      ],
+      "top_two_natural_score_margin": 0.001065615498972966,
+      "mean_natural_score_range": [
+        0.15332838544465324,
+        9.110554585018269
+      ],
+      "active_01_formula_max_error": 1.2212453270876722e-15,
+      "scope_of_correlations": "20 dependent finite candidates; descriptive only, no significance or population extrapolation"
+    }
+  },
+  "fresh_vs_original_observed_natural_overlap": [],
+  "one_step_fit_checks": {
+    "all_decrease": true,
+    "relative_decrease_range": [
+      0.014510323498243508,
+      0.048656812190478085
+    ],
+    "absolute_decrease_range": [
+      0.002658734893923237,
+      0.18897030824784267
+    ]
+  },
+  "omitted_public_raw_fields": [
+    "per-component active/random/student probe scores",
+    "per-component activation MSE and CKA scores",
+    "private original text/tokens, candidate weights, full raw specs and ledgers"
+  ]
+}

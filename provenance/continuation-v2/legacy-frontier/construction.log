@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/private/tmp/cgoc-continuation-v1/provenance/legacy_shared_frontier.py", line 123, in <module>
+    if args.convert:convert(args.out)
+                    ^^^^^^^^^^^^^^^^^
+  File "/private/tmp/cgoc-continuation-v1/provenance/legacy_shared_frontier.py", line 31, in convert
+    state=load_checkpoint(resolve_checkpoint(checkpoint),_spec(json.loads(spec_path.read_text())))
+                                                                          ^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/training/task11/learn31-canonical-v1/runs/spec.json'

@@ -1,0 +1,36 @@
+{
+  "status": "complete",
+  "artifacts": [
+    {
+      "label": "historical-K15-step29-floating",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-construction-replay/export/historical-K15-floating",
+      "manifest_sha256": "b818519304d45cd5dd5742ed424e6d41c7518a1c86ad10aeec4c7f0ce47c0406"
+    },
+    {
+      "label": "historical-K15-rtn2-embed4",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-construction-replay/export/historical-K15-rtn2-embed4",
+      "manifest_sha256": "43db7401352f82b0c3137716d416118f6f54443e8433efd3f582263ba90555d6"
+    },
+    {
+      "label": "historical-K15-rtn4-embed2",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-construction-replay/export/historical-K15-rtn4-embed2",
+      "manifest_sha256": "71a8da12defd2345bbad89c16bff7bef382ae129c4cbfd8c4a6deb3aa3d4d8de"
+    }
+  ],
+  "source_runtime": "/private/tmp/cgoc-audit-1625796/poc/__init__.py",
+  "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+  "historical_checkpoint_ref": {
+    "directory": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/training/task11/learn31-canonical-v1/runs/5406a10de5b202d4a737889b7eea4dfea17d71b591c33378dec2323c21670d73/attempts/c154bb372f7c431cbaa29c51c7220181/checkpoints/generation-6ed1fd40932448b89144afc89df5bbb6",
+    "manifest_sha256": "a844ec46cb09a3582d6a0a1b4f751bf1d7417c4d296c221b6668b2f3508597ca"
+  },
+  "source_fitted_digest": "a5a431e4262453d39e7e4558031e13018ef807ebaef977597248fe73bc0cc4d0",
+  "exact_values_verified": true,
+  "new_training_updates": 0,
+  "wall_seconds": 4.9970762499724515,
+  "memory": {
+    "process_peak_rss_bytes": 2827272192,
+    "torch_mps_driver_bytes": 568885248,
+    "mlx_peak_bytes": 471115148
+  },
+  "shared_quantizer": "existing native RTN; no learned shared quantization claim"
+}

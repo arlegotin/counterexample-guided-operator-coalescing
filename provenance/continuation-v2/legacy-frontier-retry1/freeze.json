@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "label": "historical-K15-step29-floating",
+      "manifest_sha256": "b818519304d45cd5dd5742ed424e6d41c7518a1c86ad10aeec4c7f0ce47c0406",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-floating"
+    },
+    {
+      "label": "historical-K15-rtn2-embed4",
+      "manifest_sha256": "43db7401352f82b0c3137716d416118f6f54443e8433efd3f582263ba90555d6",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-rtn2-embed4"
+    },
+    {
+      "label": "historical-K15-rtn4-embed2",
+      "manifest_sha256": "71a8da12defd2345bbad89c16bff7bef382ae129c4cbfd8c4a6deb3aa3d4d8de",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-rtn4-embed2"
+    }
+  ],
+  "expected_original_floating_kl": 6.49408069095,
+  "frame": "same8 known exploratory development components",
+  "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+  "original_training_stays_WP04": "INCONCLUSIVE"
+}

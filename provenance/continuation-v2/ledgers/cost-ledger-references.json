@@ -1,0 +1,56 @@
+[
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/costs.jsonl",
+    "sha256": "c9eef2ecf845a8a46e1178d41a479c1a18bf76e6418135ea2162a538d66152bf",
+    "bytes": 66751669,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/751c652d5f37b3e6b10ce48e3bbdbe96e9fc37027162ad6c810b4377eb8ad905/costs.jsonl",
+    "sha256": "7c0ef77665b3fb9d72be45d7c1b0c7c770e7cea8d62e9056c40f465ba9b738f1",
+    "bytes": 6428,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/e146831ac0a4c230a958fc3a70679c1de7ba8d0f0a98c463d51503dac6999158/costs.jsonl",
+    "sha256": "9b24dc1995a1370b105f6e8efaf0f0ace89db4a6ba22f0fd02dfd48fef9c01f0",
+    "bytes": 27985419,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/b5be3e20acd9384b05b0eb17ec289cad583264073ba9a9357b718454547109f5/costs.jsonl",
+    "sha256": "e8b5dc7e690e3755e30b1b1b11f08c027e4122661e7d00c9d2e02061de77a3d7",
+    "bytes": 656701,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/6be1579aef3616b161165a90aeeb3778f2e1d281ffadbbb2c7185918deeaf9fe/costs.jsonl",
+    "sha256": "2d06c5d3e85b2114c358cca0e4af4f81057f2a087c1d2e54b581741dcdf3849c",
+    "bytes": 18563765,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/86ba78bfc4c971a2a912fed7aabf6c435c3a20e21e64db5ae0a0bdf3d1aaeef5/costs.jsonl",
+    "sha256": "7269dc586727fd8b27ab3282c67f84cb0c59a5be7dbe742fd6a9bddf885abdd3",
+    "bytes": 18563680,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/7508ba3aa4aa1b6a4b071bf8c2e2edcca04313ef483a0ccb46b0528857b54d98/costs.jsonl",
+    "sha256": "91b9200b9f11f470c45659bbe87e78328cd6e0599d5ab3a83ea6e920510203d0",
+    "bytes": 10714,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/d9e76c9f2cb65f846799a8aff2a2aeb56c96a509d2c6d040b84e4c1761e2d4a6/costs.jsonl",
+    "sha256": "7ada170e7a1efc5b81f1a7ce55b361992b67b1bb429d526cc3997f1f989ef791",
+    "bytes": 2145,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  },
+  {
+    "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/ledger/8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e/children/910ca5566c712b2228ed932346067e520acf66d271b2aee607f537262ce22f0f/costs.jsonl",
+    "sha256": "b56e6995865d6e9d9e1be087c960ff935dd0860957195bbedee8a08f432c26ab",
+    "bytes": 1613,
+    "scope": "authoritative append-only local costs; retained under ignored artifacts, not repeated here"
+  }
+]

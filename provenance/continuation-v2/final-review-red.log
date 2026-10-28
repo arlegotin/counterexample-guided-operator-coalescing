@@ -1,0 +1,37 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_____________ test_final_cost_overrun_cannot_leave_success_status ______________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1566/test_final_cost_overrun_cannot0')
+
+    def test_final_cost_overrun_cannot_leave_success_status(tmp_path):
+        from provenance import recovery_pilot as runner
+        from poc.continuation_budget import PilotLedger
+        from test_records import spec,budget as small_budget
+        ledger=PilotLedger(spec(budgets=replace(small_budget(),wall_seconds=1)),tmp_path)
+        result={'status':'complete_exploratory'}
+        assert hasattr(runner,'finalize_costs'), 'final accounting guard missing'
+        runner.finalize_costs(result,ledger.tracker,elapsed=2)
+        assert result['status']=='failed_accounting'
+        assert ledger.tracker.totals.wall_seconds==2
+        from poc.budget import BudgetExceeded
+>       assert hasattr(runner,'raise_for_accounting_error'), 'CLI final accounting failure guard missing'
+E       AssertionError: CLI final accounting failure guard missing
+E       assert False
+E        +  where False = hasattr(<module 'provenance.recovery_pilot' from '/private/tmp/cgoc-continuation-v1/provenance/recovery_pilot.py'>, 'raise_for_accounting_error')
+
+tests/test_recovery_pilot.py:108: AssertionError
+_______ test_subprocess_resource_bound_adds_concurrent_parent_and_child ________
+
+    def test_subprocess_resource_bound_adds_concurrent_parent_and_child():
+        from provenance import recovery_pilot as runner
+>       assert hasattr(runner,'subprocess_memory_bound'), 'concurrent resource bound missing'
+E       AssertionError: concurrent resource bound missing
+E       assert False
+E        +  where False = hasattr(<module 'provenance.recovery_pilot' from '/private/tmp/cgoc-continuation-v1/provenance/recovery_pilot.py'>, 'subprocess_memory_bound')
+
+tests/test_recovery_pilot.py:114: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_recovery_pilot.py::test_final_cost_overrun_cannot_leave_success_status
+FAILED tests/test_recovery_pilot.py::test_subprocess_resource_bound_adds_concurrent_parent_and_child
+2 failed in 1.47s

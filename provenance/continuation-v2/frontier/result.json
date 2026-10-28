@@ -1,0 +1,825 @@
+{
+  "aggregate_cost": {
+    "disk_bytes": 4888188683,
+    "estimated_operations": 0,
+    "estimation_method": null,
+    "memory_bytes": 6459850752,
+    "memory_unavailable_reason": null,
+    "processed_inputs": 238,
+    "processed_tokens": 121856,
+    "search_proposals": 2,
+    "search_seconds": 0,
+    "student_backward_calls": 838,
+    "student_forward_calls": 7983,
+    "suffix_backward_calls": 838,
+    "teacher_forward_calls": 54560,
+    "unique_tokens": 0,
+    "updates": 49,
+    "valid_target_presentations": 401408,
+    "wall_seconds": 795.9803470840561
+  },
+  "commands": [
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "/private/tmp/cgoc-continuation-v1/provenance/native_artifact_worker.py",
+        "--artifact",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/frontier-rtn-b8-g64",
+        "--manifest-sha256",
+        "86b2f0f6e4fb729cf54144c64761999880de94356aa940d393541ba61dc6709d",
+        "--inputs",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/private-inputs.json",
+        "--inputs-sha256",
+        "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+        "--teacher-manifest",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2/teacher-assets.json",
+        "--out",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/frontier-rtn-b8-g64.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "/private/tmp/cgoc-continuation-v1/provenance/native_artifact_worker.py",
+        "--artifact",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-4366efc60c52418d8f816c383e9054b6/embedding-dwq-b2-g64-embed4",
+        "--manifest-sha256",
+        "0e1947c6080545eda6f93ce81776bbecc4df105de4e76f3dd74210389e8eda80",
+        "--inputs",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/private-inputs.json",
+        "--inputs-sha256",
+        "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+        "--teacher-manifest",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2/teacher-assets.json",
+        "--out",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/embedding-dwq-b2-g64-embed4.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "/private/tmp/cgoc-continuation-v1/provenance/native_artifact_worker.py",
+        "--artifact",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-ae0c12cb6341423cb64e7a1ab8a13215/frontier-dwq-b4-g64",
+        "--manifest-sha256",
+        "d54c7e4564873de0c00b229abca4ccf7e97909cb6ad064c644960f7c31b95d42",
+        "--inputs",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/private-inputs.json",
+        "--inputs-sha256",
+        "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+        "--teacher-manifest",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2/teacher-assets.json",
+        "--out",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/frontier-dwq-b4-g64.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "/private/tmp/cgoc-continuation-v1/provenance/native_artifact_worker.py",
+        "--artifact",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/floating",
+        "--manifest-sha256",
+        "0bbaa7440ab55da53475f9ac137aec25f436bc3a338d50142bc84096eb9f512f",
+        "--inputs",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/private-inputs.json",
+        "--inputs-sha256",
+        "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+        "--teacher-manifest",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2/teacher-assets.json",
+        "--out",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/teacher-native-noop.json"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "/private/tmp/cgoc-continuation-v1/provenance/native_artifact_worker.py",
+        "--artifact",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/shared-B-floating",
+        "--manifest-sha256",
+        "dcf19a40184909360644fdcc00e485e2efb563f0ba30c218b7a323e51f46f34e",
+        "--inputs",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/private-inputs.json",
+        "--inputs-sha256",
+        "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+        "--teacher-manifest",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2/teacher-assets.json",
+        "--out",
+        "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/shared-natural-step16.json"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "projected_transient_disk_peak_bytes": 0,
+  "recovery_and_frontier_total_cost": {
+    "disk_bytes": 4888188683,
+    "estimated_operations": 0,
+    "estimation_method": null,
+    "memory_bytes": 6459850752,
+    "memory_unavailable_reason": null,
+    "processed_inputs": 238,
+    "processed_tokens": 121856,
+    "search_proposals": 2,
+    "search_seconds": 0,
+    "student_backward_calls": 838,
+    "student_forward_calls": 7983,
+    "suffix_backward_calls": 838,
+    "teacher_forward_calls": 54560,
+    "unique_tokens": 0,
+    "updates": 49,
+    "valid_target_presentations": 401408,
+    "wall_seconds": 792.9644315830665
+  },
+  "rows": [
+    {
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+      "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+      "kl_per_target": 0.002528524796573376,
+      "label": "frontier-rtn-b8-g64",
+      "manifest_sha256": "86b2f0f6e4fb729cf54144c64761999880de94356aa940d393541ba61dc6709d",
+      "memory": {
+        "mlx_active_bytes": 189135377,
+        "mlx_peak_bytes": 228666758,
+        "note": "unified-memory counters overlap; not summed into disjoint physical memory",
+        "process_peak_rss_bytes": 1454522368,
+        "torch_mps_driver_bytes": 1431371776
+      },
+      "native_load_seconds": 0.44874595798319206,
+      "nll_per_target": 2.889961161461632,
+      "payload_bytes": 155109871,
+      "resident": {
+        "archive_bytes": null,
+        "archive_unknown_reason": "archive not measured",
+        "install_bytes": null,
+        "install_unknown_reason": "installation not measured",
+        "owner_count": 272,
+        "payload_bytes": 0,
+        "phase_peaks": {
+          "inference": {
+            "bytes": null,
+            "reason": "not measured"
+          },
+          "load": {
+            "bytes": null,
+            "reason": "not measured"
+          }
+        },
+        "resident_bytes": 151430400,
+        "resident_unknown_reason": null
+      },
+      "rows": [
+        {
+          "component_id": "90fdbca8e5b8c66afad3bbb0515438f0be4cd2d02a8582c605553382adde815e",
+          "document_id": "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+          "kl_sum": 2.0241013452216965,
+          "nll_sum": 1321.40370970381,
+          "valid_targets": 511,
+          "window_sha256": "f8fc7eb45b6ee98a34d67891266185257358b0851a56b250c5f60e1a2457b99e"
+        },
+        {
+          "component_id": "c0af74128bccbda066a2ae9dd84f3965e043a558d4e15be2d7c8906d2c5a9528",
+          "document_id": "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+          "kl_sum": 1.153389945957869,
+          "nll_sum": 1582.878701717507,
+          "valid_targets": 511,
+          "window_sha256": "215e8b916d2cf36c873d9f7e04020ad7aa7d59b9062b08a12fae31e52b1cf4ff"
+        },
+        {
+          "component_id": "91ebb47895250085ede661cce3d5471ff4375747404d255b757519718e6c4a9b",
+          "document_id": "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+          "kl_sum": 1.4370030415415331,
+          "nll_sum": 1443.9356011440252,
+          "valid_targets": 511,
+          "window_sha256": "2147391f30e01079a263c801bb856d5678ecc1204890243998467f776531bbbe"
+        },
+        {
+          "component_id": "1836c482ac5c7692272bbe919ee33af1b5512df2d13429c9350060707f8e6eb7",
+          "document_id": "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+          "kl_sum": 0.9347593776998311,
+          "nll_sum": 1652.9199117241087,
+          "valid_targets": 511,
+          "window_sha256": "bff9e374bd5d5885735c04450d50e6d94792dcf2cb8bbfb5c5e947022523c110"
+        },
+        {
+          "component_id": "2c8c95a3cb6e3b400c9d646afc3ec2d6706e3f74ee1d15dab557c62b243064b4",
+          "document_id": "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+          "kl_sum": 0.8511208299687822,
+          "nll_sum": 1356.164885048946,
+          "valid_targets": 511,
+          "window_sha256": "206d6688c995c628f1af1bc935be14d8b07814d93f6cf83e028fd6c4e498ba22"
+        },
+        {
+          "component_id": "f8fc571c0487cc49d546f7cddbcc0f5c047b5c69f34e877d8d767c26fb41e40e",
+          "document_id": "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+          "kl_sum": 1.4434145236709446,
+          "nll_sum": 1730.6713695403932,
+          "valid_targets": 511,
+          "window_sha256": "5cf69d03a60e5d8ae7810d8dadb23351e41d03e0965898822ba745ffb95448c0"
+        },
+        {
+          "component_id": "dfd2cfcc3e065536ab0973b865e2dfeb18f0fd2878ec2dbdad5191cca5b08915",
+          "document_id": "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+          "kl_sum": 1.302473533413444,
+          "nll_sum": 1374.4475444711175,
+          "valid_targets": 511,
+          "window_sha256": "379952a5a63653437233bb36e61b6f0b43b4997fa587dfbad5450b74179089f2"
+        },
+        {
+          "component_id": "d794e14571c0b5f05a4ac115bf431aad579188a9e292f2e753b8ce2b3ce2f978",
+          "document_id": "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de",
+          "kl_sum": 1.1903467709178603,
+          "nll_sum": 1351.739504705245,
+          "valid_targets": 511,
+          "window_sha256": "d93ba3d160acba85fca73061388ea4414138d40ec785ee5df5c0b0ac35b8e07c"
+        }
+      ],
+      "runtime_source": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/frontier-rtn-b8-g64/runtime/poc-runtime.zip/poc/__init__.py",
+      "schema_version": 1,
+      "status": "complete",
+      "student_forward_calls": 238,
+      "teacher_forward_calls": 136,
+      "timing_samples": [
+        {
+          "decode_16_teacher_forced_seconds": 4.782144542026799,
+          "prefill_512_next_token_seconds": 0.3540919160004705
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.4855754579766653,
+          "prefill_512_next_token_seconds": 0.23736633401131257
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.5560509170172736,
+          "prefill_512_next_token_seconds": 0.24900899996282533
+        }
+      ],
+      "timing_scope": "3 warm source contexts, batch1/context512, fixed-token cached decode16; descriptive, no stable-tail claim",
+      "valid_targets": 4088,
+      "wall_seconds": 20.280511750024743
+    },
+    {
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+      "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+      "kl_per_target": 4.441507453301355,
+      "label": "embedding-dwq-b2-g64-embed4",
+      "manifest_sha256": "0e1947c6080545eda6f93ce81776bbecc4df105de4e76f3dd74210389e8eda80",
+      "memory": {
+        "mlx_active_bytes": 96336401,
+        "mlx_peak_bytes": 135884166,
+        "note": "unified-memory counters overlap; not summed into disjoint physical memory",
+        "process_peak_rss_bytes": 1453670400,
+        "torch_mps_driver_bytes": 1311752192
+      },
+      "native_load_seconds": 0.28389479202451184,
+      "nll_per_target": 7.305242454747246,
+      "payload_bytes": 61327184,
+      "resident": {
+        "archive_bytes": null,
+        "archive_unknown_reason": "archive not measured",
+        "install_bytes": null,
+        "install_unknown_reason": "installation not measured",
+        "owner_count": 272,
+        "payload_bytes": 0,
+        "phase_peaks": {
+          "inference": {
+            "bytes": null,
+            "reason": "not measured"
+          },
+          "load": {
+            "bytes": null,
+            "reason": "not measured"
+          }
+        },
+        "resident_bytes": 57648384,
+        "resident_unknown_reason": null
+      },
+      "rows": [
+        {
+          "component_id": "90fdbca8e5b8c66afad3bbb0515438f0be4cd2d02a8582c605553382adde815e",
+          "document_id": "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+          "kl_sum": 2663.3393581025753,
+          "nll_sum": 3880.0307574183726,
+          "valid_targets": 511,
+          "window_sha256": "f8fc7eb45b6ee98a34d67891266185257358b0851a56b250c5f60e1a2457b99e"
+        },
+        {
+          "component_id": "c0af74128bccbda066a2ae9dd84f3965e043a558d4e15be2d7c8906d2c5a9528",
+          "document_id": "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+          "kl_sum": 2233.6590292937112,
+          "nll_sum": 3776.0842452770457,
+          "valid_targets": 511,
+          "window_sha256": "215e8b916d2cf36c873d9f7e04020ad7aa7d59b9062b08a12fae31e52b1cf4ff"
+        },
+        {
+          "component_id": "91ebb47895250085ede661cce3d5471ff4375747404d255b757519718e6c4a9b",
+          "document_id": "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+          "kl_sum": 2157.677502791216,
+          "nll_sum": 3657.2274288163303,
+          "valid_targets": 511,
+          "window_sha256": "2147391f30e01079a263c801bb856d5678ecc1204890243998467f776531bbbe"
+        },
+        {
+          "component_id": "1836c482ac5c7692272bbe919ee33af1b5512df2d13429c9350060707f8e6eb7",
+          "document_id": "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+          "kl_sum": 2134.251718719105,
+          "nll_sum": 3836.6569499510465,
+          "valid_targets": 511,
+          "window_sha256": "bff9e374bd5d5885735c04450d50e6d94792dcf2cb8bbfb5c5e947022523c110"
+        },
+        {
+          "component_id": "2c8c95a3cb6e3b400c9d646afc3ec2d6706e3f74ee1d15dab557c62b243064b4",
+          "document_id": "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+          "kl_sum": 2106.4445938955237,
+          "nll_sum": 3435.9095498606202,
+          "valid_targets": 511,
+          "window_sha256": "206d6688c995c628f1af1bc935be14d8b07814d93f6cf83e028fd6c4e498ba22"
+        },
+        {
+          "component_id": "f8fc571c0487cc49d546f7cddbcc0f5c047b5c69f34e877d8d767c26fb41e40e",
+          "document_id": "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+          "kl_sum": 2112.60985225391,
+          "nll_sum": 3798.3351288772556,
+          "valid_targets": 511,
+          "window_sha256": "5cf69d03a60e5d8ae7810d8dadb23351e41d03e0965898822ba745ffb95448c0"
+        },
+        {
+          "component_id": "dfd2cfcc3e065536ab0973b865e2dfeb18f0fd2878ec2dbdad5191cca5b08915",
+          "document_id": "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+          "kl_sum": 2358.947942667741,
+          "nll_sum": 3739.4911394268547,
+          "valid_targets": 511,
+          "window_sha256": "379952a5a63653437233bb36e61b6f0b43b4997fa587dfbad5450b74179089f2"
+        },
+        {
+          "component_id": "d794e14571c0b5f05a4ac115bf431aad579188a9e292f2e753b8ce2b3ce2f978",
+          "document_id": "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de",
+          "kl_sum": 2389.9524713721594,
+          "nll_sum": 3740.0959553792145,
+          "valid_targets": 511,
+          "window_sha256": "d93ba3d160acba85fca73061388ea4414138d40ec785ee5df5c0b0ac35b8e07c"
+        }
+      ],
+      "runtime_source": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-4366efc60c52418d8f816c383e9054b6/embedding-dwq-b2-g64-embed4/runtime/poc-runtime.zip/poc/__init__.py",
+      "schema_version": 1,
+      "status": "complete",
+      "student_forward_calls": 238,
+      "teacher_forward_calls": 136,
+      "timing_samples": [
+        {
+          "decode_16_teacher_forced_seconds": 2.6922117919893935,
+          "prefill_512_next_token_seconds": 0.20880462497007102
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.252166667021811,
+          "prefill_512_next_token_seconds": 0.18840766599169
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.4657876669662073,
+          "prefill_512_next_token_seconds": 0.2859137079794891
+        }
+      ],
+      "timing_scope": "3 warm source contexts, batch1/context512, fixed-token cached decode16; descriptive, no stable-tail claim",
+      "valid_targets": 4088,
+      "wall_seconds": 16.402838707959745
+    },
+    {
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+      "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+      "kl_per_target": 0.22209895517462389,
+      "label": "frontier-dwq-b4-g64",
+      "manifest_sha256": "d54c7e4564873de0c00b229abca4ccf7e97909cb6ad064c644960f7c31b95d42",
+      "memory": {
+        "mlx_active_bytes": 122386961,
+        "mlx_peak_bytes": 161934662,
+        "note": "unified-memory counters overlap; not summed into disjoint physical memory",
+        "process_peak_rss_bytes": 1454538752,
+        "torch_mps_driver_bytes": 1337933824
+      },
+      "native_load_seconds": 0.3403703329968266,
+      "nll_per_target": 3.0710051333265476,
+      "payload_bytes": 87869602,
+      "resident": {
+        "archive_bytes": null,
+        "archive_unknown_reason": "archive not measured",
+        "install_bytes": null,
+        "install_unknown_reason": "installation not measured",
+        "owner_count": 272,
+        "payload_bytes": 0,
+        "phase_peaks": {
+          "inference": {
+            "bytes": null,
+            "reason": "not measured"
+          },
+          "load": {
+            "bytes": null,
+            "reason": "not measured"
+          }
+        },
+        "resident_bytes": 84190464,
+        "resident_unknown_reason": null
+      },
+      "rows": [
+        {
+          "component_id": "90fdbca8e5b8c66afad3bbb0515438f0be4cd2d02a8582c605553382adde815e",
+          "document_id": "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+          "kl_sum": 206.80342286614112,
+          "nll_sum": 1473.9089115787863,
+          "valid_targets": 511,
+          "window_sha256": "f8fc7eb45b6ee98a34d67891266185257358b0851a56b250c5f60e1a2457b99e"
+        },
+        {
+          "component_id": "c0af74128bccbda066a2ae9dd84f3965e043a558d4e15be2d7c8906d2c5a9528",
+          "document_id": "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+          "kl_sum": 102.75928051508787,
+          "nll_sum": 1659.5177111282542,
+          "valid_targets": 511,
+          "window_sha256": "215e8b916d2cf36c873d9f7e04020ad7aa7d59b9062b08a12fae31e52b1cf4ff"
+        },
+        {
+          "component_id": "91ebb47895250085ede661cce3d5471ff4375747404d255b757519718e6c4a9b",
+          "document_id": "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+          "kl_sum": 107.62529277728996,
+          "nll_sum": 1539.7867024716752,
+          "valid_targets": 511,
+          "window_sha256": "2147391f30e01079a263c801bb856d5678ecc1204890243998467f776531bbbe"
+        },
+        {
+          "component_id": "1836c482ac5c7692272bbe919ee33af1b5512df2d13429c9350060707f8e6eb7",
+          "document_id": "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+          "kl_sum": 102.65000096771492,
+          "nll_sum": 1749.1621802881916,
+          "valid_targets": 511,
+          "window_sha256": "bff9e374bd5d5885735c04450d50e6d94792dcf2cb8bbfb5c5e947022523c110"
+        },
+        {
+          "component_id": "2c8c95a3cb6e3b400c9d646afc3ec2d6706e3f74ee1d15dab557c62b243064b4",
+          "document_id": "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+          "kl_sum": 83.79736398127272,
+          "nll_sum": 1417.8304481865537,
+          "valid_targets": 511,
+          "window_sha256": "206d6688c995c628f1af1bc935be14d8b07814d93f6cf83e028fd6c4e498ba22"
+        },
+        {
+          "component_id": "f8fc571c0487cc49d546f7cddbcc0f5c047b5c69f34e877d8d767c26fb41e40e",
+          "document_id": "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+          "kl_sum": 105.5210787807529,
+          "nll_sum": 1819.7398918498438,
+          "valid_targets": 511,
+          "window_sha256": "5cf69d03a60e5d8ae7810d8dadb23351e41d03e0965898822ba745ffb95448c0"
+        },
+        {
+          "component_id": "dfd2cfcc3e065536ab0973b865e2dfeb18f0fd2878ec2dbdad5191cca5b08915",
+          "document_id": "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+          "kl_sum": 100.79011199797024,
+          "nll_sum": 1443.6384566795498,
+          "valid_targets": 511,
+          "window_sha256": "379952a5a63653437233bb36e61b6f0b43b4997fa587dfbad5450b74179089f2"
+        },
+        {
+          "component_id": "d794e14571c0b5f05a4ac115bf431aad579188a9e292f2e753b8ce2b3ce2f978",
+          "document_id": "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de",
+          "kl_sum": 97.99397686763268,
+          "nll_sum": 1450.6846828560722,
+          "valid_targets": 511,
+          "window_sha256": "d93ba3d160acba85fca73061388ea4414138d40ec785ee5df5c0b0ac35b8e07c"
+        }
+      ],
+      "runtime_source": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-ae0c12cb6341423cb64e7a1ab8a13215/frontier-dwq-b4-g64/runtime/poc-runtime.zip/poc/__init__.py",
+      "schema_version": 1,
+      "status": "complete",
+      "student_forward_calls": 238,
+      "teacher_forward_calls": 136,
+      "timing_samples": [
+        {
+          "decode_16_teacher_forced_seconds": 3.4943364579812624,
+          "prefill_512_next_token_seconds": 0.20847383298678324
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.585227749950718,
+          "prefill_512_next_token_seconds": 0.28187058301409706
+        },
+        {
+          "decode_16_teacher_forced_seconds": 3.5782312499941327,
+          "prefill_512_next_token_seconds": 0.2539998340071179
+        }
+      ],
+      "timing_scope": "3 warm source contexts, batch1/context512, fixed-token cached decode16; descriptive, no stable-tail claim",
+      "valid_targets": 4088,
+      "wall_seconds": 16.633004166011233
+    },
+    {
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+      "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+      "kl_per_target": 3.0752759601655926e-11,
+      "label": "teacher-native-noop",
+      "manifest_sha256": "0bbaa7440ab55da53475f9ac137aec25f436bc3a338d50142bc84096eb9f512f",
+      "memory": {
+        "mlx_active_bytes": 571492753,
+        "mlx_peak_bytes": 656427549,
+        "note": "unified-memory counters overlap; not summed into disjoint physical memory",
+        "process_peak_rss_bytes": 1597718528,
+        "torch_mps_driver_bytes": 1877032960
+      },
+      "native_load_seconds": 0.5919756670482457,
+      "nll_per_target": 2.8862786037723924,
+      "payload_bytes": 541680338,
+      "resident": {
+        "archive_bytes": null,
+        "archive_unknown_reason": "archive not measured",
+        "install_bytes": null,
+        "install_unknown_reason": "installation not measured",
+        "owner_count": 272,
+        "payload_bytes": 0,
+        "phase_peaks": {
+          "inference": {
+            "bytes": null,
+            "reason": "not measured"
+          },
+          "load": {
+            "bytes": null,
+            "reason": "not measured"
+          }
+        },
+        "resident_bytes": 538060032,
+        "resident_unknown_reason": null
+      },
+      "rows": [
+        {
+          "component_id": "90fdbca8e5b8c66afad3bbb0515438f0be4cd2d02a8582c605553382adde815e",
+          "document_id": "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+          "kl_sum": 1.817572207264455e-08,
+          "nll_sum": 1319.4887293750294,
+          "valid_targets": 511,
+          "window_sha256": "f8fc7eb45b6ee98a34d67891266185257358b0851a56b250c5f60e1a2457b99e"
+        },
+        {
+          "component_id": "c0af74128bccbda066a2ae9dd84f3965e043a558d4e15be2d7c8906d2c5a9528",
+          "document_id": "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+          "kl_sum": 1.6133043444184154e-08,
+          "nll_sum": 1583.3659103462978,
+          "valid_targets": 511,
+          "window_sha256": "215e8b916d2cf36c873d9f7e04020ad7aa7d59b9062b08a12fae31e52b1cf4ff"
+        },
+        {
+          "component_id": "91ebb47895250085ede661cce3d5471ff4375747404d255b757519718e6c4a9b",
+          "document_id": "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+          "kl_sum": 1.5003397294364115e-08,
+          "nll_sum": 1443.7158088726621,
+          "valid_targets": 511,
+          "window_sha256": "2147391f30e01079a263c801bb856d5678ecc1204890243998467f776531bbbe"
+        },
+        {
+          "component_id": "1836c482ac5c7692272bbe919ee33af1b5512df2d13429c9350060707f8e6eb7",
+          "document_id": "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+          "kl_sum": 1.4036851161356422e-08,
+          "nll_sum": 1650.163796665905,
+          "valid_targets": 511,
+          "window_sha256": "bff9e374bd5d5885735c04450d50e6d94792dcf2cb8bbfb5c5e947022523c110"
+        },
+        {
+          "component_id": "2c8c95a3cb6e3b400c9d646afc3ec2d6706e3f74ee1d15dab557c62b243064b4",
+          "document_id": "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+          "kl_sum": 1.2849287951522305e-08,
+          "nll_sum": 1353.137865078348,
+          "valid_targets": 511,
+          "window_sha256": "206d6688c995c628f1af1bc935be14d8b07814d93f6cf83e028fd6c4e498ba22"
+        },
+        {
+          "component_id": "f8fc571c0487cc49d546f7cddbcc0f5c047b5c69f34e877d8d767c26fb41e40e",
+          "document_id": "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+          "kl_sum": 1.7905927230486322e-08,
+          "nll_sum": 1726.2957778052214,
+          "valid_targets": 511,
+          "window_sha256": "5cf69d03a60e5d8ae7810d8dadb23351e41d03e0965898822ba745ffb95448c0"
+        },
+        {
+          "component_id": "dfd2cfcc3e065536ab0973b865e2dfeb18f0fd2878ec2dbdad5191cca5b08915",
+          "document_id": "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+          "kl_sum": 1.621257831370558e-08,
+          "nll_sum": 1371.420348858091,
+          "valid_targets": 511,
+          "window_sha256": "379952a5a63653437233bb36e61b6f0b43b4997fa587dfbad5450b74179089f2"
+        },
+        {
+          "component_id": "d794e14571c0b5f05a4ac115bf431aad579188a9e292f2e753b8ce2b3ce2f978",
+          "document_id": "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de",
+          "kl_sum": 1.540047378330597e-08,
+          "nll_sum": 1351.5186952199851,
+          "valid_targets": 511,
+          "window_sha256": "d93ba3d160acba85fca73061388ea4414138d40ec785ee5df5c0b0ac35b8e07c"
+        }
+      ],
+      "runtime_source": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/floating/runtime/poc-runtime.zip/poc/__init__.py",
+      "schema_version": 1,
+      "status": "complete",
+      "student_forward_calls": 238,
+      "teacher_forward_calls": 136,
+      "timing_samples": [
+        {
+          "decode_16_teacher_forced_seconds": 5.199983374972362,
+          "prefill_512_next_token_seconds": 0.3536672089830972
+        },
+        {
+          "decode_16_teacher_forced_seconds": 5.054168040980585,
+          "prefill_512_next_token_seconds": 0.36709279200294986
+        },
+        {
+          "decode_16_teacher_forced_seconds": 5.0093984169652686,
+          "prefill_512_next_token_seconds": 0.3395475840079598
+        }
+      ],
+      "timing_scope": "3 warm source contexts, batch1/context512, fixed-token cached decode16; descriptive, no stable-tail claim",
+      "valid_targets": 4088,
+      "wall_seconds": 23.07779837498674
+    },
+    {
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3",
+      "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+      "kl_per_target": 0.18927191976477775,
+      "label": "shared-natural-step16",
+      "manifest_sha256": "dcf19a40184909360644fdcc00e485e2efb563f0ba30c218b7a323e51f46f34e",
+      "memory": {
+        "mlx_active_bytes": 568249745,
+        "mlx_peak_bytes": 653184541,
+        "note": "unified-memory counters overlap; not summed into disjoint physical memory",
+        "process_peak_rss_bytes": 1594048512,
+        "torch_mps_driver_bytes": 1881604096
+      },
+      "native_load_seconds": 0.6388703749980778,
+      "nll_per_target": 3.0507704093328925,
+      "payload_bytes": 537217158,
+      "resident": {
+        "archive_bytes": null,
+        "archive_unknown_reason": "archive not measured",
+        "install_bytes": null,
+        "install_unknown_reason": "installation not measured",
+        "owner_count": 449,
+        "payload_bytes": 0,
+        "phase_peaks": {
+          "inference": {
+            "bytes": null,
+            "reason": "not measured"
+          },
+          "load": {
+            "bytes": null,
+            "reason": "not measured"
+          }
+        },
+        "resident_bytes": 533525760,
+        "resident_unknown_reason": null
+      },
+      "rows": [
+        {
+          "component_id": "90fdbca8e5b8c66afad3bbb0515438f0be4cd2d02a8582c605553382adde815e",
+          "document_id": "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+          "kl_sum": 226.99133329848536,
+          "nll_sum": 1499.1542043594482,
+          "valid_targets": 511,
+          "window_sha256": "f8fc7eb45b6ee98a34d67891266185257358b0851a56b250c5f60e1a2457b99e"
+        },
+        {
+          "component_id": "c0af74128bccbda066a2ae9dd84f3965e043a558d4e15be2d7c8906d2c5a9528",
+          "document_id": "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+          "kl_sum": 59.1936051321339,
+          "nll_sum": 1634.72903205887,
+          "valid_targets": 511,
+          "window_sha256": "215e8b916d2cf36c873d9f7e04020ad7aa7d59b9062b08a12fae31e52b1cf4ff"
+        },
+        {
+          "component_id": "91ebb47895250085ede661cce3d5471ff4375747404d255b757519718e6c4a9b",
+          "document_id": "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+          "kl_sum": 80.72643188867653,
+          "nll_sum": 1531.4569769259974,
+          "valid_targets": 511,
+          "window_sha256": "2147391f30e01079a263c801bb856d5678ecc1204890243998467f776531bbbe"
+        },
+        {
+          "component_id": "1836c482ac5c7692272bbe919ee33af1b5512df2d13429c9350060707f8e6eb7",
+          "document_id": "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+          "kl_sum": 88.49973835395684,
+          "nll_sum": 1723.6184292524563,
+          "valid_targets": 511,
+          "window_sha256": "bff9e374bd5d5885735c04450d50e6d94792dcf2cb8bbfb5c5e947022523c110"
+        },
+        {
+          "component_id": "2c8c95a3cb6e3b400c9d646afc3ec2d6706e3f74ee1d15dab557c62b243064b4",
+          "document_id": "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+          "kl_sum": 64.85713926512277,
+          "nll_sum": 1423.416186565711,
+          "valid_targets": 511,
+          "window_sha256": "206d6688c995c628f1af1bc935be14d8b07814d93f6cf83e028fd6c4e498ba22"
+        },
+        {
+          "component_id": "f8fc571c0487cc49d546f7cddbcc0f5c047b5c69f34e877d8d767c26fb41e40e",
+          "document_id": "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+          "kl_sum": 89.64046703325108,
+          "nll_sum": 1797.137407661108,
+          "valid_targets": 511,
+          "window_sha256": "5cf69d03a60e5d8ae7810d8dadb23351e41d03e0965898822ba745ffb95448c0"
+        },
+        {
+          "component_id": "dfd2cfcc3e065536ab0973b865e2dfeb18f0fd2878ec2dbdad5191cca5b08915",
+          "document_id": "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+          "kl_sum": 100.06272482159962,
+          "nll_sum": 1450.4670205640277,
+          "valid_targets": 511,
+          "window_sha256": "379952a5a63653437233bb36e61b6f0b43b4997fa587dfbad5450b74179089f2"
+        },
+        {
+          "component_id": "d794e14571c0b5f05a4ac115bf431aad579188a9e292f2e753b8ce2b3ce2f978",
+          "document_id": "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de",
+          "kl_sum": 63.77216820518533,
+          "nll_sum": 1411.5701759652452,
+          "valid_targets": 511,
+          "window_sha256": "d93ba3d160acba85fca73061388ea4414138d40ec785ee5df5c0b0ac35b8e07c"
+        }
+      ],
+      "runtime_source": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/shared-B-floating/runtime/poc-runtime.zip/poc/__init__.py",
+      "schema_version": 1,
+      "status": "complete",
+      "student_forward_calls": 238,
+      "teacher_forward_calls": 136,
+      "timing_samples": [
+        {
+          "decode_16_teacher_forced_seconds": 5.621969915984664,
+          "prefill_512_next_token_seconds": 0.40819508297136053
+        },
+        {
+          "decode_16_teacher_forced_seconds": 5.420114249980543,
+          "prefill_512_next_token_seconds": 0.37336333404527977
+        },
+        {
+          "decode_16_teacher_forced_seconds": 5.742106915975455,
+          "prefill_512_next_token_seconds": 0.3728395829675719
+        }
+      ],
+      "timing_scope": "3 warm source contexts, batch1/context512, fixed-token cached decode16; descriptive, no stable-tail claim",
+      "valid_targets": 4088,
+      "wall_seconds": 24.049614915973507
+    }
+  ],
+  "run_spec": {
+    "budgets": {
+      "disk_bytes": 6442450944,
+      "memory_bytes": 8589934592,
+      "search_proposals": 10000,
+      "search_seconds": 1200,
+      "student_backward_calls": 100000,
+      "suffix_backward_calls": 100000,
+      "teacher_forward_calls": 200000,
+      "updates": 0,
+      "valid_target_presentations": 0,
+      "wall_seconds": 480
+    },
+    "dependency_lock_sha256": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+    "dirty_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "hardware_policy": {
+      "backend": "torch_mps",
+      "dtype": "float32",
+      "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3",
+      "macOS": "26.7.1"
+    },
+    "input_manifests": {
+      "data": "aa1e4e65f4b9b6170d74fea68bb57a11848bafb8767a2aca432b486fa12b2026",
+      "historical_development_plan": "684119cde3152448c985cb5e55ba11b545bf4e3ddf7a817d432c3f273041524a",
+      "historical_fit_plan": "a781c8b0c092337fa53ae340268c08d256436c30c75395c58fea343355b6324c",
+      "original_exposure": "0ae3834412a48da5e992ac84dc63cc48d3ec3fa6f5f0aa8f79342ae12bcadb55",
+      "pool": "d3447b89452a5cea1f502f485260045b93d949fe2c3b251e9d02b0bb6ae5e54b",
+      "teacher": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083"
+    },
+    "method_id": "M",
+    "method_variant": "exploratory-matched-native-frontier-v2",
+    "parent_run_ids": [
+      "8962eb09d3a8365c5bfbe2ea8f27393fc2c9267a2d93b91976589082fb401e5e"
+    ],
+    "resolved_config": {
+      "comparison": "fixed best natural-fit shared artifact versus three previously qualified dense points and floating no-op",
+      "native_profiles": "each artifact executes its own frozen runtime in a fresh process; no historical relabeling",
+      "pilot_digest": "9668e21db9c1b1f00857f6baa6b90b280cb43309a9df4eac96df62b4deeb363a",
+      "quality_reduction": "CPUFP64 full-vocabulary KL on nativeFP32 logits",
+      "source": {
+        "provenance/native_artifact_worker.py": "b98e276d6b1556e224e3b53e30f14e55ce4bace9802a297c13e74ce7882b5590",
+        "provenance/native_frontier_check.py": "4d038e8e529f247eec48a752e9948533887aeb7129df7cf8d813de954b651139"
+      },
+      "validation_ids": [
+        "4a56fe79fc24e0c970e53b8ed2a0ae8791dac9f5ee63ad612a3144f241549f3b",
+        "606d100a3db22d617904b52bdee4563c8d61dd7c5d95820feab8f3eee635fae0",
+        "941f4e08fd1254cdf2866e0c5bdcafda9d8bb0e74e04f2baaf93e6d31c9882bd",
+        "f58774329bbfb7d194bbc074c51707cc6e2c9edb8a8adb127c43af33386bca5b",
+        "31a2f6380ccc6947ed6da0870de5eaf8d59c19f2c514c08d44898f02d44bb986",
+        "637f1b1277d676366bb42e498da23a3e36505e696f31d05fc9731f944b7c89d8",
+        "0a8129686456fa17fe5eba68fe8dd7e3f1970befc0abe06f16381ef369fd7064",
+        "cd3233988599530baaa458a8054bfd46ac6d55e1e2d65940edee955aaedd49de"
+      ]
+    },
+    "seeds": {
+      "pilot": 17
+    },
+    "source_commit": "22c1b8fd62e7dff13f7981089161c19f51e5ed99"
+  },
+  "status": "complete_exploratory"
+}

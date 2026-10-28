@@ -1,0 +1,21 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_child_checkpoint_disk_preflight_uses_complete_parent_tree ________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1516/test_child_checkpoint_disk_pre0')
+
+    def test_child_checkpoint_disk_preflight_uses_complete_parent_tree(tmp_path):
+        from poc.continuation_budget import PilotLedger
+        from test_records import spec
+        ledger=PilotLedger(spec(),tmp_path)
+        ledger.tracker.disk=lambda:7654
+        with ledger.arm(spec(method_variant='disk-child')) as recorder:
+>           assert hasattr(recorder,'disk'), 'child does not expose aggregate checkpoint disk'
+E           AssertionError: child does not expose aggregate checkpoint disk
+E           assert False
+E            +  where False = hasattr(<poc.continuation_budget._ChildTracker object at 0x110a857f0>, 'disk')
+
+tests/test_recovery_pilot.py:80: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_recovery_pilot.py::test_child_checkpoint_disk_preflight_uses_complete_parent_tree
+1 failed in 0.68s

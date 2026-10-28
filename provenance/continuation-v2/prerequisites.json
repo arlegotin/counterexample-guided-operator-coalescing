@@ -1,0 +1,119 @@
+{
+  "archive_sha256": "fdf89785dd4527217b6d9491ec7db4ec48a026f4fded319b3c6d1f38a76609df",
+  "verified_files": [
+    {
+      "path": "COMMAND_STATUS.tsv",
+      "sha256": "057c0cb45824491fc4830a3c21e3907d1291ae2e8dd03ef73571fc3c636c5303"
+    },
+    {
+      "path": "EVIDENCE_LEDGER.tsv",
+      "sha256": "352432362ca90aa56843bae874e9cb1ad5f9792d882b26d3913ba239c25501fc"
+    },
+    {
+      "path": "PRIMARY_SOURCES.tsv",
+      "sha256": "1c650caab7db00b52276923e467be3bc34be43ed89b709d0d29aa124d8ad042c"
+    },
+    {
+      "path": "README.txt",
+      "sha256": "2b6bddc0b396a9b646cd08eaaf83137750d5f2dbec1c1dbb05f440c6111812a6"
+    },
+    {
+      "path": "UNRESOLVED_QUESTIONS.tsv",
+      "sha256": "335084c9531b2a1eb91919a62673c54c7104fe2382a068cbada03ac9ba9101bd"
+    },
+    {
+      "path": "diagnostics/audit_public_evidence.py",
+      "sha256": "0bb5de9f65c2ec64dc0b96402af25814694618f348a0cd4971719adee73135da"
+    },
+    {
+      "path": "diagnostics/canonical-residual-layout.patch",
+      "sha256": "cb465703103693402488fcfcf11538a7aee09cbd0fec68ac0dd66caebc83bad7"
+    },
+    {
+      "path": "diagnostics/mechanism-baseline-final.json",
+      "sha256": "15caa13d5dacde52c7e0f961535c04ec8684426c157a4870793235d027ca7e23"
+    },
+    {
+      "path": "diagnostics/mechanism_diagnostics.py",
+      "sha256": "cffde82411d059887e02fd360b87ad5d3f78b598d1277adea09eb2ae62c34f16"
+    },
+    {
+      "path": "diagnostics/metadata-audit.json",
+      "sha256": "83c9b381ffbbdb24b70a3e6a95d1957ba8c803b0b07892d99fbd2b0f8d43e687"
+    },
+    {
+      "path": "diagnostics/probe-pipeline-baseline.json",
+      "sha256": "0277d9b7a18db916faf05586944a00102a88af052f0cf270c7ce4ab23fa0581e"
+    },
+    {
+      "path": "diagnostics/probe_pipeline_controls.py",
+      "sha256": "961cedc11f308538533284698b1b369053f8e670b4272da23451b855a90cc1fc"
+    },
+    {
+      "path": "environment-requirements.txt",
+      "sha256": "caa653f6f8563a82f08710287d193b10ff28d061d6209c5da3b562f476963c02"
+    },
+    {
+      "path": "environment.json",
+      "sha256": "33a8b67c0785ee1ebd59b853313cef2bc2bd4c1c0c9da15464b7e53693f92674"
+    },
+    {
+      "path": "logs/baseline-status.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/cpu-tests-host.txt",
+      "sha256": "66d0907f3d68af6f2cbae77ae516cc8d6c26a9f268fb0502c3b7ba715b3b4de1"
+    },
+    {
+      "path": "logs/cpu-tests-layout-patch.txt",
+      "sha256": "a07a6846d311322a6d107f8da3dd4db58c9cda74825af7ebe0a80532701d0f77"
+    },
+    {
+      "path": "logs/cpu-tests.txt",
+      "sha256": "5fb4a58f4f0391b4a8df252d3bf9af04045ad7c47a4f7599e6a224e9bbd0e3b0"
+    },
+    {
+      "path": "logs/git-history.txt",
+      "sha256": "281a1bc97f21b1f07d713406e10884bb52fa208659474e82a429064908dfa81f"
+    },
+    {
+      "path": "logs/mechanism-baseline-final.txt",
+      "sha256": "15caa13d5dacde52c7e0f961535c04ec8684426c157a4870793235d027ca7e23"
+    },
+    {
+      "path": "logs/metadata-audit.txt",
+      "sha256": "83c9b381ffbbdb24b70a3e6a95d1957ba8c803b0b07892d99fbd2b0f8d43e687"
+    },
+    {
+      "path": "logs/probe-pipeline-baseline.txt",
+      "sha256": "0277d9b7a18db916faf05586944a00102a88af052f0cf270c7ce4ab23fa0581e"
+    },
+    {
+      "path": "logs/report-artifact-diff.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/report-regeneration.txt",
+      "sha256": "e9b36be482e298633375aee8bf9ef5751e4bd8991044aa3963c7f0eb451cf02d"
+    },
+    {
+      "path": "logs/report-tests.txt",
+      "sha256": "71748fded826f4cae2ab1b06cc655dd279d9ec22df9e022a76c5ba0cb93e608d"
+    }
+  ],
+  "macOS": "26.7.1",
+  "Darwin": "25.6.0",
+  "correction": "Earlier Darwin25.6=>macOSbelow26 inference was wrong; actual product version26.7.1 meets OS floor.",
+  "exact_control_status": {
+    "mechanism-pinned": "passed",
+    "probe-pinned": "passed",
+    "mechanism-current": "passed",
+    "probe-current": "passed"
+  },
+  "native_tests": {
+    "passed": 39,
+    "log": "native-prelaunch.log"
+  },
+  "original_report_sha256": "e55d80a5885ca8676c29cfa4190224e953205413e0ff84499413838af6976602"
+}

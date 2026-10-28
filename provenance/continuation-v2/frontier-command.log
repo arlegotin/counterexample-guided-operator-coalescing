@@ -1,0 +1,6 @@
+{"event": "frontier_frozen", "artifacts": ["frontier-rtn-b8-g64", "embedding-dwq-b2-g64-embed4", "frontier-dwq-b4-g64", "teacher-native-noop", "shared-natural-step16"]}
+{"event": "native_result", "label": "frontier-rtn-b8-g64", "bytes": 155109871, "KL": 0.002528524796573376}
+{"event": "native_result", "label": "embedding-dwq-b2-g64-embed4", "bytes": 61327184, "KL": 4.441507453301355}
+{"event": "native_result", "label": "frontier-dwq-b4-g64", "bytes": 87869602, "KL": 0.22209895517462389}
+{"event": "native_result", "label": "teacher-native-noop", "bytes": 541680338, "KL": 3.0752759601655926e-11}
+{"event": "native_result", "label": "shared-natural-step16", "bytes": 537217158, "KL": 0.18927191976477775}

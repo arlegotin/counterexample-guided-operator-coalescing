@@ -1,0 +1,183 @@
+{
+  "limits": [
+    "Model/data alternatives are engineered; no fitting or sharing advantage is established.",
+    "Two interventions and one component per population are diagnostic only; no sampling uncertainty or significance claim.",
+    "Teacher identity on patched states is a numerical no-op control, not evidence that interventions represent natural text."
+  ],
+  "null_donor_has_no_hidden_effect": {
+    "candidates": {
+      "conservative": {
+        "active_selected_ids": [
+          "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54"
+        ],
+        "heldout_damage": 0.0009853103252167397,
+        "probe_rows": [
+          {
+            "edit_kind": "number",
+            "kl_per_target": 0.0009853103252167397,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54",
+            "teacher_identity_kl_per_target": 0.0
+          },
+          {
+            "edit_kind": "name",
+            "kl_per_target": 0.0009853103252167395,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d",
+            "teacher_identity_kl_per_target": 0.0
+          }
+        ],
+        "random_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "scores": {
+          "active_01": 0.0010838413577384136,
+          "active_1": 0.0019706206504334794,
+          "natural_kl": 0.0009853103252167397,
+          "random_donor": 0.001970620650433479
+        }
+      },
+      "risky": {
+        "active_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "heldout_damage": 0.0,
+        "probe_rows": [
+          {
+            "edit_kind": "number",
+            "kl_per_target": 0.0,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54",
+            "teacher_identity_kl_per_target": 0.0
+          },
+          {
+            "edit_kind": "name",
+            "kl_per_target": 0.0,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d",
+            "teacher_identity_kl_per_target": 0.0
+          }
+        ],
+        "random_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "scores": {
+          "active_01": 0.0,
+          "active_1": 0.0,
+          "natural_kl": 0.0,
+          "random_donor": 0.0
+        }
+      }
+    },
+    "oracle": "risky",
+    "regrets": {
+      "active_01": 0.0,
+      "active_1": 0.0,
+      "natural_kl": 0.0,
+      "random_donor": 0.0
+    },
+    "selections": {
+      "active_01": "risky",
+      "active_1": "risky",
+      "natural_kl": "risky",
+      "random_donor": "risky"
+    }
+  },
+  "path": [
+    "generate_donors",
+    "prefix_for_probe",
+    "apply_probe",
+    "local_discrepancy",
+    "mine_probes",
+    "fixed_scores",
+    "heldout full-model stream_metrics"
+  ],
+  "positive": {
+    "candidates": {
+      "conservative": {
+        "active_selected_ids": [
+          "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54"
+        ],
+        "heldout_damage": 5.705919713937326e-05,
+        "probe_rows": [
+          {
+            "edit_kind": "number",
+            "kl_per_target": 0.0009853103252167397,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54",
+            "teacher_identity_kl_per_target": 0.0
+          },
+          {
+            "edit_kind": "name",
+            "kl_per_target": 0.0005211847611780564,
+            "patched_boundary_max_abs_delta": 1.0,
+            "probe_id": "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d",
+            "teacher_identity_kl_per_target": 0.0
+          }
+        ],
+        "random_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "scores": {
+          "active_01": 0.0010838413577384136,
+          "active_1": 0.0019706206504334794,
+          "natural_kl": 0.0009853103252167397,
+          "random_donor": 0.0017385578684141379
+        }
+      },
+      "risky": {
+        "active_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "heldout_damage": 0.9451879229802511,
+        "probe_rows": [
+          {
+            "edit_kind": "number",
+            "kl_per_target": 0.0,
+            "patched_boundary_max_abs_delta": 0.0,
+            "probe_id": "a58fe67450d83c64394ac00e6b539580df00329ee1b94acbcc1280151c7a4d54",
+            "teacher_identity_kl_per_target": 0.0
+          },
+          {
+            "edit_kind": "name",
+            "kl_per_target": 0.47259396149012556,
+            "patched_boundary_max_abs_delta": 1.0,
+            "probe_id": "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d",
+            "teacher_identity_kl_per_target": 0.0
+          }
+        ],
+        "random_selected_ids": [
+          "612273f6707ef635affdb940fa10a594471991d50865a8f13bb88d1cb0074d5d"
+        ],
+        "scores": {
+          "active_01": 0.02362969807450628,
+          "active_1": 0.23629698074506278,
+          "natural_kl": 0.0,
+          "random_donor": 0.23629698074506278
+        }
+      }
+    },
+    "oracle": "conservative",
+    "regrets": {
+      "active_01": 0.0,
+      "active_1": 0.0,
+      "natural_kl": 0.9451308637831117,
+      "random_donor": 0.0
+    },
+    "selections": {
+      "active_01": "conservative",
+      "active_1": "conservative",
+      "natural_kl": "risky",
+      "random_donor": "conservative"
+    }
+  },
+  "scope": "Constructed positive and null controls with deterministic tiny SiLU transformer, engineered embeddings, two hand-specified candidate operators, and synthetic word tokenizer; no natural-language or compression performance claim.",
+  "source_sha256": {
+    "poc/bank.py": "248bd01a2ec8e499e93b85cca73022304063728de92dbebb31e8147a18bec634",
+    "poc/diagnostics.py": "60f8432462bc8e35bac7e34ab60a11874e85c8c73c4c4b18251b5aec92201723",
+    "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+    "poc/probes.py": "b2d85cde0e02f0e4b7047648cb8f8287e6d469ae791a1191f0aad589f1a8c898",
+    "poc/runtime/torch_decoder.py": "726458296828b23e30cd6cabdd7b7ac98c618deea82ffbe6c6255b139c894dee"
+  },
+  "torch_version": "2.14.1"
+}

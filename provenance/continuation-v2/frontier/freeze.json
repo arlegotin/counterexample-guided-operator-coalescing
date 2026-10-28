@@ -1,0 +1,47 @@
+{
+  "artifacts": [
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "frontier-rtn-b8-g64",
+      "manifest_sha256": "86b2f0f6e4fb729cf54144c64761999880de94356aa940d393541ba61dc6709d",
+      "original_construction_and_dev_seconds": 6.161091041984037,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/frontier-rtn-b8-g64"
+    },
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "embedding-dwq-b2-g64-embed4",
+      "manifest_sha256": "0e1947c6080545eda6f93ce81776bbecc4df105de4e76f3dd74210389e8eda80",
+      "original_construction_and_dev_seconds": 15.132332292036153,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-4366efc60c52418d8f816c383e9054b6/embedding-dwq-b2-g64-embed4"
+    },
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "frontier-dwq-b4-g64",
+      "manifest_sha256": "d54c7e4564873de0c00b229abca4ccf7e97909cb6ad064c644960f7c31b95d42",
+      "original_construction_and_dev_seconds": 15.357815542025492,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-ae0c12cb6341423cb64e7a1ab8a13215/frontier-dwq-b4-g64"
+    },
+    {
+      "label": "teacher-native-noop",
+      "manifest_sha256": "0bbaa7440ab55da53475f9ac137aec25f436bc3a338d50142bc84096eb9f512f",
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/floating"
+    },
+    {
+      "exact_parameter_values_verified": true,
+      "label": "shared-natural-step16",
+      "manifest_sha256": "dcf19a40184909360644fdcc00e485e2efb563f0ba30c218b7a323e51f46f34e",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/shared-B-floating",
+      "source_checkpoint": {
+        "directory": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/B/checkpoints/generation-45c07338fff84a3d81b6c633c79fbecf",
+        "manifest_sha256": "ec4aeba9058ec572062ceac108027212da6b96c0dff7ef3e5454b43121ee4e8a"
+      },
+      "source_fitted_digest": "53bc4c6cbb66231076ca6fd0687a869a23262b6b7b85bca03311df9f01b985fc"
+    }
+  ],
+  "inputs_sha256": "4e6fa337922e96b8294ad29046a2bec9c2a1a1b5738aeecf3c1d128e84405170",
+  "policy": "fixed artifact set chosen before these predictions, common known exploratory8components; no protected inference",
+  "source": {
+    "provenance/native_artifact_worker.py": "b98e276d6b1556e224e3b53e30f14e55ce4bace9802a297c13e74ce7882b5590",
+    "provenance/native_frontier_check.py": "4d038e8e529f247eec48a752e9948533887aeb7129df7cf8d813de954b651139"
+  }
+}

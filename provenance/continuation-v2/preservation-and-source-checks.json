@@ -1,0 +1,14 @@
+{
+  "executed_driver_retrieval": "git show 22c1b8fd62e7dff13f7981089161c19f51e5ed99:provenance/recovery_pilot.py",
+  "numerical_training_modules_match_executed_commit": true,
+  "original_commit": "162579679f8baa47d2cb4445d3d82f396e685baa",
+  "original_exposure_unchanged": true,
+  "original_git_status": "",
+  "postrun_training_or_observation_changes": false,
+  "raw_teacher_sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+  "training_driver_postrun_changes": [
+    "Add raise_for_accounting_error after saving final receipt",
+    "Add subprocess_memory_bound for later artifact-worker accounting"
+  ],
+  "training_executed_commit": "22c1b8fd62e7dff13f7981089161c19f51e5ed99"
+}

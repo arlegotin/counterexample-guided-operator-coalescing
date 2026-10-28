@@ -1,0 +1,80 @@
+{
+  "new_recovery_source_commit": "22c1b8fd62e7dff13f7981089161c19f51e5ed99",
+  "executed_comparison_scripts_commit": "e320583404c61532760b61cf76bd98f5307e2773",
+  "new_checkpoints": {
+    "A": {
+      "directory": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/A/checkpoints/generation-06eb65103a0044bdb0997e56d2e24920",
+      "manifest_sha256": "fa18c78db0ba133410326e7fa4bc266e22640a323caba29a0944e3c111bf71dd"
+    },
+    "B": {
+      "directory": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/B/checkpoints/generation-45c07338fff84a3d81b6c633c79fbecf",
+      "manifest_sha256": "ec4aeba9058ec572062ceac108027212da6b96c0dff7ef3e5454b43121ee4e8a"
+    },
+    "C": {
+      "directory": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/C/checkpoints/generation-e843289efdf747fcb782d7f05582a9f5",
+      "manifest_sha256": "c5213c9c50b909b3d3c7eb231e661731a684f38e6a4b2d57f6f2c87593cb2dde"
+    }
+  },
+  "native_artifacts": [
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "frontier-rtn-b8-g64",
+      "manifest_sha256": "86b2f0f6e4fb729cf54144c64761999880de94356aa940d393541ba61dc6709d",
+      "original_construction_and_dev_seconds": 6.161091041984037,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/frontier-rtn-b8-g64"
+    },
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "embedding-dwq-b2-g64-embed4",
+      "manifest_sha256": "0e1947c6080545eda6f93ce81776bbecc4df105de4e76f3dd74210389e8eda80",
+      "original_construction_and_dev_seconds": 15.132332292036153,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-4366efc60c52418d8f816c383e9054b6/embedding-dwq-b2-g64-embed4"
+    },
+    {
+      "historical_cost": "reused artifact, not newly constructed for free",
+      "label": "frontier-dwq-b4-g64",
+      "manifest_sha256": "d54c7e4564873de0c00b229abca4ccf7e97909cb6ad064c644960f7c31b95d42",
+      "original_construction_and_dev_seconds": 15.357815542025492,
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-ae0c12cb6341423cb64e7a1ab8a13215/frontier-dwq-b4-g64"
+    },
+    {
+      "label": "teacher-native-noop",
+      "manifest_sha256": "0bbaa7440ab55da53475f9ac137aec25f436bc3a338d50142bc84096eb9f512f",
+      "path": "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/artifacts/quantization/attempt-0d83f2dd972948b18693e244895e0b06/floating"
+    },
+    {
+      "exact_parameter_values_verified": true,
+      "label": "shared-natural-step16",
+      "manifest_sha256": "dcf19a40184909360644fdcc00e485e2efb563f0ba30c218b7a323e51f46f34e",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/frontier/shared-B-floating",
+      "source_checkpoint": {
+        "directory": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/recovery/B/checkpoints/generation-45c07338fff84a3d81b6c633c79fbecf",
+        "manifest_sha256": "ec4aeba9058ec572062ceac108027212da6b96c0dff7ef3e5454b43121ee4e8a"
+      },
+      "source_fitted_digest": "53bc4c6cbb66231076ca6fd0687a869a23262b6b7b85bca03311df9f01b985fc"
+    },
+    {
+      "label": "historical-K15-step29-floating",
+      "manifest_sha256": "b818519304d45cd5dd5742ed424e6d41c7518a1c86ad10aeec4c7f0ce47c0406",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-floating"
+    },
+    {
+      "label": "historical-K15-rtn2-embed4",
+      "manifest_sha256": "43db7401352f82b0c3137716d416118f6f54443e8433efd3f582263ba90555d6",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-rtn2-embed4"
+    },
+    {
+      "label": "historical-K15-rtn4-embed2",
+      "manifest_sha256": "71a8da12defd2345bbad89c16bff7bef382ae129c4cbfd8c4a6deb3aa3d4d8de",
+      "path": "/private/tmp/cgoc-continuation-v1/artifacts/continuation-v2/legacy-frontier-retry1/export/historical-K15-rtn4-embed2"
+    }
+  ],
+  "input_retrieval": "Retain original verified local asset/data/exposure tree. Numeric metadata does not reconstruct private text or fitted states.",
+  "excluded_from_safe_metadata": [
+    "corpus text",
+    "input token arrays",
+    "model weights",
+    "exposure fingerprints",
+    "credentials"
+  ]
+}

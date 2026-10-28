@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/private/tmp/cgoc-continuation-v1/provenance/legacy_shared_frontier.py", line 124, in <module>
+    else:run()
+         ^^^^^
+  File "/private/tmp/cgoc-continuation-v1/provenance/legacy_shared_frontier.py", line 88, in run
+    if execution.returncode:raise RuntimeError('pinned historical export failed')
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: pinned historical export failed

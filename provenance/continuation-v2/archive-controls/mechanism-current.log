@@ -1,0 +1,94 @@
+W1028 12:00:07.863000 81162 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+{
+  "actual_transformer_joint_substitution_control": {
+    "first_only": {
+      "kl_per_target": 0.0,
+      "logit_max_abs_error": 0.0
+    },
+    "interpretation": "An engineered residual direction invisible to the untied readout and preserving RMS norm activates a second substituted SiLU FFN. Individually the two replacements are null on sampled tokens; jointly they alter full-model output. This proves a possible interaction in the actual decoder, not an observed failure of any real merge or universal error bound.",
+    "joint": {
+      "kl_per_target": 0.18818184657880663,
+      "logit_max_abs_error": 1.2549698347250144
+    },
+    "second_only": {
+      "kl_per_target": 0.0,
+      "logit_max_abs_error": 0.0
+    }
+  },
+  "affected_residual_reset_control": {
+    "current_state_unchanged_by_trial": true,
+    "distinct_current_logits_max_abs_difference": 0.00023047625877190003,
+    "distinct_current_state_digests": true,
+    "identical_initialized_merge_digests": true,
+    "initialized_merge_logits_max_abs_difference": 0.0,
+    "interpretation": "Affected private residuals are discarded and reinitialized from original teacher minus current bank; a simulated prior residual change cannot influence the initialized result. This is source behavior, not evidence of a quality regression after actual recovery training.",
+    "perturbed_current_to_merged_logits_max_abs_difference": 0.00023047625877190003
+  },
+  "control_limit": "Existing selector controls exercise supplied score tables and hand-written nonlinear functions, not acquisition of counterexamples through the real transformer probe pipeline.",
+  "existing_arithmetic_selector_and_joint_controls": {
+    "bad_selected_regret": 2.0,
+    "joint_failure": {
+      "first_only": 0.0,
+      "joint": 1.0,
+      "second_only": 0.0
+    },
+    "null_regret": 0.0,
+    "planted_selected_regret": 0.0
+  },
+  "permutation_control": {
+    "oracle_alignment_teacher_function_error": 2.220446049250313e-16,
+    "rank2_oracle_aligned": {
+      "ffn_max_abs_error_on_96_vectors": 3.0357660829594124e-18,
+      "logits_max_abs_error_on_5_tokens": 2.220446049250313e-16,
+      "unique_parameter_count": 43328
+    },
+    "rank2_raw_svd": {
+      "ffn_max_abs_error_on_96_vectors": 0.006512836720991471,
+      "logits_max_abs_error_on_5_tokens": 0.027047398142221304,
+      "unique_parameter_count": 43328
+    },
+    "rank2_zero_correction": {
+      "ffn_max_abs_error_on_96_vectors": 2.6020852139652106e-18,
+      "logits_max_abs_error_on_5_tokens": 1.1102230246251565e-16,
+      "unique_parameter_count": 43328
+    },
+    "rank32_raw_svd": {
+      "ffn_max_abs_error_on_96_vectors": 3.236343484869231e-17,
+      "logits_max_abs_error_on_5_tokens": 2.220446049250313e-16,
+      "unique_parameter_count": 112448
+    },
+    "teacher_unique_parameter_count": 75584
+  },
+  "scope": "Independent CPU FP64 planted mechanism diagnostics; no downloaded weights, natural text, fitting, protected evaluation, MLX execution, or performance claim.",
+  "serialization_layout_control": {
+    "bank_state": {
+      "checkpoint_digest_equal": true,
+      "contiguous_normalization_preserves_digest": true,
+      "contiguous_original_restored_logit_max_abs": 0.0,
+      "original_contiguous_logit_max_abs": 0.0,
+      "original_restored_logit_max_abs": 0.0,
+      "parameter_values_exact": true,
+      "stride_mismatches": {}
+    },
+    "interpretation": "The value/alias digest ignores strides. SVD residual B factors can be column-major; bank/delta reload initializes row-major factors. On this CPU the same values can produce tiny arithmetic differences. Canonical-contiguous factors remove the observed difference; this is sampled numerical evidence, not a proof of cross-platform bitwise equivalence. Normalize a prospective execution profile or qualify a numerical bound while keeping exact value/alias validation.",
+    "trial_delta": {
+      "checkpoint_digest_equal": true,
+      "contiguous_normalization_preserves_digest": true,
+      "contiguous_original_restored_logit_max_abs": 0.0,
+      "original_contiguous_logit_max_abs": 0.0,
+      "original_restored_logit_max_abs": 0.0,
+      "parameter_values_exact": true,
+      "stride_mismatches": {}
+    }
+  },
+  "source_sha256": {
+    "poc/bank.py": "2c3e9cce07c5248f7b1da2ca46192e22f2eb0a4c405e800d3a6e15eed8c29e0d",
+    "poc/bundle.py": "c4b324044618ab14b4baf66ca9e276046ce135ebf94526cd9eda6d5a45b1ba06",
+    "poc/diagnostics.py": "60f8432462bc8e35bac7e34ab60a11874e85c8c73c4c4b18251b5aec92201723",
+    "poc/losses.py": "a3eae458fb332e5bfe20092b4555363a418e97e551666e36d93004773e1eafa0",
+    "poc/merge.py": "a3960338a181ddee24440955be86a048a25735d61b1a9bbc1dbcc843601970e3",
+    "poc/runtime/torch_decoder.py": "303cb1e2268a5b0ed5b14e5973817366f49823299af4f7fd0d0a127bbdde5d4a",
+    "poc/synthetic.py": "8c34a8c0b169533c7103a30d64a23df0b2e7daa4d18e302a0cdc39f00dbd6101"
+  },
+  "torch_version": "2.14.1"
+}

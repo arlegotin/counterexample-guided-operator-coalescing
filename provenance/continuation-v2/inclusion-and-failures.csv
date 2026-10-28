@@ -1,0 +1,15 @@
+id,status,new_updates,note
+profile,complete,1,independent outcome-blind profile
+A,complete,16,"same fixed pair, exploratory recipe"
+B,complete,16,"same fixed pair, exploratory recipe"
+C,complete,16,"same fixed pair, exploratory recipe"
+legacy-export-attempt1,failed,0,metadata lookup before model reconstruction/predictions; spending retained
+frontier-rtn-b8-g64,complete,0,complete native artifact on same8windows
+embedding-dwq-b2-g64-embed4,complete,0,complete native artifact on same8windows
+frontier-dwq-b4-g64,complete,0,complete native artifact on same8windows
+teacher-native-noop,complete,0,complete native artifact on same8windows
+shared-natural-step16,complete,0,complete native artifact on same8windows
+historical-K15-step29-floating,complete,0,complete native artifact on same8windows
+historical-K15-rtn2-embed4,complete,0,complete native artifact on same8windows
+historical-K15-rtn4-embed2,complete,0,complete native artifact on same8windows
+legacy-construction-replay,complete,0,byte-identical artifacts; concurrent resource accounting

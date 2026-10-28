@@ -1,0 +1,126 @@
+{
+  "original": {
+    "natural_kl": {
+      "selected_pair": [
+        12,
+        20
+      ],
+      "sampled_oracle_pair": [
+        4,
+        6
+      ],
+      "damage": 0.1639481259622919,
+      "sampled_regret": 0.0001156671144024457
+    },
+    "random_donor": {
+      "selected_pair": [
+        12,
+        20
+      ],
+      "sampled_oracle_pair": [
+        4,
+        6
+      ],
+      "damage": 0.1639481259622919,
+      "sampled_regret": 0.0001156671144024457
+    },
+    "active_1": {
+      "selected_pair": [
+        12,
+        20
+      ],
+      "sampled_oracle_pair": [
+        4,
+        6
+      ],
+      "damage": 0.1639481259622919,
+      "sampled_regret": 0.0001156671144024457
+    },
+    "active_01": {
+      "selected_pair": [
+        12,
+        20
+      ],
+      "sampled_oracle_pair": [
+        4,
+        6
+      ],
+      "damage": 0.1639481259622919,
+      "sampled_regret": 0.0001156671144024457
+    },
+    "student_only": {
+      "selected_pair": [
+        12,
+        20
+      ],
+      "sampled_oracle_pair": [
+        4,
+        6
+      ],
+      "damage": 0.1639481259622919,
+      "sampled_regret": 0.0001156671144024457
+    }
+  },
+  "fresh_exploratory": {
+    "natural_kl": {
+      "selected_pair": [
+        4,
+        6
+      ],
+      "sampled_oracle_pair": [
+        12,
+        20
+      ],
+      "damage": 0.15121223012061968,
+      "sampled_regret": 0.009830384476952364
+    },
+    "random_donor": {
+      "selected_pair": [
+        4,
+        6
+      ],
+      "sampled_oracle_pair": [
+        12,
+        20
+      ],
+      "damage": 0.15121223012061968,
+      "sampled_regret": 0.009830384476952364
+    },
+    "active_1": {
+      "selected_pair": [
+        4,
+        6
+      ],
+      "sampled_oracle_pair": [
+        12,
+        20
+      ],
+      "damage": 0.15121223012061968,
+      "sampled_regret": 0.009830384476952364
+    },
+    "active_01": {
+      "selected_pair": [
+        4,
+        6
+      ],
+      "sampled_oracle_pair": [
+        12,
+        20
+      ],
+      "damage": 0.15121223012061968,
+      "sampled_regret": 0.009830384476952364
+    },
+    "student_only": {
+      "selected_pair": [
+        4,
+        6
+      ],
+      "sampled_oracle_pair": [
+        12,
+        20
+      ],
+      "damage": 0.15121223012061968,
+      "sampled_regret": 0.009830384476952364
+    }
+  }
+}

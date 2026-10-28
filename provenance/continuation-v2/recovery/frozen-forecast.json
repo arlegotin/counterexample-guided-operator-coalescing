@@ -1,0 +1,10 @@
+{
+  "horizon": 16,
+  "measured_shared_seconds": 19.62761879194295,
+  "observations_and_checkpoint_allowance_seconds": 600,
+  "projected_remaining_seconds": 1461.9088959395885,
+  "quality_inspected": false,
+  "time_margin_factor": 2,
+  "update_seconds_upper": 17.95643533207476,
+  "updates": 48
+}

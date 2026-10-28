@@ -1,0 +1,132 @@
+{
+  "scope": "executed top-level commands; worker argv/status in result files; timings in cost ledger",
+  "commands": [
+    {
+      "label": "recovery",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/recovery_pilot.py",
+        "--config",
+        "configs/recovery-pilot-v2.yaml"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "recovery-command.log",
+      "log_sha256": "f0d7ca798fe83b6f9dd3a244b49b8665a56372c943dc3bb1987907f7c67808c3"
+    },
+    {
+      "label": "recovered_scores",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/recovered_score_audit.py",
+        "--asset-root",
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing",
+        "--out",
+        "artifacts/continuation-v2/recovered-scores.json"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "recovered-score-command.log",
+      "log_sha256": "13f21cbdf2f5ac6f2d23a528455ebf583d9cde9d400dde79b630850a65811272"
+    },
+    {
+      "label": "matched_native",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/native_frontier_check.py"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "frontier-command.log",
+      "log_sha256": "905f66aae80340737812249ca9eb1bd6223561d372ba6e290b6cb2a067818af5"
+    },
+    {
+      "label": "legacy_failed_metadata",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/legacy_shared_frontier.py"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 1,
+      "log": "legacy-frontier-command.log",
+      "log_sha256": "5e51ca439dedeb6557c3d72a30594eb3f307ac6d5acaa2212b5f1ee877e3b1e9"
+    },
+    {
+      "label": "legacy_corrected",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/legacy_shared_frontier.py",
+        "--out",
+        "artifacts/continuation-v2/legacy-frontier-retry1"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "legacy-frontier-retry1-command.log",
+      "log_sha256": "09153d088b29f925962e75b1bb5efc1821fe1e0c4db7bfd2f1260118c2afb649"
+    },
+    {
+      "label": "construction_replay",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/legacy_shared_frontier.py",
+        "--construction-only",
+        "--out",
+        "artifacts/continuation-v2/legacy-construction-replay"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "legacy-construction-replay-command.log",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "final_cpu",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "cpu-final.log",
+      "log_sha256": "71be97f0b803c03d7a591ee3726ecf4ea78b64cde9fb100998146b971f853497"
+    },
+    {
+      "label": "final_native",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-o",
+        "addopts=",
+        "-m",
+        "mps or mlx",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "native-final.log",
+      "log_sha256": "96a7820859a6fbafa60bc7b63dee0a5677b95c50de12fe59558ad481e167aa5e"
+    },
+    {
+      "label": "numeric_summary",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/summarize_recovery_v2.py"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "PYTHONPATH": ".",
+      "exit_code": 0,
+      "log": "summary-command.log",
+      "log_sha256": "7f6cd655a2af4e0e013137a24550d33eb541c5353253ff468b0dcfb3885cebff"
+    }
+  ]
+}

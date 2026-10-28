@@ -1,0 +1,41 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+____ test_training_reports_gradient_before_clipping_and_actual_update_norm _____
+
+    def test_training_reports_gradient_before_clipping_and_actual_update_norm():
+        assert 'record_norms' in TrainingConfig.__dataclass_fields__, 'optimizer instrumentation missing'
+        teacher,student=models()
+        result=fit_model(student,teacher,TrainingSources(natural=(batch(),)),
+            TrainingConfig(max_updates=1,record_norms=True),budget(),MemoryRecorder())
+        row=result.metrics[0]
+        assert math.isfinite(row['gradient_norm_pre_clip']) and row['gradient_norm_pre_clip']>0
+        assert math.isfinite(row['parameter_update_norm']) and row['parameter_update_norm']>0
+>       assert row['source_kl_sums']=={'natural':row['kl_sum']}
+               ^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'source_kl_sums'
+
+tests/test_recovery_pilot.py:63: KeyError
+----------------------------- Captured stderr call -----------------------------
+W1028 12:18:25.145000 85940 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+------------------------------ Captured log call -------------------------------
+WARNING  torch.distributed.elastic.multiprocessing.redirects:redirects.py:35 NOTE: Redirects are currently not supported in MacOs.
+_____________ test_final_cost_overrun_cannot_leave_success_status ______________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1518/test_final_cost_overrun_cannot0')
+
+    def test_final_cost_overrun_cannot_leave_success_status(tmp_path):
+        from provenance import recovery_pilot as runner
+        from poc.continuation_budget import PilotLedger
+        from test_records import spec,budget as small_budget
+        ledger=PilotLedger(spec(budgets=replace(small_budget(),wall_seconds=1)),tmp_path)
+        result={'status':'complete_exploratory'}
+>       assert hasattr(runner,'finalize_costs'), 'final accounting guard missing'
+E       AssertionError: final accounting guard missing
+E       assert False
+E        +  where False = hasattr(<module 'provenance.recovery_pilot' from '/private/tmp/cgoc-continuation-v1/provenance/recovery_pilot.py'>, 'finalize_costs')
+
+tests/test_recovery_pilot.py:103: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_recovery_pilot.py::test_training_reports_gradient_before_clipping_and_actual_update_norm
+FAILED tests/test_recovery_pilot.py::test_final_cost_overrun_cannot_leave_success_status
+2 failed in 2.91s

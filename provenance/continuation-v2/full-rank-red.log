@@ -1,0 +1,26 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+______ test_full_rank_floor_reconstructs_actual_operator_on_owned_inputs _______
+
+    def test_full_rank_floor_reconstructs_actual_operator_on_owned_inputs():
+        from provenance import recovery_pilot as runner
+        from poc.merge import initialize_merge
+        from poc.bank import make_bank,canonicalize_partition
+        from test_bank import tiny
+        from test_merge_trials import fit_manifest
+        from test_model_parity import batch as small_batch
+        teacher=tiny();current=make_bank(teacher,canonicalize_partition([[0],[1],[2]],3),2,17)
+        trial=initialize_merge(current,teacher,(0,2),fit_manifest(),17,batches=(small_batch(),))
+>       assert hasattr(runner,'full_rank_floor'), 'real-shape full-rank control missing'
+E       AssertionError: real-shape full-rank control missing
+E       assert False
+E        +  where False = hasattr(<module 'provenance.recovery_pilot' from '/private/tmp/cgoc-continuation-v1/provenance/recovery_pilot.py'>, 'full_rank_floor')
+
+tests/test_recovery_pilot.py:129: AssertionError
+----------------------------- Captured stderr call -----------------------------
+W1028 12:21:01.039000 86534 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+------------------------------ Captured log call -------------------------------
+WARNING  torch.distributed.elastic.multiprocessing.redirects:redirects.py:35 NOTE: Redirects are currently not supported in MacOs.
+=========================== short test summary info ============================
+FAILED tests/test_recovery_pilot.py::test_full_rank_floor_reconstructs_actual_operator_on_owned_inputs
+1 failed in 2.88s

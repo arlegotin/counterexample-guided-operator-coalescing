@@ -1,0 +1,25 @@
+{
+  "macOS": "26.7.1",
+  "Darwin": "25.6.0",
+  "machine": "arm64",
+  "model": "Mac15,11",
+  "chip": "Apple M3 Max",
+  "memory": "36 GB",
+  "versions": {
+    "torch": "2.14.1",
+    "mlx": "0.32.4",
+    "mlx-lm": "0.32.2",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "transformers": "5.21.0",
+    "datasets": "5.1.0",
+    "safetensors": "0.8.0",
+    "pytest": "9.1.1"
+  },
+  "environment_status": "existing environment reused; no second clean install or new wheel hash reconstruction",
+  "historical_dependency_lock_references": {
+    "provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt": "d2258e74c2198259bd7b2dfa3b4373adf3977da79f670e7cab0cbc4f438b684e",
+    "provenance/dependency-locks/wheel-provenance.json": "376dd3e4e191da6aa8fb4ea5b6edb608d84f45267adaa490a069a703bf60a622",
+    "provenance/dependency-locks/upstream-commits.json": "df4e2e79a38f0c40eb6cecf47d99a46d754e196d2051241cd6a898c734c9fe75"
+  }
+}

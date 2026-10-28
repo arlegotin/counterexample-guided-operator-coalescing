@@ -1,0 +1,66 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+____ test_variable_masks_fill_finite_updates_without_slicing_full_builders _____
+
+    def test_variable_masks_fill_finite_updates_without_slicing_full_builders():
+>       a=api();items=[];depths={}
+          ^^^^^
+
+tests/test_recovery_pilot.py:19: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       assert importlib.util.find_spec('poc.recovery_plan'), 'variable-context recovery plan missing'
+E       AssertionError: variable-context recovery plan missing
+E       assert None
+E        +  where None = <function find_spec at 0x1004a98a0>('poc.recovery_plan')
+E        +    where <function find_spec at 0x1004a98a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_recovery_pilot.py:14: AssertionError
+____ test_fixed_parent_zero_product_keeps_bank_and_original_state_isolated _____
+
+    def test_fixed_parent_zero_product_keeps_bank_and_original_state_isolated():
+>       a=api()
+          ^^^^^
+
+tests/test_recovery_pilot.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       assert importlib.util.find_spec('poc.recovery_plan'), 'variable-context recovery plan missing'
+E       AssertionError: variable-context recovery plan missing
+E       assert None
+E        +  where None = <function find_spec at 0x1004a98a0>('poc.recovery_plan')
+E        +    where <function find_spec at 0x1004a98a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_recovery_pilot.py:14: AssertionError
+____ test_training_reports_gradient_before_clipping_and_actual_update_norm _____
+
+    def test_training_reports_gradient_before_clipping_and_actual_update_norm():
+>       assert 'record_norms' in TrainingConfig.__dataclass_fields__, 'optimizer instrumentation missing'
+E       AssertionError: optimizer instrumentation missing
+E       assert 'record_norms' in {'max_updates': Field(name='max_updates',type=<class 'int'>,default=<dataclasses._MISSING_TYPE object at 0x10062d730>,...10062d730>,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=False,_field_type=_FIELD), ...}
+E        +  where {'max_updates': Field(name='max_updates',type=<class 'int'>,default=<dataclasses._MISSING_TYPE object at 0x10062d730>,...10062d730>,init=True,repr=True,hash=None,compare=True,metadata=mappingproxy({}),kw_only=False,_field_type=_FIELD), ...} = TrainingConfig.__dataclass_fields__
+
+tests/test_recovery_pilot.py:56: AssertionError
+________ test_reader_denies_protected_metadata_before_any_content_open _________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1512/test_reader_denies_protected_m0')
+
+    def test_reader_denies_protected_metadata_before_any_content_open(tmp_path):
+>       assert importlib.util.find_spec('poc.recovery_data'), 'recovery reader missing'
+E       AssertionError: recovery reader missing
+E       assert None
+E        +  where None = <function find_spec at 0x1004a98a0>('poc.recovery_data')
+E        +    where <function find_spec at 0x1004a98a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_recovery_pilot.py:66: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_recovery_pilot.py::test_variable_masks_fill_finite_updates_without_slicing_full_builders
+FAILED tests/test_recovery_pilot.py::test_fixed_parent_zero_product_keeps_bank_and_original_state_isolated
+FAILED tests/test_recovery_pilot.py::test_training_reports_gradient_before_clipping_and_actual_update_norm
+FAILED tests/test_recovery_pilot.py::test_reader_denies_protected_metadata_before_any_content_open
+4 failed in 1.15s

@@ -1,0 +1,18 @@
+W1028 12:23:20.155000 87110 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]Loading weights: 100%|██████████| 272/272 [00:00<00:00, 9422.13it/s]
+{"event": "forecast_frozen", "seconds": 1461.9088959395885, "profile_update_seconds": 8.97821766603738, "parent": 0}
+{"event": "observation", "arm": "A", "step": 0, "fit_kl": 0.17958362061294636, "validation_kl": 0.22322883659612877, "validation_nll": 3.0833515533029217}
+{"event": "observation", "arm": "A", "step": 1, "fit_kl": 0.17465622566606356, "validation_kl": 0.21939280075103104, "validation_nll": 3.0796470511449527}
+{"event": "observation", "arm": "A", "step": 4, "fit_kl": 0.1610475882392107, "validation_kl": 0.2082392597851688, "validation_nll": 3.068751388333315}
+{"event": "observation", "arm": "A", "step": 8, "fit_kl": 0.1488669013090563, "validation_kl": 0.19763715352330888, "validation_nll": 3.0585677796380626}
+{"event": "observation", "arm": "A", "step": 16, "fit_kl": 0.1425569889907812, "validation_kl": 0.19212511175999203, "validation_nll": 3.053387042827569}
+{"event": "observation", "arm": "B", "step": 0, "fit_kl": 0.17958362061294636, "validation_kl": 0.22322883659612877, "validation_nll": 3.0833515533029217}
+{"event": "observation", "arm": "B", "step": 1, "fit_kl": 0.17383920668155947, "validation_kl": 0.21868426663301696, "validation_nll": 3.0788537536815186}
+{"event": "observation", "arm": "B", "step": 4, "fit_kl": 0.15894067602381548, "validation_kl": 0.20605451854241105, "validation_nll": 3.066556257744358}
+{"event": "observation", "arm": "B", "step": 8, "fit_kl": 0.14610688793682539, "validation_kl": 0.19493878027697598, "validation_nll": 3.0560180781638784}
+{"event": "observation", "arm": "B", "step": 16, "fit_kl": 0.13957840647482825, "validation_kl": 0.18927179244866343, "validation_nll": 3.050770418051404}
+{"event": "observation", "arm": "C", "step": 0, "fit_kl": 0.2733696909100109, "validation_kl": 0.3697569619886096, "validation_nll": 3.2402149898432007}
+{"event": "observation", "arm": "C", "step": 1, "fit_kl": 0.26915187009082303, "validation_kl": 0.3661390170309175, "validation_nll": 3.2365950250345668}
+{"event": "observation", "arm": "C", "step": 4, "fit_kl": 0.2569660743855217, "validation_kl": 0.3555529612151144, "validation_nll": 3.2259057226013064}
+{"event": "observation", "arm": "C", "step": 8, "fit_kl": 0.2446612767821733, "validation_kl": 0.3446810631019495, "validation_nll": 3.214883365743081}
+{"event": "observation", "arm": "C", "step": 16, "fit_kl": 0.23752791661494554, "validation_kl": 0.33829386774341186, "validation_nll": 3.2083955501623582}
