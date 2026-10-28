@@ -24,6 +24,9 @@ class GateRecord:
     decision: str
     reason: str
     evidence_refs: tuple[str, ...] = ()
+    category: str = 'unknown'
+    record_id: str | None = None
+    supersedes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -38,14 +41,51 @@ class AnalysisResult:
     unresolved_sv_comparison: bool = False
     budget_limited_curve: bool = False
     insufficient_sensitivity: bool = False
+    validity_confirmed: bool | None = None
+
+
+def _effective_gates(gates: Sequence[GateRecord]) -> tuple[GateRecord, ...]:
+    """Resolve only explicit, evidenced, ordered replacements of the same gate.
+
+    The complete sequence remains provenance. Mere later success, reason prose,
+    or a different prerequisite gate never implicitly resolves an earlier stop.
+    """
+    identified = {}
+    superseded = set()
+    categories = {'unknown', 'assessment', 'scientific_negative', 'control',
+                  'integrity', 'resource', 'sensitivity', 'proxy', 'budget'}
+    for index, gate in enumerate(gates):
+        if gate.decision not in {'pass', 'stop', 'invalid', 'amend', 'inconclusive'} or gate.category not in categories:
+            raise ValueError('gate decision/category is unknown')
+        if gate.record_id is not None:
+            if not isinstance(gate.record_id, str) or not gate.record_id or gate.record_id in identified:
+                raise ValueError('gate record IDs must be nonempty and unique')
+        if gate.supersedes and (not gate.record_id or not gate.evidence_refs):
+            raise ValueError('gate supersession requires a record ID and resolution evidence')
+        for identity in gate.supersedes:
+            prior = identified.get(identity)
+            if prior is None or prior in superseded or gates[prior].gate != gate.gate:
+                raise ValueError('gate supersession must name an effective earlier record of the same gate')
+            superseded.add(prior)
+        if gate.record_id is not None:
+            identified[gate.record_id] = index
+    return tuple(g for i, g in enumerate(gates) if i not in superseded)
 
 
 def classify_outcome(gates: Sequence[GateRecord], analysis: AnalysisResult | None) -> Outcome:
-    """A terminal diagnostic limits downstream claims even if a summary looks positive."""
-    if any(g.decision in {'stop', 'inconclusive', 'invalid', 'amend'} for g in gates) or analysis is None:
+    """Classify the effective assessment while preserving conservative stop guards."""
+    effective = _effective_gates(gates)
+    if analysis is None:
         return Outcome.INCONCLUSIVE
     a = analysis
-    if (not a.sensitivity_adequate or a.unresolved_sv_comparison or a.budget_limited_curve
+    for gate in effective:
+        if gate.decision in {'inconclusive', 'invalid', 'amend'}:
+            return Outcome.INCONCLUSIVE
+        if gate.decision == 'stop' and not (
+                gate.category == 'scientific_negative' and gate.evidence_refs
+                and a.evidence_against and a.validity_confirmed is True):
+            return Outcome.INCONCLUSIVE
+    if (a.validity_confirmed is False or not a.sensitivity_adequate or a.unresolved_sv_comparison or a.budget_limited_curve
             or a.insufficient_sensitivity):
         return Outcome.INCONCLUSIVE
     if a.guardrails_passed is False or a.evidence_against:
@@ -130,20 +170,166 @@ def _relative(root: Path, path: str) -> Path:
     return full
 
 
+def _schema(valid: bool, description: str) -> None:
+    if not valid:
+        raise ValueError('evidence index: ' + description)
+
+
+def _object(value, required: set[str], optional: set[str], location: str) -> None:
+    _schema(isinstance(value, dict), location + ' must be an object')
+    _schema(required <= value.keys(), location + ' missing required fields: ' + ', '.join(sorted(required - value.keys())))
+    _schema(value.keys() <= required | optional, location + ' has unknown fields')
+
+
+def _strings(value, location: str) -> None:
+    _schema(isinstance(value, list) and all(isinstance(v, str) and v for v in value), location + ' must be a string list')
+
+
+def _string(value, location: str) -> None:
+    _schema(isinstance(value, str) and bool(value), location + ' must be a nonempty string')
+
+
+def _digest(value, location: str) -> None:
+    _schema(isinstance(value, str) and re.fullmatch('[0-9a-f]{64}', value) is not None, location + ' must be a SHA256')
+
+
+def _metric_schema(rows, records: dict) -> None:
+    _schema(isinstance(rows, list), 'metrics must be a list')
+    identities = set()
+    for row in rows:
+        _schema(isinstance(row, dict), 'metrics entry must be an object')
+        for name in ('metric_id', 'status', 'scope'):
+            _string(row.get(name), 'metrics.' + name)
+        _schema(row['metric_id'] not in identities, 'duplicate metric ID')
+        identities.add(row['metric_id'])
+        _schema(row['status'] in {'measured', 'unexecuted', 'unavailable', 'unsupported'}, 'metrics status is unknown')
+        for key in ('kl_sum', 'nll_sum'):
+            val = row.get(key)
+            _schema(val is None or (type(val) in (int, float) and math.isfinite(val)), 'metrics.' + key + ' must be finite or null')
+        targets = row.get('valid_targets')
+        _schema(targets is None or (type(targets) is int and targets > 0), 'metrics denominator must be positive or null')
+        for key in ('seed', 'depth'):
+            _schema(row.get(key) is None or type(row[key]) is int, 'metrics.' + key + ' must be an integer or null')
+        for key in ('study', 'model_revision', 'candidate_digest', 'component_id', 'document_id',
+                    'pair', 'unavailable_reason', 'source_path', 'source_pointer', 'probe_id', 'probe_source'):
+            _schema(row.get(key) is None or isinstance(row[key], str), 'metrics.' + key + ' must be a string or null')
+        if row.get('record') is not None:
+            _string(row['record'], 'metrics.record')
+            _schema(row['record'] in records, 'metrics record reference is unknown')
+        if row.get('pointer') is not None:
+            _schema(isinstance(row['pointer'], str) and row['pointer'].startswith('/'), 'metrics.pointer must be a JSON pointer')
+        if row.get('source_sha256') is not None:
+            _digest(row['source_sha256'], 'metrics.source_sha256')
+        if row['status'] == 'measured':
+            _string(row.get('record'), 'metrics.record')
+            _schema(row['record'] in records, 'metrics record reference is unknown')
+            _string(row.get('pointer'), 'metrics.pointer')
+            _schema(row['pointer'].startswith('/'), 'metrics pointer must be a JSON pointer')
+            _digest(row.get('source_sha256'), 'metrics.source_sha256')
+            _schema(row.get('kl_sum') is not None and targets is not None, 'measured metrics require sum and denominator')
+        else:
+            _schema(all(row.get(k) is None for k in ('kl_sum', 'nll_sum', 'valid_targets')), 'unavailable metrics require null outcomes')
+
+
+def _index_schema(value) -> None:
+    required = {'records', 'claims', 'stages', 'gates', 'analysis', 'sections', 'metrics',
+                'failures', 'narrative', 'release_files'}
+    _object(value, required, {'schema_version', 'metrics_record', 'overview'}, 'root')
+    if 'schema_version' in value:
+        _schema(type(value['schema_version']) is int and value['schema_version'] == 1, 'unsupported schema_version')
+    records = value['records']
+    _schema(isinstance(records, dict), 'records must be an object')
+    for identity, row in records.items():
+        _string(identity, 'records ID')
+        _object(row, {'path', 'sha256'}, set(), 'records entry')
+        _string(row['path'], 'records.path')
+        _digest(row['sha256'], 'records.sha256')
+    if 'metrics_record' in value:
+        _string(value['metrics_record'], 'metrics_record')
+        _schema(value['metrics_record'] in records, 'metrics_record reference is unknown')
+    _schema(isinstance(value['claims'], list), 'claims must be a list')
+    claims = {}
+    for row in value['claims']:
+        _object(row, {'id', 'value', 'record', 'pointer', 'scope'}, set(), 'claims entry')
+        for key in ('id', 'record', 'scope'):
+            _string(row[key], 'claims.' + key)
+        _schema(isinstance(row['pointer'], str) and (not row['pointer'] or row['pointer'].startswith('/')), 'claims.pointer must be a JSON pointer')
+        _schema(row['record'] in records, 'claim record reference is unknown')
+        _schema(row['id'] not in claims, 'duplicate claim ID')
+        # JSON numbers accepted by Python's decoder must still be finite.
+        try:
+            json.dumps(row['value'], allow_nan=False)
+        except ValueError as exc:
+            raise ValueError('evidence index: nonfinite claim value') from exc
+        claims[row['id']] = row
+    _schema(isinstance(value['stages'], dict) and all(isinstance(k, str) and isinstance(v, str) for k, v in value['stages'].items()), 'stages must map strings to statuses')
+    _schema(isinstance(value['gates'], list), 'gates must be a list')
+    for row in value['gates']:
+        _object(row, {'gate', 'decision', 'reason'}, {'evidence_refs', 'category', 'record_id', 'supersedes'}, 'gates entry')
+        for key in ('gate', 'decision', 'reason'):
+            _string(row[key], 'gates.' + key)
+        for key in ('evidence_refs', 'supersedes'):
+            _strings(row.get(key, []), 'gates.' + key)
+        _schema(all(ref in records for ref in row.get('evidence_refs', [])), 'gate evidence reference is unknown')
+        if 'category' in row:
+            _string(row['category'], 'gates.category')
+        _schema(row.get('record_id') is None or isinstance(row['record_id'], str), 'gates.record_id must be a string or null')
+    analysis = value['analysis']
+    if analysis is not None:
+        _object(analysis, set(), set(AnalysisResult.__dataclass_fields__), 'analysis')
+        for key, val in analysis.items():
+            _schema(type(val) is bool or (val is None and key in {'guardrails_passed', 'validity_confirmed'}), 'analysis.' + key + ' must be boolean' + (' or null' if key in {'guardrails_passed', 'validity_confirmed'} else ''))
+    _schema(isinstance(value['sections'], list), 'sections must be a list')
+    for section in value['sections']:
+        _schema(isinstance(section, list) and len(section) == 2, 'section must contain title and rows')
+        _string(section[0], 'section title')
+        _schema(isinstance(section[1], list), 'section rows must be a list')
+        for row in section[1]:
+            _schema(isinstance(row, list) and len(row) == 2, 'section row must contain label and claim ID')
+            _strings(row, 'section row')
+            _schema(row[1] in claims, 'section claim reference is unknown')
+    _schema(isinstance(value.get('overview', []), list), 'overview must be a list')
+    for row in value.get('overview', []):
+        _strings(row, 'overview row')
+        _schema(len(row) == 5 and all(ref in claims for ref in row[1:]), 'overview must reference four claims')
+        for ref in row[1:]:
+            point = claims[ref]['value']
+            _schema(isinstance(point, dict), 'overview claim must be a point object')
+            pair = point.get('selected_pair')
+            regret = point.get('regret')
+            _schema(isinstance(pair, list) and len(pair) == 2 and all(type(v) is int for v in pair), 'overview selected pair must contain two integers')
+            _schema(type(regret) in (int, float) and math.isfinite(regret), 'overview regret must be finite')
+    _strings(value['failures'], 'failures')
+    _strings(value['release_files'], 'release_files')
+    _schema(isinstance(value['narrative'], str), 'narrative must be a string')
+    _metric_schema(value['metrics'], records)
+
+
 def load_evidence(root: Path) -> EvidenceIndex:
+    """Validate user evidence before linked I/O; null analysis is an early unknown.
+
+    Schema failures are ValueError at this boundary. Unrelated programming errors
+    are not converted or broadly caught by the CLI.
+    """
     path = root / 'provenance/report-evidence-2026-10-28.json'
     value = json.loads(path.read_text())
+    _index_schema(value)
+    gates = tuple(GateRecord(**{**row, 'evidence_refs': tuple(row.get('evidence_refs', ())),
+                               'supersedes': tuple(row.get('supersedes', ()))}) for row in value['gates'])
+    _effective_gates(gates)
     if 'metrics_record' in value:
         metric_record = value['records'][value['metrics_record']]
         metric_path = _relative(root, metric_record['path'])
         if sha256_file(metric_path) != metric_record['sha256']:
             raise ValueError('raw metric source hash mismatch')
-        value['metrics'] = json.loads(metric_path.read_text())['metrics']
+        source = json.loads(metric_path.read_text())
+        _schema(isinstance(source, dict) and 'metrics' in source, 'linked metrics source must contain metrics')
+        _metric_schema(source['metrics'], value['records'])
+        value['metrics'] = source['metrics']
     return EvidenceIndex(root=root, records={k: EvidenceRecord(**v) for k, v in value['records'].items()},
-                         claims=tuple(Claim(**v) for v in value['claims']), stages=value['stages'],
-                         gates=tuple(GateRecord(**v) for v in value['gates']),
-                         analysis=AnalysisResult(**value['analysis']), sections=tuple(value['sections']),
-                         metrics=tuple(value['metrics']), failures=tuple(value['failures']),
+                         claims=tuple(Claim(**v) for v in value['claims']), stages=value['stages'], gates=gates,
+                         analysis=AnalysisResult(**value['analysis']) if value['analysis'] is not None else None,
+                         sections=tuple(value['sections']), metrics=tuple(value['metrics']), failures=tuple(value['failures']),
                          narrative=value['narrative'], release_files=tuple(value['release_files']),
                          overview=tuple(value.get('overview', ())))
 
