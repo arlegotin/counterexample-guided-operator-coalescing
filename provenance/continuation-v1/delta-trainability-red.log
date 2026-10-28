@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_ test_compact_delta_retains_local_owner_trainability_and_rejects_old_profile __
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1497/test_compact_delta_retains_loc0')
+
+    def test_compact_delta_retains_local_owner_trainability_and_rejects_old_profile(tmp_path):
+        from poc.train import configure_trainable_owners, TrainingConfig
+        teacher=tiny()
+        current=make_bank(teacher,canonicalize_partition([[0],[1],[2]],3),2,17)
+        trial=initialize_merge(current,teacher,(0,2),fit_manifest(),17,batches=(batch(),))
+        configure_trainable_owners(trial.model,TrainingConfig(max_updates=1,phase='local',affected_depths=(0,2)))
+        trial.fitted_digest=trial.model.manifest().checkpoint_digest
+        save_trial_delta(trial,current,tmp_path/'delta')
+        restored=restore_trial_delta(current,teacher,tmp_path/'delta')
+>       assert owner_census(restored.model)==owner_census(trial.model)
+E       AssertionError: assert [OwnerRecord(...oj.A',)), ...] == [OwnerRecord(...oj.A',)), ...]
+E         
+E         At index 17 diff: OwnerRecord(name='layers.1.mlp.residuals.gate_proj.A', shape=(2, 8), numel=16, trainable=True, category='residual', use_sites=('layers.1.mlp.residuals.gate_proj.A',)) != OwnerRecord(name='layers.1.mlp.residuals.gate_proj.A', shape=(2, 8), numel=16, trainable=False, category='residual', use_sites=('layers.1.mlp.residuals.gate_proj.A',))
+E         Use -v to get more diff
+
+tests/test_continuation_layout.py:112: AssertionError
+----------------------------- Captured stderr call -----------------------------
+W1028 11:07:50.655000 73795 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+------------------------------ Captured log call -------------------------------
+WARNING  torch.distributed.elastic.multiprocessing.redirects:redirects.py:35 NOTE: Redirects are currently not supported in MacOs.
+=========================== short test summary info ============================
+FAILED tests/test_continuation_layout.py::test_compact_delta_retains_local_owner_trainability_and_rejects_old_profile
+1 failed in 2.53s

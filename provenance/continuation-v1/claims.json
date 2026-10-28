@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "claims": [
+    {"claim": "Pinned checkout reporting regenerates byte-identically with 65 tests, 290 claims, 20 records", "classification": "INDEPENDENTLY REPRODUCED", "evidence": ["cgoc-report-baseline.log", "cgoc-report-regeneration.log"]},
+    {"claim": "Unmodified suite passes on this Darwin CPU host: 568 passed, 1 skipped, 39 deselected", "classification": "INDEPENDENTLY REPRODUCED", "evidence": ["cgoc-cpu-before.log"], "qualification": "Does not contradict or repair the supplied Linux exact-output failure; Linux not rerun"},
+    {"claim": "Factor values/digests/ownership agree across owned reload; factor layout becomes contiguous", "classification": "INDEPENDENTLY REPRODUCED", "evidence": ["layout-before.json", "layout-after.json", "layout-green.log"], "qualification": "Both sampled Darwin FP64 outputs were bit-exact before and after; not universal numerical equivalence"},
+    {"claim": "Owned runner executes one full 8192-target local update and reloads its checkpoint/delta", "classification": "INDEPENDENTLY REPRODUCED", "evidence": ["verification/owned.json", "verification/commands.json"], "qualification": "Tiny constructed fixture; no independent validation or pretrained gain"},
+    {"claim": "Numeric fixed formulas and selections reconstruct from complete safe raw metadata", "classification": "INDEPENDENTLY REPRODUCED", "evidence": ["verification/owned.json", "review-green.log"], "qualification": "Hand-specified arithmetic fixture; no acquisition superiority"},
+    {"claim": "Historical WP04 is INCONCLUSIVE; K15 reported development KL improved after 29 durable updates", "classification": "REPOSITORY-REPORTED", "evidence": ["../training-135m-2026-10-27.json"], "qualification": "No teacher equivalence, convergence, capability or native frontier claim"},
+    {"claim": "initialize_merge historically resets affected deltas toward original teacher matrices", "classification": "OBSERVED SOURCE", "evidence": ["../../poc/merge.py"], "qualification": "Current-effective-state alternative and composition are WP4, unimplemented here"},
+    {"claim": "New execution profile needs independent native qualification", "classification": "INFERENCE", "evidence": ["../../protocol/continuation-v1.md"], "qualification": "MPS/MLX not run; current OS below stated native floor"},
+    {"claim": "Exact archive mechanism/acquisition fixtures reproduced", "classification": "UNTESTED", "status": "BLOCKED", "evidence": ["missing-inputs.json"]},
+    {"claim": "Pretrained recovery, selector superiority, acquisition efficiency, composition, deployment tradeoff, protected capability, replication or transfer", "classification": "UNTESTED", "status": "BLOCKED", "evidence": ["missing-inputs.json"]}
+  ]
+}

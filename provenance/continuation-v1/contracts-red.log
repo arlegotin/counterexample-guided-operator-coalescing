@@ -1,0 +1,234 @@
+FFFFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+______ test_parent_budget_denies_next_arm_and_retains_failures_and_replay ______
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1485/test_parent_budget_denies_next0')
+
+    def test_parent_budget_denies_next_arm_and_retains_failures_and_replay(tmp_path):
+>       api = module('poc.continuation_budget')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_budget'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_budget missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_budget')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+__________ test_plan_full_updates_balance_and_preserve_full_builders ___________
+
+    def test_plan_full_updates_balance_and_preserve_full_builders():
+>       api = module('poc.continuation_plan')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:44: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_plan'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_plan missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_plan')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+___ test_numeric_export_reconstructs_every_fixed_formula_selection_and_ties ____
+
+    def test_numeric_export_reconstructs_every_fixed_formula_selection_and_ties():
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+_____ test_numeric_export_rejects_incomplete_or_unsafe_evidence[candidate] _____
+
+attack = 'candidate'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+____ test_numeric_export_rejects_incomplete_or_unsafe_evidence[denominator] ____
+
+attack = 'denominator'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+______ test_numeric_export_rejects_incomplete_or_unsafe_evidence[private] ______
+
+attack = 'private'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+_____ test_numeric_export_rejects_incomplete_or_unsafe_evidence[component] _____
+
+attack = 'component'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+_______ test_numeric_export_rejects_incomplete_or_unsafe_evidence[group] _______
+
+attack = 'group'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+_______ test_numeric_export_rejects_incomplete_or_unsafe_evidence[graph] _______
+
+attack = 'graph'
+
+    @pytest.mark.parametrize('attack',['candidate','denominator','private','component','group','graph'])
+    def test_numeric_export_rejects_incomplete_or_unsafe_evidence(attack):
+>       api = module('poc.continuation_evidence')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:108: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation_evidence'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation_evidence missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation_evidence')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+________ test_schema_rejects_runtime_profile_horizon_and_unknown_fields ________
+
+    def test_schema_rejects_runtime_profile_horizon_and_unknown_fields():
+>       api = module('poc.continuation')
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_continuation_contracts.py:120: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'poc.continuation'
+
+    def module(name):
+>       assert importlib.util.find_spec(name), f'{name} missing'
+E       AssertionError: poc.continuation missing
+E       assert None
+E        +  where None = <function find_spec at 0x10092d8a0>('poc.continuation')
+E        +    where <function find_spec at 0x10092d8a0> = <module 'importlib.util' (frozen)>.find_spec
+E        +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests/test_continuation_contracts.py:15: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_contracts.py::test_parent_budget_denies_next_arm_and_retains_failures_and_replay
+FAILED tests/test_continuation_contracts.py::test_plan_full_updates_balance_and_preserve_full_builders
+FAILED tests/test_continuation_contracts.py::test_numeric_export_reconstructs_every_fixed_formula_selection_and_ties
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[candidate]
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[denominator]
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[private]
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[component]
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[group]
+FAILED tests/test_continuation_contracts.py::test_numeric_export_rejects_incomplete_or_unsafe_evidence[graph]
+FAILED tests/test_continuation_contracts.py::test_schema_rejects_runtime_profile_horizon_and_unknown_fields
+10 failed in 0.95s

@@ -1,0 +1,2 @@
+W1028 11:22:17.408000 78213 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+{"status": "complete_owned_only", "receipt": "artifacts/continuation-v1/verification-v1/owned.json", "exit_code": 0}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "scope": "WP1 asset-free implementation; no native science",
+  "archive": {
+    "url": "https://chatgpt.com/library?file_id=libfile_6ed92f7800ec819180a60b3a8f11a02d&account_id=personal",
+    "expected_sha256": "fdf89785dd4527217b6d9491ec7db4ec48a026f4fded319b3c6d1f38a76609df",
+    "access_attempt": "web open failed: cache miss; available connectors have no Library download tool",
+    "downloaded": false,
+    "archive_hash_verified": false,
+    "internal_manifest_verified": false,
+    "mechanism_diagnostics_gate": "BLOCKED: exact script unavailable",
+    "probe_pipeline_controls_gate": "BLOCKED: exact engineered acquisition script unavailable"
+  },
+  "teacher": {
+    "repository": "HuggingFaceTB/SmolLM2-135M",
+    "revision": "93efa2f097d58c2a74874c7e644dbc9b0cee75a2",
+    "asset_manifest_sha256": "9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083",
+    "raw_weights_sha256": "80521b40281d6ce74e35c9282c22539e75aa0ac8578892b2a59955ef78d55da1",
+    "opened_or_downloaded_for_continuation": false,
+    "status": "UNQUALIFIED: not resolved in this worktree"
+  },
+  "original_checkout_private_metadata_presence_only": {
+    "data/prepared-135m-v1/preparation.json": {"exists": true, "opened": false},
+    "data/prepared-135m-v2/preparation.json": {"exists": true, "opened": false},
+    "status": "Historical inputs may exist; no freshness, lineage reconciliation or protected status inferred"
+  },
+  "scientific_blockers": [
+    "Exact archive scripts and verified archive/internal hashes, or independently specified and reviewed replacements",
+    "Verified teacher/tokenizer asset identities and frozen teacher lineage",
+    "Allowed fit/calibration/pilot-validation metadata and all known historical exclusions/exposure history",
+    "Outcome-blind sufficient metadata and exact finite source/target plan for all arms",
+    "Separate numerical floors and scientific profile qualification",
+    "Allowed-operation forecast for 48 updates plus all observations and shared work, within finite caps",
+    "Reviewed portable scientific pilot adapter and source-specific metric instrumentation",
+    "Qualified macOS 26+ native host plus MPS/MLX reload/parity qualification for native claims"
+  ],
+  "native_status": "BLOCKED",
+  "current_host": "Darwin 25.6 arm64, Python 3.12.9; CPU controls only",
+  "deferred_commands": [
+    {
+      "command": "python3.12 -m venv /private/tmp/cgoc-native-rebuild-v1",
+      "condition": "Separate qualified macOS 26+ host; do not silently downgrade native dependencies"
+    },
+    {
+      "command": "/private/tmp/cgoc-native-rebuild-v1/bin/python -m pip install --require-hashes -r provenance/dependency-locks/qualified-darwin-arm64-py312.requirements.txt",
+      "condition": "Exact qualified native interpreter/hardware; retain wheel hashes and upstream commits"
+    },
+    {
+      "command": "/private/tmp/cgoc-native-rebuild-v1/bin/python -m pip install --no-deps -e .",
+      "condition": "Continuation source selected explicitly; old artifacts replay only with pinned source"
+    },
+    {
+      "command": "/private/tmp/cgoc-native-rebuild-v1/bin/python -m pytest tests/test_operations.py -m 'mps or mlx'",
+      "condition": "This is only an initial native check, not full native deployment qualification"
+    },
+    {
+      "command": "PYTHONPATH=. python provenance/continuation_recovery.py --config configs/continuation-recovery-v1.yaml --mode pilot --out artifacts/continuation-v1/pilot-preflight.json",
+      "condition": "Current implementation returns BLOCKED/3; it does not launch pretrained science"
+    }
+  ],
+  "unavailable_commands": [
+    "Archive README commands cannot be reconstructed without the exact archive",
+    "Scientific trajectory execution is deferred to the reviewed WP2 adapter; no absent poc fit/compile pipeline is advertised"
+  ]
+}

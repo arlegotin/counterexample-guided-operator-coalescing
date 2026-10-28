@@ -1,0 +1,121 @@
+.FFFFFF.                                                                 [100%]
+=================================== FAILURES ===================================
+__________ test_initialization_layout_and_external_state_roundtrip[2] __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1482/test_initialization_layout_and1')
+rank = 2
+
+    @pytest.mark.parametrize('rank', [0, 2, 8])
+    def test_initialization_layout_and_external_state_roundtrip(tmp_path, rank):
+        delta = torch.arange(96, dtype=torch.float64).reshape(12, 8).sin()
+        a, b = initialize_residual(delta, rank, 17)
+>       assert a.is_contiguous() and b.is_contiguous()
+E       assert (False)
+E        +  where False = <built-in method is_contiguous of Tensor object at 0x117e4b9d0>()
+E        +    where <built-in method is_contiguous of Tensor object at 0x117e4b9d0> = tensor([[-0.8273, -1.0198, -0.2747,  0.7230,  1.0559,  0.4181, -0.6042, -1.0709],\n        [-0.6575,  0.4399,  1.1328,  0.7843, -0.2854, -1.0926, -0.8953,  0.1251]],\n       dtype=torch.float64).is_contiguous
+
+tests/test_continuation_layout.py:45: AssertionError
+__________ test_initialization_layout_and_external_state_roundtrip[8] __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1482/test_initialization_layout_and2')
+rank = 8
+
+    @pytest.mark.parametrize('rank', [0, 2, 8])
+    def test_initialization_layout_and_external_state_roundtrip(tmp_path, rank):
+        delta = torch.arange(96, dtype=torch.float64).reshape(12, 8).sin()
+        a, b = initialize_residual(delta, rank, 17)
+>       assert a.is_contiguous() and b.is_contiguous()
+E       assert (False)
+E        +  where False = <built-in method is_contiguous of Tensor object at 0x117d68f00>()
+E        +    where <built-in method is_contiguous of Tensor object at 0x117d68f00> = tensor([[-8.2732e-01, -1.0198e+00, -2.7470e-01,  7.2297e-01,  1.0559e+00,\n          4.1809e-01, -6.0416e-01, -1.0709e+...4918e-10, -3.2346e-09,  3.8090e-10,  3.1722e-09,\n         -1.9507e-09, -1.2207e-09,  3.4670e-09]], dtype=torch.float64).is_contiguous
+
+tests/test_continuation_layout.py:45: AssertionError
+_____________ test_merge_compact_delta_layout_values_and_ownership _____________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1482/test_merge_compact_delta_layou0')
+
+    def test_merge_compact_delta_layout_values_and_ownership(tmp_path):
+        teacher = tiny()
+        current = make_bank(teacher, canonicalize_partition([[0], [1], [2]], 3), 2, 17)
+        trial = initialize_merge(current, teacher, (0, 2), fit_manifest(), 17, batches=(batch(),))
+        trial.fitted_digest = trial.model.manifest().checkpoint_digest
+        save_trial_delta(trial, current, tmp_path/'delta')
+        restored = restore_trial_delta(current, teacher, tmp_path/'delta')
+>       assert_roundtrip(trial.model, restored.model)
+
+tests/test_continuation_layout.py:59: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_continuation_layout.py:31: in assert_roundtrip
+    assert_factors(source)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = BankDecoder(
+  (embed_tokens): Embedding(41, 8)
+  (layers): ModuleList(
+    (0-2): 3 x LlamaDecoderLayer(
+      (self_...tures=8, out_features=12, bias=False)
+      (down_proj): Linear(in_features=12, out_features=8, bias=False)
+    )
+  )
+)
+
+    def assert_factors(model):
+        for layer in model.layers:
+            for factors in layer.mlp.residuals.values():
+>               assert factors.A.is_contiguous() and factors.B.is_contiguous()
+E               assert (False)
+E                +  where False = <built-in method is_contiguous of Parameter object at 0x117d6ab20>()
+E                +    where <built-in method is_contiguous of Parameter object at 0x117d6ab20> = Parameter containing:\ntensor([[-0.0760,  0.1641, -0.0987, -0.0500,  0.1426,  0.1975, -0.0100, -0.1670],\n        [ 0.0596, -0.0137, -0.0033,  0.1807,  0.1911,  0.0675,  0.1322,  0.1423]],\n       dtype=torch.float64, requires_grad=True).is_contiguous
+E                +      where Parameter containing:\ntensor([[-0.0760,  0.1641, -0.0987, -0.0500,  0.1426,  0.1975, -0.0100, -0.1670],\n        [ 0.0596, -0.0137, -0.0033,  0.1807,  0.1911,  0.0675,  0.1322,  0.1423]],\n       dtype=torch.float64, requires_grad=True) = _Factors().A
+
+tests/test_continuation_layout.py:22: AssertionError
+___________ test_incompatible_teacher_lineage_rejected_before_merge ____________
+
+    def test_incompatible_teacher_lineage_rejected_before_merge():
+        teacher = tiny()
+        current = make_bank(teacher, canonicalize_partition([[0], [1], [2]], 3), 2, 17)
+        current.base_digest = '0'*64
+>       with pytest.raises(ValueError, match='lineage'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_layout.py:66: Failed
+_________ test_old_profile_bundle_rejected_and_current_metadata_bound __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1482/test_old_profile_bundle_reject0')
+
+    def test_old_profile_bundle_rejected_and_current_metadata_bound(tmp_path):
+        ref = write_bundle(model('2'), tmp_path/'bundle', runtime(tmp_path))
+        path = tmp_path/'bundle/manifest.json'
+        raw = json.loads(path.read_text())
+        assert raw['execution_profile'] == EXECUTION_PROFILE
+        raw['execution_profile'] = 'eager-llama-hf-fp32-reciprocal-true-fp64-v2'
+        path.write_text(json.dumps(raw))
+>       with pytest.raises(ValueError, match='profile'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_layout.py:77: Failed
+_____ test_external_state_rejects_old_profile_even_with_rehashed_manifest ______
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1482/test_external_state_rejects_ol0')
+
+    def test_external_state_rejects_old_profile_even_with_rehashed_manifest(tmp_path):
+        teacher = tiny()
+        source = make_bank(teacher, canonicalize_partition([[0, 2], [1]], 3), 2, 17)
+        ref = write_bank_state(source, tmp_path/'state')
+        path = tmp_path/'state/state.json'
+        raw = json.loads(path.read_text())
+>       assert raw['execution_profile'] == EXECUTION_PROFILE
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'execution_profile'
+
+tests/test_continuation_layout.py:87: KeyError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_layout.py::test_initialization_layout_and_external_state_roundtrip[2]
+FAILED tests/test_continuation_layout.py::test_initialization_layout_and_external_state_roundtrip[8]
+FAILED tests/test_continuation_layout.py::test_merge_compact_delta_layout_values_and_ownership
+FAILED tests/test_continuation_layout.py::test_incompatible_teacher_lineage_rejected_before_merge
+FAILED tests/test_continuation_layout.py::test_old_profile_bundle_rejected_and_current_metadata_bound
+FAILED tests/test_continuation_layout.py::test_external_state_rejects_old_profile_even_with_rehashed_manifest
+6 failed, 2 passed in 2.54s

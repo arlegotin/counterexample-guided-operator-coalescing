@@ -1,0 +1,424 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-c",
+        "import hashlib,json,runpy,subprocess\nimport poc\nimport torch\nfrom poc.bank import make_bank,canonicalize_partition\nfrom poc.runtime.torch_decoder import TinyConfig,make_tiny_decoder\nteacher=make_tiny_decoder(TinyConfig(hidden_size=8,intermediate_size=12,num_attention_heads=2,num_key_value_heads=1),seed=2,dtype=torch.float64)\nmodel=make_bank(teacher,canonicalize_partition([[0,2],[1]],3),2,17)\nh=hashlib.sha256()\nfor name,p in sorted(model.named_parameters()):\n    h.update(name.encode());h.update(str(tuple(p.shape)).encode());h.update(str(p.dtype).encode());h.update(p.detach().cpu().contiguous().numpy().tobytes())\nresult=runpy.run_path('/private/tmp/cgoc-continuation-v1/provenance/continuation_layout_diagnostic.py')['measure']()\nresult.update(parameter_value_sha256=h.hexdigest(),poc_source=poc.__file__,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())\nprint(json.dumps(result,sort_keys=True))\n"
+      ],
+      "cwd": "/private/tmp/cgoc-audit-1625796",
+      "exit_code": 0,
+      "output": {
+        "bit_exact_logits": true,
+        "census_equal": true,
+        "device": "cpu",
+        "digest_equal": true,
+        "dtype": "float64",
+        "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-v2",
+        "max_logit_difference": 0.0,
+        "parameter_bytes_equal": true,
+        "parameter_value_sha256": "51572e664239e4ecf5610e88712ff5601b165e853c3c2624398cd83ad1f19994",
+        "poc_source": "/private/tmp/cgoc-audit-1625796/poc/__init__.py",
+        "qualified": true,
+        "source_commit": "162579679f8baa47d2cb4445d3d82f396e685baa",
+        "strides": {
+          "layers.0.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              12,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              12,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              1,
+              2
+            ]
+          },
+          "layers.2.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              1,
+              8
+            ]
+          },
+          "layers.2.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              1,
+              2
+            ]
+          },
+          "layers.2.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              1,
+              12
+            ]
+          },
+          "layers.2.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              1,
+              2
+            ]
+          },
+          "layers.2.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              1,
+              12
+            ]
+          }
+        },
+        "tied_head": true,
+        "tolerance": 1e-12
+      },
+      "started": "2026-10-28T10:23:08.486072+00:00",
+      "stderr": "W1028 11:23:10.569000 78278 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.\n"
+    },
+    {
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-c",
+        "import hashlib,json,runpy,subprocess\nimport poc\nimport torch\nfrom poc.bank import make_bank,canonicalize_partition\nfrom poc.runtime.torch_decoder import TinyConfig,make_tiny_decoder\nteacher=make_tiny_decoder(TinyConfig(hidden_size=8,intermediate_size=12,num_attention_heads=2,num_key_value_heads=1),seed=2,dtype=torch.float64)\nmodel=make_bank(teacher,canonicalize_partition([[0,2],[1]],3),2,17)\nh=hashlib.sha256()\nfor name,p in sorted(model.named_parameters()):\n    h.update(name.encode());h.update(str(tuple(p.shape)).encode());h.update(str(p.dtype).encode());h.update(p.detach().cpu().contiguous().numpy().tobytes())\nresult=runpy.run_path('/private/tmp/cgoc-continuation-v1/provenance/continuation_layout_diagnostic.py')['measure']()\nresult.update(parameter_value_sha256=h.hexdigest(),poc_source=poc.__file__,source_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip())\nprint(json.dumps(result,sort_keys=True))\n"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "exit_code": 0,
+      "output": {
+        "bit_exact_logits": true,
+        "census_equal": true,
+        "device": "cpu",
+        "digest_equal": true,
+        "dtype": "float64",
+        "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3",
+        "max_logit_difference": 0.0,
+        "parameter_bytes_equal": true,
+        "parameter_value_sha256": "51572e664239e4ecf5610e88712ff5601b165e853c3c2624398cd83ad1f19994",
+        "poc_source": "/private/tmp/cgoc-continuation-v1/poc/__init__.py",
+        "qualified": true,
+        "source_commit": "7afd61bb0d5037a8d2ad6c116962879f1ecd2c42",
+        "strides": {
+          "layers.0.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              12,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.0.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              12,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.1.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.down_proj.A": {
+            "after": [
+              12,
+              1
+            ],
+            "before": [
+              12,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.down_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.gate_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.gate_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.up_proj.A": {
+            "after": [
+              8,
+              1
+            ],
+            "before": [
+              8,
+              1
+            ]
+          },
+          "layers.2.mlp.residuals.up_proj.B": {
+            "after": [
+              2,
+              1
+            ],
+            "before": [
+              2,
+              1
+            ]
+          }
+        },
+        "tied_head": true,
+        "tolerance": 1e-12
+      },
+      "started": "2026-10-28T10:23:11.202143+00:00",
+      "stderr": "W1028 11:23:13.280000 78280 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.\n"
+    }
+  ],
+  "note": "Runtime checkpoint identities intentionally differ because execution profiles differ; raw parameter-value digest is layout independent.",
+  "parameter_values_identical": true
+}

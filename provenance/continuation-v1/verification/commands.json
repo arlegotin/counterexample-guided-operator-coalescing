@@ -1,0 +1,118 @@
+{
+  "source_commit": "7afd61bb0d5037a8d2ad6c116962879f1ecd2c42",
+  "commands": [
+    {
+      "name": "help",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/continuation_recovery.py",
+        "--config",
+        "configs/continuation-recovery-v1.yaml",
+        "--help"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 0,
+      "started": "2026-10-28T10:22:13.342830+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:14.110700+00:00",
+      "exit_code": 0,
+      "log_sha256": "9e6a9afbf7c98419edd41c9825f6715d26d2c1b275ce5712bd976ed57db09223"
+    },
+    {
+      "name": "validate",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/continuation_recovery.py",
+        "--config",
+        "configs/continuation-recovery-v1.yaml",
+        "--mode",
+        "validate-config",
+        "--out",
+        "artifacts/continuation-v1/verification-v1/validate.json"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 0,
+      "started": "2026-10-28T10:22:14.111259+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:15.072469+00:00",
+      "exit_code": 0,
+      "log_sha256": "2f949e31bcadf7e590b00bf5ee0b2220e423074c848ba62cbc0fdbd775863290"
+    },
+    {
+      "name": "owned",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/continuation_recovery.py",
+        "--config",
+        "configs/continuation-recovery-v1.yaml",
+        "--mode",
+        "owned-controls",
+        "--out",
+        "artifacts/continuation-v1/verification-v1/owned.json"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 0,
+      "started": "2026-10-28T10:22:15.073456+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:20.186746+00:00",
+      "exit_code": 0,
+      "log_sha256": "1937db589cbe0eec7b8a9f53d7523d752fa094a03c984f13bba765a31709d758"
+    },
+    {
+      "name": "profile",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/continuation_recovery.py",
+        "--config",
+        "configs/continuation-recovery-v1.yaml",
+        "--mode",
+        "profile",
+        "--out",
+        "artifacts/continuation-v1/verification-v1/profile.json"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 0,
+      "started": "2026-10-28T10:22:20.187381+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:25.163923+00:00",
+      "exit_code": 0,
+      "log_sha256": "f6c0bf22efd27caee46c89f89b75070c6f08dbf9ea9c40cdf71c429ea550e97b"
+    },
+    {
+      "name": "pilot-blocked",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "provenance/continuation_recovery.py",
+        "--config",
+        "configs/continuation-recovery-v1.yaml",
+        "--mode",
+        "pilot",
+        "--out",
+        "artifacts/continuation-v1/verification-v1/pilot-blocked.json"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 3,
+      "started": "2026-10-28T10:22:25.164582+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:26.144833+00:00",
+      "exit_code": 3,
+      "log_sha256": "3041793ff9ecb088258d5b8607639cd33dcbdce41f08325f1da86229b4e0df7a"
+    },
+    {
+      "name": "cpu-suite",
+      "argv": [
+        "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+        "-m",
+        "pytest",
+        "-q"
+      ],
+      "cwd": "/private/tmp/cgoc-continuation-v1",
+      "expected_exit_code": 0,
+      "started": "2026-10-28T10:22:26.145479+00:00",
+      "status": "expected",
+      "finished": "2026-10-28T10:22:52.913926+00:00",
+      "exit_code": 0,
+      "log_sha256": "331356ee01608e8ddee9318f898b166a4ff9ad1e82ec7ce81371b1df443e43cb"
+    }
+  ]
+}

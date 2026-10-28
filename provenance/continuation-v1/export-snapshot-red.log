@@ -1,0 +1,15 @@
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_safe_export_is_an_immutable_snapshot_of_caller_inputs __________
+
+    def test_safe_export_is_an_immutable_snapshot_of_caller_inputs():
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        result=api.export_numeric(data)
+        data['candidates'][0]['text']='private mutation'
+>       assert 'text' not in result['raw']['candidates'][0]
+E       AssertionError: assert 'text' not in {'pair': [0, 1], 'inclusion_probability': 1.0, 'status': 'valid', 'failure_code': None, ...}
+
+tests/test_continuation_contracts.py:203: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_contracts.py::test_safe_export_is_an_immutable_snapshot_of_caller_inputs
+1 failed, 1 passed in 0.86s

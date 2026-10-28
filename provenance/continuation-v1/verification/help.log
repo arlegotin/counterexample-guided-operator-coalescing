@@ -1,0 +1,11 @@
+usage: continuation_recovery.py [-h] --config CONFIG --mode
+                                {validate-config,owned-controls,profile,pilot}
+                                --out OUT
+
+Executable asset-free WP1 runner; scientific pilot remains gated.
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG
+  --mode {validate-config,owned-controls,profile,pilot}
+  --out OUT

@@ -1,0 +1,131 @@
+..........FFFFFF.........F                                               [100%]
+=================================== FAILURES ===================================
+_ test_failed_rows_cannot_export_private_payloads[initialized_digest-PRIVATE TEXT] _
+
+field = 'initialized_digest', value = 'PRIVATE TEXT'
+
+    @pytest.mark.parametrize('field,value',[('initialized_digest','PRIVATE TEXT'),('fitted_digest',{'tokens':[1,2]})])
+    def test_failed_rows_cannot_export_private_payloads(field,value):
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        c=data['candidates'][0]
+        c.update(status='failed',failure_code='budget',observations=[],damage=[])
+        c[field]=value
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:140: Failed
+____ test_failed_rows_cannot_export_private_payloads[fitted_digest-value1] _____
+
+field = 'fitted_digest', value = {'tokens': [1, 2]}
+
+    @pytest.mark.parametrize('field,value',[('initialized_digest','PRIVATE TEXT'),('fitted_digest',{'tokens':[1,2]})])
+    def test_failed_rows_cannot_export_private_payloads(field,value):
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        c=data['candidates'][0]
+        c.update(status='failed',failure_code='budget',observations=[],damage=[])
+        c[field]=value
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:140: Failed
+_____________ test_damage_windows_and_denominators_must_be_common ______________
+
+    def test_damage_windows_and_denominators_must_be_common():
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        data['candidates'][1]['damage'][0]['window_sha256']='f'*64
+        data['candidates'][1]['damage'][0]['valid_targets']=17
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:147: Failed
+__________ test_accounting_overrun_is_failed_and_not_reusable[shared] __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1501/test_accounting_overrun_is_fai0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c522d80>
+kind = 'shared'
+
+    @pytest.mark.parametrize('kind',['shared','arm'])
+    def test_accounting_overrun_is_failed_and_not_reusable(tmp_path,monkeypatch,kind):
+        api=module('poc.continuation_budget')
+        from poc.budget import BudgetExceeded
+        ledger=api.PilotLedger(spec(budgets=replace(budget(),wall_seconds=1)),tmp_path)
+        times=iter((0.,2.));monkeypatch.setattr(api.time,'monotonic',lambda:next(times))
+        with pytest.raises(BudgetExceeded):
+            if kind=='shared':ledger.shared('calibration',CostRecord(),lambda:None)
+            else:
+                with ledger.arm(spec()):pass
+>       assert ledger.graph()[-1]['status']=='failed'
+E       AssertionError: assert 'complete' == 'failed'
+E         
+E         - failed
+E         + complete
+
+tests/test_continuation_contracts.py:160: AssertionError
+___________ test_accounting_overrun_is_failed_and_not_reusable[arm] ____________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1501/test_accounting_overrun_is_fai1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10bee6b70>
+kind = 'arm'
+
+    @pytest.mark.parametrize('kind',['shared','arm'])
+    def test_accounting_overrun_is_failed_and_not_reusable(tmp_path,monkeypatch,kind):
+        api=module('poc.continuation_budget')
+        from poc.budget import BudgetExceeded
+        ledger=api.PilotLedger(spec(budgets=replace(budget(),wall_seconds=1)),tmp_path)
+        times=iter((0.,2.));monkeypatch.setattr(api.time,'monotonic',lambda:next(times))
+        with pytest.raises(BudgetExceeded):
+            if kind=='shared':ledger.shared('calibration',CostRecord(),lambda:None)
+            else:
+                with ledger.arm(spec()):pass
+>       assert ledger.graph()[-1]['status']=='failed'
+E       AssertionError: assert 'complete' == 'failed'
+E         
+E         - failed
+E         + complete
+
+tests/test_continuation_contracts.py:160: AssertionError
+____________ test_random_donor_must_be_a_member_of_the_active_pool _____________
+
+    def test_random_donor_must_be_a_member_of_the_active_pool():
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        for candidate in data['candidates']:
+            for row in candidate['observations']:
+                if row['source']=='random':row['probe_sha256']='f'*64
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:171: Failed
+____ test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec ____
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1501/test_checkpoint_loader_rejects0')
+
+    def test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec(tmp_path):
+        from poc.train import fit_model,TrainingConfig,TrainingSources
+        from poc.checkpoint import save_checkpoint,load_checkpoint
+        from test_training import models,MemoryRecorder,budget
+        from test_records import spec
+        teacher,student=models()
+        cfg=TrainingConfig(max_updates=1)
+        cfg=replace(cfg,run_spec=spec(budgets=budget(),resolved_config={'training':cfg.identity()}))
+        result=fit_model(student,teacher,TrainingSources(natural=(batch(),)),cfg,budget(),MemoryRecorder())
+        # Save a current checkpoint, then emulate a historical state with its own
+        # valid manifest. save_checkpoint verifies by calling load_checkpoint.
+        result.state.model_schema['execution_profile']='eager-llama-hf-fp32-reciprocal-true-fp64-v2'
+>       with pytest.raises(ValueError,match='profile'):save_checkpoint(result.state,tmp_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_layout.py:131: Failed
+=========================== short test summary info ============================
+FAILED tests/test_continuation_contracts.py::test_failed_rows_cannot_export_private_payloads[initialized_digest-PRIVATE TEXT]
+FAILED tests/test_continuation_contracts.py::test_failed_rows_cannot_export_private_payloads[fitted_digest-value1]
+FAILED tests/test_continuation_contracts.py::test_damage_windows_and_denominators_must_be_common
+FAILED tests/test_continuation_contracts.py::test_accounting_overrun_is_failed_and_not_reusable[shared]
+FAILED tests/test_continuation_contracts.py::test_accounting_overrun_is_failed_and_not_reusable[arm]
+FAILED tests/test_continuation_contracts.py::test_random_donor_must_be_a_member_of_the_active_pool
+FAILED tests/test_continuation_layout.py::test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec
+7 failed, 19 passed in 3.28s

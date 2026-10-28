@@ -1,0 +1,35 @@
+...........F                                                             [100%]
+=================================== FAILURES ===================================
+______ test_owned_runner_uses_real_full_update_without_corpus_or_network _______
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1494/test_owned_runner_uses_real_fu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10c2436b0>
+
+    def test_owned_runner_uses_real_full_update_without_corpus_or_network(tmp_path,monkeypatch):
+        assert SCRIPT.exists(), 'continuation runner missing'
+        spec=importlib.util.spec_from_file_location('continuation_runner',SCRIPT)
+        runner=importlib.util.module_from_spec(spec);spec.loader.exec_module(runner)
+        import socket
+        import poc.data.access
+        import poc.assets
+        def forbidden(*_,**__):raise AssertionError('fixture opened corpus/network')
+        monkeypatch.setattr(socket,'socket',forbidden)
+        monkeypatch.setattr(poc.data.access,'open_records',forbidden)
+        monkeypatch.setattr(poc.assets,'fetch_asset',forbidden)
+        out=tmp_path/'owned.json'
+>       assert runner.main(['--config','configs/continuation-recovery-v1.yaml',
+                            '--mode','owned-controls','--out',str(out)])==0
+E       AssertionError: assert 4 == 0
+E        +  where 4 = <function main at 0x10c5d5c60>(['--config', 'configs/continuation-recovery-v1.yaml', '--mode', 'owned-controls', '--out', '/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1494/test_owned_runner_uses_real_fu0/owned.json'])
+E        +    where <function main at 0x10c5d5c60> = <module 'continuation_runner' from '/private/tmp/cgoc-continuation-v1/provenance/continuation_recovery.py'>.main
+
+tests/test_continuation_runner.py:41: AssertionError
+----------------------------- Captured stdout call -----------------------------
+{"status": "invalid", "receipt": "/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1494/test_owned_runner_uses_real_fu0/owned.json", "exit_code": 4}
+----------------------------- Captured stderr call -----------------------------
+W1028 11:06:29.824000 70899 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+------------------------------ Captured log call -------------------------------
+WARNING  torch.distributed.elastic.multiprocessing.redirects:redirects.py:35 NOTE: Redirects are currently not supported in MacOs.
+=========================== short test summary info ============================
+FAILED tests/test_continuation_runner.py::test_owned_runner_uses_real_full_update_without_corpus_or_network
+1 failed, 11 passed in 6.71s

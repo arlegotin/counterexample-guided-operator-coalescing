@@ -1,0 +1,31 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+___________________ test_cli_help_validate_and_blocked_pilot ___________________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1492/test_cli_help_validate_and_blo0')
+
+    def test_cli_help_validate_and_blocked_pilot(tmp_path):
+>       assert SCRIPT.exists(), 'continuation runner missing'
+E       AssertionError: continuation runner missing
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('provenance/continuation_recovery.py').exists
+
+tests/test_continuation_runner.py:15: AssertionError
+______ test_owned_runner_uses_real_full_update_without_corpus_or_network _______
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1492/test_owned_runner_uses_real_fu0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x106eb3cb0>
+
+    def test_owned_runner_uses_real_full_update_without_corpus_or_network(tmp_path,monkeypatch):
+>       assert SCRIPT.exists(), 'continuation runner missing'
+E       AssertionError: continuation runner missing
+E       assert False
+E        +  where False = exists()
+E        +    where exists = PosixPath('provenance/continuation_recovery.py').exists
+
+tests/test_continuation_runner.py:30: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_runner.py::test_cli_help_validate_and_blocked_pilot
+FAILED tests/test_continuation_runner.py::test_owned_runner_uses_real_full_update_without_corpus_or_network
+2 failed in 0.03s

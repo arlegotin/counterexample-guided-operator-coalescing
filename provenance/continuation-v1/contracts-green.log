@@ -1,0 +1,44 @@
+.F........                                                               [100%]
+=================================== FAILURES ===================================
+__________ test_plan_full_updates_balance_and_preserve_full_builders ___________
+
+    def test_plan_full_updates_balance_and_preserve_full_builders():
+        api = module('poc.continuation_plan')
+        from poc.train import ProbeTrainingSource, iter_update_targets
+        # 4 eligible targets/template: 2048 presentations/update. Whole templates
+        # retain original masks and builders; no synthetic completion of epoch tails.
+        items = []
+        depths = {}
+        for source in ('natural', 'student', 'donor'):
+            for depth in (0, 2):
+                identity = f'{source}-{depth}'
+                b = batch()
+                items.append(ProbeTrainingSource(b, source, 'fit', identity, lambda *_: None))
+                depths[identity] = depth
+>       plan = api.build_target_plan(tuple(items), depths, updates=2,
+            weights={'natural': .5, 'student': .25, 'donor': .25}, affected_depths=(0, 2))
+
+tests/test_continuation_contracts.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+poc/continuation_plan.py:63: in build_target_plan
+    metadata = {p.identity:window_metadata(p.template) for p in items}
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+poc/continuation_plan.py:22: in window_metadata
+    rows.append(dict(document_sha256=digest(document), component_sha256=digest(component),
+                                     ^^^^^^^^^^^^^^^^
+poc/continuation_plan.py:13: in digest
+    return hashlib.sha256(canonical_json(value)).hexdigest()
+                          ^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = 'd0'
+
+    def canonical_json(value: Mapping) -> bytes:
+        if not isinstance(value, Mapping):
+>           raise TypeError("canonical_json requires a mapping")
+E           TypeError: canonical_json requires a mapping
+
+poc/records.py:22: TypeError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_contracts.py::test_plan_full_updates_balance_and_preserve_full_builders
+1 failed, 9 passed in 0.90s

@@ -1,0 +1,220 @@
+.F........FFFFFFFF.........FF                                            [100%]
+=================================== FAILURES ===================================
+__________ test_plan_full_updates_balance_and_preserve_full_builders ___________
+
+    def test_plan_full_updates_balance_and_preserve_full_builders():
+        api = module('poc.continuation_plan')
+        from poc.train import ProbeTrainingSource, iter_update_targets
+        # 4 eligible targets/template: 2048 presentations/update. Whole templates
+        # retain original masks and builders; no synthetic completion of epoch tails.
+        items = []
+        depths = {}
+        for source in ('natural', 'student', 'donor'):
+            for depth in (0, 2):
+                identity = f'{source}-{depth}'
+                b = batch()
+                items.append(ProbeTrainingSource(b, source, 'fit', identity, lambda *_: None))
+                depths[identity] = depth
+        plan = api.build_target_plan(tuple(items), depths, updates=2,
+            weights={'natural': .5, 'student': .25, 'donor': .25}, affected_depths=(0, 2))
+        updates = tuple(iter_update_targets(tuple(p.template for p in plan.sources.probes), 8192))
+        assert [u.valid_targets for u in updates] == [8192, 8192]
+        for u in updates:
+            counts = {s: 0 for s in ('natural', 'student', 'donor')}
+            for b, (i, _, _) in zip(u.batches, u.slices, strict=True):
+                counts[plan.sources.probes[i].source] += int(b.target_mask.sum())
+            assert counts == {'natural':4096, 'student':2048, 'donor':2048}
+>       assert all(any(p.template is original.template and p.identity==original.identity
+            and p.build.__wrapped__ is original.build for original in items) for p in plan.sources.probes)
+
+tests/test_continuation_contracts.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_continuation_contracts.py:65: in <genexpr>
+    assert all(any(p.template is original.template and p.identity==original.identity
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x10fede170>
+
+    assert all(any(p.template is original.template and p.identity==original.identity
+>       and p.build.__wrapped__ is original.build for original in items) for p in plan.sources.probes)
+            ^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'function' object has no attribute '__wrapped__'
+
+tests/test_continuation_contracts.py:66: AttributeError
+_ test_failed_rows_cannot_export_private_payloads[initialized_digest-PRIVATE TEXT] _
+
+field = 'initialized_digest', value = 'PRIVATE TEXT'
+
+    @pytest.mark.parametrize('field,value',[('initialized_digest','PRIVATE TEXT'),('fitted_digest',{'tokens':[1,2]})])
+    def test_failed_rows_cannot_export_private_payloads(field,value):
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        c=data['candidates'][0]
+        c.update(status='failed',failure_code='budget',observations=[],damage=[])
+        c[field]=value
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:141: Failed
+____ test_failed_rows_cannot_export_private_payloads[fitted_digest-value1] _____
+
+field = 'fitted_digest', value = {'tokens': [1, 2]}
+
+    @pytest.mark.parametrize('field,value',[('initialized_digest','PRIVATE TEXT'),('fitted_digest',{'tokens':[1,2]})])
+    def test_failed_rows_cannot_export_private_payloads(field,value):
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        c=data['candidates'][0]
+        c.update(status='failed',failure_code='budget',observations=[],damage=[])
+        c[field]=value
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:141: Failed
+_____________ test_damage_windows_and_denominators_must_be_common ______________
+
+    def test_damage_windows_and_denominators_must_be_common():
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        data['candidates'][1]['damage'][0]['window_sha256']='f'*64
+        data['candidates'][1]['damage'][0]['valid_targets']=17
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:148: Failed
+__________ test_accounting_overrun_is_failed_and_not_reusable[shared] __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1502/test_accounting_overrun_is_fai0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10fee6f00>
+kind = 'shared'
+
+    @pytest.mark.parametrize('kind',['shared','arm'])
+    def test_accounting_overrun_is_failed_and_not_reusable(tmp_path,monkeypatch,kind):
+        api=module('poc.continuation_budget')
+        from poc.budget import BudgetExceeded
+        ledger=api.PilotLedger(spec(budgets=replace(budget(),wall_seconds=1)),tmp_path)
+        times=iter((0.,2.));monkeypatch.setattr(api.time,'monotonic',lambda:next(times))
+        with pytest.raises(BudgetExceeded):
+            if kind=='shared':ledger.shared('calibration',CostRecord(),lambda:None)
+            else:
+                with ledger.arm(spec()):pass
+>       assert ledger.graph()[-1]['status']=='failed'
+E       AssertionError: assert 'complete' == 'failed'
+E         
+E         - failed
+E         + complete
+
+tests/test_continuation_contracts.py:161: AssertionError
+___________ test_accounting_overrun_is_failed_and_not_reusable[arm] ____________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1502/test_accounting_overrun_is_fai1')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10ff0b290>
+kind = 'arm'
+
+    @pytest.mark.parametrize('kind',['shared','arm'])
+    def test_accounting_overrun_is_failed_and_not_reusable(tmp_path,monkeypatch,kind):
+        api=module('poc.continuation_budget')
+        from poc.budget import BudgetExceeded
+        ledger=api.PilotLedger(spec(budgets=replace(budget(),wall_seconds=1)),tmp_path)
+        times=iter((0.,2.));monkeypatch.setattr(api.time,'monotonic',lambda:next(times))
+        with pytest.raises(BudgetExceeded):
+            if kind=='shared':ledger.shared('calibration',CostRecord(),lambda:None)
+            else:
+                with ledger.arm(spec()):pass
+>       assert ledger.graph()[-1]['status']=='failed'
+E       AssertionError: assert 'complete' == 'failed'
+E         
+E         - failed
+E         + complete
+
+tests/test_continuation_contracts.py:161: AssertionError
+____________ test_random_donor_must_be_a_member_of_the_active_pool _____________
+
+    def test_random_donor_must_be_a_member_of_the_active_pool():
+        api=module('poc.continuation_evidence');data=numeric_fixture()
+        for candidate in data['candidates']:
+            for row in candidate['observations']:
+                if row['source']=='random':row['probe_sha256']='f'*64
+>       with pytest.raises(ValueError):api.export_numeric(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:172: Failed
+___ test_planned_depth_is_checked_against_actual_full_record_before_backward ___
+
+    def test_planned_depth_is_checked_against_actual_full_record_before_backward():
+        api=module('poc.continuation_plan')
+        from test_training import models,local_sources,MemoryRecorder
+        teacher,student=models()
+        natural=local_sources(teacher,student).probes[0]  # actual depth 1
+        alias=replace(natural,identity='other')
+        plan=api.build_target_plan((natural,alias),{natural.identity:0,alias.identity:1},
+            updates=1,weights={'natural':1.},affected_depths=(0,1))
+>       with pytest.raises(ValueError,match='declared depth'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_contracts.py:183: Failed
+----------------------------- Captured stderr call -----------------------------
+W1028 11:12:46.071000 77706 torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+------------------------------ Captured log call -------------------------------
+WARNING  torch.distributed.elastic.multiprocessing.redirects:redirects.py:35 NOTE: Redirects are currently not supported in MacOs.
+_________ test_live_peak_observation_enforces_cap_and_retains_overrun __________
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1502/test_live_peak_observation_enf0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x119cf1a30>
+
+    def test_live_peak_observation_enforces_cap_and_retains_overrun(tmp_path,monkeypatch):
+        api=module('poc.continuation_budget')
+        from poc.budget import BudgetExceeded
+>       assert hasattr(api,'process_peak_bytes'), 'CPU high-water observer missing'
+E       AssertionError: CPU high-water observer missing
+E       assert False
+E        +  where False = hasattr(<module 'poc.continuation_budget' from '/private/tmp/cgoc-continuation-v1/poc/continuation_budget.py'>, 'process_peak_bytes')
+
+tests/test_continuation_contracts.py:190: AssertionError
+____ test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec ____
+
+tmp_path = PosixPath('/private/var/folders/q3/tm7kkng56417wgzydc4q8p8r0000gn/T/pytest-of-artemlegotin/pytest-1502/test_checkpoint_loader_rejects0')
+
+    def test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec(tmp_path):
+        from poc.train import fit_model,TrainingConfig,TrainingSources
+        from poc.checkpoint import save_checkpoint,load_checkpoint
+        from test_training import models,MemoryRecorder,budget
+        from test_records import spec
+        teacher,student=models()
+        cfg=TrainingConfig(max_updates=1)
+        cfg=replace(cfg,run_spec=spec(budgets=budget(),resolved_config={'training':cfg.identity()}))
+        result=fit_model(student,teacher,TrainingSources(natural=(batch(),)),cfg,budget(),MemoryRecorder())
+        # Save a current checkpoint, then emulate a historical state with its own
+        # valid manifest. save_checkpoint verifies by calling load_checkpoint.
+        result.state.model_schema['execution_profile']='eager-llama-hf-fp32-reciprocal-true-fp64-v2'
+>       with pytest.raises(ValueError,match='profile'):save_checkpoint(result.state,tmp_path)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_continuation_layout.py:131: Failed
+________________ test_reload_verification_charges_both_forwards ________________
+
+    def test_reload_verification_charges_both_forwards():
+        from poc import continuation_controls as controls
+        from test_training import MemoryRecorder
+>       assert hasattr(controls,'reload_difference'), 'charged reload helper missing'
+E       AssertionError: charged reload helper missing
+E       assert False
+E        +  where False = hasattr(<module 'poc.continuation_controls' from '/private/tmp/cgoc-continuation-v1/poc/continuation_controls.py'>, 'reload_difference')
+
+tests/test_continuation_layout.py:137: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_continuation_contracts.py::test_plan_full_updates_balance_and_preserve_full_builders
+FAILED tests/test_continuation_contracts.py::test_failed_rows_cannot_export_private_payloads[initialized_digest-PRIVATE TEXT]
+FAILED tests/test_continuation_contracts.py::test_failed_rows_cannot_export_private_payloads[fitted_digest-value1]
+FAILED tests/test_continuation_contracts.py::test_damage_windows_and_denominators_must_be_common
+FAILED tests/test_continuation_contracts.py::test_accounting_overrun_is_failed_and_not_reusable[shared]
+FAILED tests/test_continuation_contracts.py::test_accounting_overrun_is_failed_and_not_reusable[arm]
+FAILED tests/test_continuation_contracts.py::test_random_donor_must_be_a_member_of_the_active_pool
+FAILED tests/test_continuation_contracts.py::test_planned_depth_is_checked_against_actual_full_record_before_backward
+FAILED tests/test_continuation_contracts.py::test_live_peak_observation_enforces_cap_and_retains_overrun
+FAILED tests/test_continuation_layout.py::test_checkpoint_loader_rejects_old_profile_with_matching_expected_spec
+FAILED tests/test_continuation_layout.py::test_reload_verification_charges_both_forwards
+11 failed, 18 passed in 3.20s

@@ -1,0 +1,195 @@
+{
+  "bit_exact_logits": true,
+  "census_equal": true,
+  "device": "cpu",
+  "digest_equal": true,
+  "dtype": "float64",
+  "execution_profile": "eager-llama-hf-fp32-reciprocal-true-fp64-contiguous-factors-v3",
+  "max_logit_difference": 0.0,
+  "parameter_bytes_equal": true,
+  "qualified": true,
+  "strides": {
+    "layers.0.mlp.residuals.down_proj.A": {
+      "after": [
+        12,
+        1
+      ],
+      "before": [
+        12,
+        1
+      ]
+    },
+    "layers.0.mlp.residuals.down_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.0.mlp.residuals.gate_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.0.mlp.residuals.gate_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.0.mlp.residuals.up_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.0.mlp.residuals.up_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.down_proj.A": {
+      "after": [
+        12,
+        1
+      ],
+      "before": [
+        12,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.down_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.gate_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.gate_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.up_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.1.mlp.residuals.up_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.down_proj.A": {
+      "after": [
+        12,
+        1
+      ],
+      "before": [
+        12,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.down_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.gate_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.gate_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.up_proj.A": {
+      "after": [
+        8,
+        1
+      ],
+      "before": [
+        8,
+        1
+      ]
+    },
+    "layers.2.mlp.residuals.up_proj.B": {
+      "after": [
+        2,
+        1
+      ],
+      "before": [
+        2,
+        1
+      ]
+    }
+  },
+  "tied_head": true,
+  "tolerance": 1e-12
+}
