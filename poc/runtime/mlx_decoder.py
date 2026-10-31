@@ -174,7 +174,7 @@ class MLXDecoder:
         def projection(z,name):
             if self.metadata['kind'] == 'dense': return self._linear(z,f'layers.{depth}.mlp.{name}')
             result = self._linear(z,f'bank.{self.layer_map[depth]}.{name}')
-            if self.metadata['rank']:
+            if self.metadata['rank'] and (self.metadata.get('factor_presence') is None or self.metadata['factor_presence'][depth][name]):
                 prefix = f'layers.{depth}.mlp.residuals.{name}'
                 result = result + (z@self.weights[prefix+'.A'].astype(mx.float32).T)@self.weights[prefix+'.B'].astype(mx.float32).T
             return result

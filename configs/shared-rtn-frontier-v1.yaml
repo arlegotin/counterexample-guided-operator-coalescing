@@ -1,0 +1,66 @@
+schema_version: 1
+study: shared-rtn-frontier-v1
+out: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/artifacts/shared-rtn-frontier-v1
+teacher:
+  directory: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/artifacts/teacher_noop
+  manifest_sha256: 0b461c4d88965ec7b44ca4c26fe321be57fd0e471844d95b641b661cc4c1927e
+shared:
+  directory: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/artifacts/shared_full17_float
+  manifest_sha256: ad2153036f70682a3061f7db07c82c0a663488de00345239109d4a50cd063439
+inputs:
+  path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/inputs/windows.json
+  population_manifest_sha256: 5f8efb57981dc350f74426ceeb667e36cdbcb85ef73c7b64f71a6718ec5a1613
+  sha256: aea47ba9eca3450151f911d0ce05b732c7c482390d19fc2776f32536779fab40
+qualified_source:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-calibration-v1/qualification-v1.json
+  sha256: 9ec81104bbe9001846631fb9c82d90ff418ca04ff3be730fcb50ab803b53e441
+worker:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-rtn-frontier-v1/native-fidelity-worker-v1.py
+  sha256: 7c062d1cd6686c247690a7367f021cdbad8a8a2b45aba358085d88c2507828b5
+reference:
+  teacher_mps_digest: b5b12555a38fe9ab6ddcd3d487d8ea11738bd9c7e921dc6a283bc06ec34518f5
+  source_run_id: 3d06f9d73d3ded5f3f960a12cb31ef4b2f07c3ee5905a65bfe690d61c0fe31de
+  preparation:
+    path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/preparation.json
+    sha256: 06bee4a7db4a4a1ec43505349c40ee581b031a3c686c3fce1c79209a7b639964
+  preparation_attempt:
+    path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/provenance/native-baseline-recovery256-v2/preparation/attempt.json
+    sha256: bfd022e60e246699dc127b4199b26224e56364793eafe1f4a7e5364d63dcdbbb
+  preparation_protocol:
+    path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/provenance/native-baseline-recovery256-v2/preparation-protocol.json
+    sha256: 874a873c9bbc57bd14cdb1a900b6fd0bbd641203f25e61347e0be75d8bfc8d62
+  source_contract:
+    path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/provenance/native-baseline-recovery256-v2/analysis-contract.json
+    sha256: daaab3c2f68010681ba635e094248943a33e982c0a2766cb8787c982dd99bcc5
+  scientific_observation:
+    path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/artifacts/recovery-diagnosis-v2/runs/full_student-seed17/observations/0256.json
+    sha256: a5f70381b8cefbf52a330fee9304b7835c5105ed3ac378995580f44419cc754d
+serial_gate:
+  directory: /Users/artemlegotin/.codex-a/worktrees/3ea7/counterexample-guided-operator-coalescing/provenance/joint-composition-endpoint-analysis-v3
+  registry_sha256: 206c04b6d4e2b9a80d581f25a9b89c995990ab1afd4e2f7547a7407444d89dfd
+  runner: /private/tmp/cgoc_joint_composition_analysis_runner_v1.py
+  result_relative: analysis/result.json
+  attempt_field: analysis_attempt_sha256
+resource:
+  preparation:
+    updates: 0
+    valid_target_presentations: 0
+    teacher_forward_calls: 0
+    suffix_backward_calls: 0
+    student_backward_calls: 0
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 900
+    disk_bytes: 51539607552
+    memory_bytes: 6442450944
+  profile:
+    wall_seconds: 300
+    memory_bytes: 6442450944
+    output_disk_bytes: 2147483648
+  evaluation:
+    memory_bytes: 6442450944
+    output_disk_bytes: 2147483648
+    wall_ceiling: 1800
+    campaign_wall_seconds: 7200
+    family_disk_bytes: 51539607552
+    deadline_unix: 1793518703.093599

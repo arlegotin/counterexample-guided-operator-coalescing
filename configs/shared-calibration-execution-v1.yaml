@@ -1,0 +1,41 @@
+schema_version: 1
+study: shared-calibration-execution-v1
+out: /Users/artemlegotin/.codex-a/worktrees/723f/counterexample-guided-operator-coalescing/artifacts/shared-calibration-execution-v1
+source_bundle:
+  directory: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/artifacts/shared_full17_float
+  manifest_sha256: ad2153036f70682a3061f7db07c82c0a663488de00345239109d4a50cd063439
+parent_qualification:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-rtn-frontier-v1/qualification.json
+  sha256: affd3670ca8d53092d0bd905e995155fdfbc8013450a5b7f7e23fc29966e7f14
+ancestor_config:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/configs/shared-rtn-frontier-v1.yaml
+  sha256: f00cb30725590d9340b42f4bb88d76465870571d7d2012e4f02034cf207081ce
+fit_manifest:
+  path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/data/recovery-diagnosis-v1-population/prepared/fit-manifest.json
+  sha256: 604eb83e032a2ed375751af797e55a8827c546eab70d07b1ca78af6d6d3817ad
+tokenizer_sha256: 9f027c4d1f9423fa1341c88a180ef08bc7fd45f7f3b144f64ed83de273d51083
+vocabulary_size: 49152
+source_components: 512
+selected_components: 16
+max_document_bytes: 1048576
+max_token_file_bytes: 4194304
+expected_layout:
+  hidden_size: 576
+  intermediate_size: 1536
+  num_hidden_layers: 30
+  banks: 29
+  rank: 8
+resource:
+  profile:
+    wall_seconds: 900
+    memory_bytes: 4294967296
+    output_disk_bytes: 4294967296
+    max_statistics_bytes: 1073741824
+  run:
+    wall_ceiling: 3600
+    memory_bytes: 4294967296
+    family_disk_bytes: 8589934592
+  deadline_unix: 1793605103.093599
+serial_gate:
+  directory: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-rtn-frontier-v1
+  queue_freeze_sha256: 1042d1d76badad09f1eca9989a6dcb745369609496882b3556f929e3896b08e3

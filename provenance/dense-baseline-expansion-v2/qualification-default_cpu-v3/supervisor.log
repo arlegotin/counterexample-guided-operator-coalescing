@@ -1,0 +1,1 @@
+{"exit_code": 0, "failure": null, "wall_seconds": 906.6923685839865, "sampled_process_tree_rss_bytes": 890650624, "sampled_scratch_peak_bytes": 277532233, "protocol_sha256": "0c5e3ff895777b789db8065d57a46a5d76a8952969c6695ae9add4d1a48f9b31", "scope": "fixed RTN artifact study; finite source-bound stage; no retries"}

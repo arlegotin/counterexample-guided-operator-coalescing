@@ -1,0 +1,80 @@
+........................................................................ [  3%]
+........................................................................ [  7%]
+........................................................................ [ 11%]
+........................................................................ [ 15%]
+........................................................................ [ 18%]
+........................................................................ [ 22%]
+........................................................................ [ 26%]
+........................................................................ [ 30%]
+........................F............................................... [ 33%]
+........................................................................ [ 37%]
+........................................................................ [ 41%]
+........................................................................ [ 45%]
+........................................................................ [ 48%]
+........................................................................ [ 52%]
+........................................................................ [ 56%]
+........................................................................ [ 60%]
+........................................................................ [ 63%]
+........................................................................ [ 67%]
+........................................................................ [ 71%]
+........................................................................ [ 75%]
+........................................................................ [ 79%]
+........................................................................ [ 82%]
+........................................................................ [ 86%]
+........................................................................ [ 90%]
+........................................................................ [ 94%]
+...................................................s.................... [ 97%]
+.........................................                                [100%]
+=================================== FAILURES ===================================
+_ test_full_driver_profile_run_interruption_resume_and_frozen_old_group[current_continuation-affected_group] _
+
+source = namespace(teacher=TorchDecoder(
+  (embed_tokens): Embedding(11, 8)
+  (layers): ModuleList(
+    (0-5): 6 x LlamaDecoder...ivate/tmp/cgoc-dense-v2-lineage-qualification-v3/default_cpu/pytest/test_full_driver_profile_run_i2/completed-source'))
+tmp_path = PosixPath('/private/tmp/cgoc-dense-v2-lineage-qualification-v3/default_cpu/pytest/test_full_driver_profile_run_i2')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x118b6f650>
+reference = 'current_continuation', scope = 'affected_group'
+
+    @pytest.mark.parametrize('reference,scope',[('current_continuation','affected_groups'),('teacher_reset','affected_groups'),('current_continuation','affected_group')])
+    def test_full_driver_profile_run_interruption_resume_and_frozen_old_group(source,tmp_path,monkeypatch,reference,scope):
+     import yaml,poc.teacher
+     from poc.recovery_study import load_study_config
+     s=source;d=driver();out=tmp_path/'recovery';cfg=load_study_config(ROOT/'configs/composition-recovery-v1.yaml');cfg.update(s.config);cfg.update(study='owned-joint-'+reference+'-'+scope,out=str(out),asset_root=str(tmp_path),updates=2,observations=[0,1,2],checkpoint_every=1,observation_policy='optimizer_plus_tuning_v2',resource_budget=None,retained_dependency_roots=[str(s.dependency)],profile_resource_budget=budget(updates=1,wall_seconds=600,valid_target_presentations=4000000,memory_bytes=4*1024**3,disk_bytes=2*1024**3,search_proposals=10).to_dict());cfg['composition']=dict(s.config['composition'],reference=reference);cfg['owner_scope']=scope;cfg['trainable_depths']=[0,1,2,3] if scope=='affected_groups' else [2,3];cfg['populations']={'fit':{'path':'owned','sha256':'b'*64,'components':1},'tuning':{'path':'owned-dev','sha256':'c'*64,'components':1}};cfg['numerical_profile']['device']='cpu';dev=replace(s.batch,document_ids=('dev',),cluster_ids=('dev-component',))
+     monkeypatch.setattr(d,'load_inputs',lambda c:(object(),s.fit,(s.batch,),(dev,),{17:s.plan}));monkeypatch.setattr(poc.teacher,'load_teacher',lambda a:deepcopy(s.teacher));monkeypatch.setattr(d,'output_root',lambda c:out);out.mkdir();path=tmp_path/'study.yaml';path.write_text(yaml.safe_dump(cfg));code=d.executed_sources(path);d.write_new(out/'controls.json',{'backend':{'passed':True,'device':'cpu'},'implementation_sha256':code['implementation_sha256'],'environment_sha256':d.hashed(d.environment())})
+     profile=d.execute(cfg,path,'profile');assert profile['arms']['full_student']['planned_updates']==2
+     cap=budget(updates=2,wall_seconds=3000,valid_target_presentations=4000000,memory_bytes=4*1024**3,disk_bytes=2*1024**3,search_proposals=10).to_dict();cfg['resource_budget']={'frozen_profile_sha256':sha(out/'profile.json'),'per_arm':{'full_student':cap}};path.write_text(yaml.safe_dump(cfg));observe=d.observation;called={'once':False}
+     def interrupt(*a,**k):
+      if a[5]==1 and not called['once']:called['once']=True;raise InterruptedError('owned safe-boundary interruption')
+      return observe(*a,**k)
+     monkeypatch.setattr(d,'observation',interrupt)
+     with pytest.raises(InterruptedError):d.execute(cfg,path,'run')
+>    monkeypatch.setattr(d,'observation',observe);d.execute(cfg,path,'run',resume=True)
+                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_joint_composition_recovery.py:95: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+provenance/recovery_diagnosis.py:506: in execute
+    write_or_verify(path,value)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/private/tmp/cgoc-dense-v2-lineage-qualification-v3/default_cpu/pytest/test_full_driver_profile_run_i2/recovery/runs/executed-source.json')
+value = {'commit': '80a8b8389ecf60b8e23eccd29971c2c1cec380fd', 'branch': '', 'tracked_diff_sha256': 'dbe6bd0d025eb84cbd6bdda7c...baseline-expansion-v1-proposal-v2.yaml': '628a1d03342c072f55bd11a2a3b5e384554e29b5406a364198618586282a2181', ...}, ...}
+
+    def write_or_verify(path,value):
+        path=Path(path)
+        if path.exists():
+>           if path.read_bytes()!=canonical_json(value):raise ValueError('resume artifact/contract identity mismatch: '+str(path))
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           ValueError: resume artifact/contract identity mismatch: /private/tmp/cgoc-dense-v2-lineage-qualification-v3/default_cpu/pytest/test_full_driver_profile_run_i2/recovery/runs/executed-source.json
+
+provenance/recovery_diagnosis.py:51: ValueError
+=============================== warnings summary ===============================
+tests/test_confirmation_access.py::test_abrupt_exit_after_started_consumes_population_across_grants
+  /opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/popen_fork.py:66: DeprecationWarning: This process (pid=32728) is multi-threaded, use of fork() may lead to deadlocks in the child.
+    self.pid = os.fork()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_joint_composition_recovery.py::test_full_driver_profile_run_interruption_resume_and_frozen_old_group[current_continuation-affected_group]
+1 failed, 1911 passed, 1 skipped, 68 deselected, 1 warning in 861.17s (0:14:21)

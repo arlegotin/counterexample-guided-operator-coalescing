@@ -1,0 +1,123 @@
+schema_version: 2
+study: dense-baseline-expansion-v2
+out: /Users/artemlegotin/.codex-a/worktrees/1cab/counterexample-guided-operator-coalescing/artifacts/dense-baseline-expansion-v2
+reference_acceptance:
+  path: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/provenance/shared-gptq-independent-admission-v3/acceptance.json
+  sha256: e0d7083ab1d03b15202e241543a9b27584064b695964717389d06076947c202a
+reference_config:
+  path: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/configs/shared-gptq-execution-v3.yaml
+  sha256: e3120400d00357460434c06abb33765407810af3ffd0c875ed2f651c5b10fa3c
+reference_artifacts:
+  dense_gptq2_embedding4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_gptq2_embedding4
+    manifest_sha256: 58c60e90ccb5ce09855d0c7b0bf2997bcc2f09899448f410fc986dba2d134ae0
+  dense_gptq4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_gptq4
+    manifest_sha256: 0f1db3f85f07d08c0a4865d773ab6e34d64fc4b9346519a92010ce1d300bd2e4
+  dense_rtn2:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_rtn2
+    manifest_sha256: b65fa8f55b5238ded2d749544175b5a747edee6bd7d6e9216b34e40141226118
+  dense_rtn2_embedding4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_rtn2_embedding4
+    manifest_sha256: aa842f74bf8152d0e36983aa0073cbf6b986c8dd767fa1969358e48a6ca327a6
+  dense_rtn4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_rtn4
+    manifest_sha256: e0dbd346c7e222343ce01c18e7db77e75b453943acd46d3ddfb0533f532f88de
+  dense_rtn8:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/dense_rtn8
+    manifest_sha256: 4618d0df874e8f0b5b91a7590bcea3a4cabc993cecceb31cd504ad7980f1ff40
+  shared_float:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/shared_float
+    manifest_sha256: ad2153036f70682a3061f7db07c82c0a663488de00345239109d4a50cd063439
+  shared_gptq2_embedding4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/shared_gptq2_embedding4
+    manifest_sha256: 4a532316e2c076c1f866269fb9a2a1a097a3b8be8fbabe4e89148e75aa40e805
+  shared_gptq4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/shared_gptq4
+    manifest_sha256: 54a2558b9dfe6227210d1b733a058ae23f6fb8611aef69aacff39966cd08c73e
+  shared_rtn2_embedding4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/shared_rtn2_embedding4
+    manifest_sha256: d274b84c9fc57566be77634900c89195fcb4a1d53515b80cf7463aa44f03f999
+  shared_rtn4:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/shared_rtn4
+    manifest_sha256: e4d58420d8656d6c90ee0cebc5bb332ce09bc947f8bca434591ca444b39f1245
+  teacher_noop:
+    directory: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3/artifacts/teacher_noop
+    manifest_sha256: 0b461c4d88965ec7b44ca4c26fe321be57fd0e471844d95b641b661cc4c1927e
+fit_manifest:
+  path: /Users/artemlegotin/.codex-a/worktrees/1cab/counterexample-guided-operator-coalescing/data/dense-baseline-expansion-v2/fit80-manifest.json
+  sha256: 09642e0830d5fe17228191ee98f28c386b00ece679862e509f80a476435ef24a
+inputs:
+  path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/inputs/windows.json
+  population_manifest_sha256: 5f8efb57981dc350f74426ceeb667e36cdbcb85ef73c7b64f71a6718ec5a1613
+  sha256: aea47ba9eca3450151f911d0ce05b732c7c482390d19fc2776f32536779fab40
+worker:
+  path: /Users/artemlegotin/.codex-a/worktrees/1cab/counterexample-guided-operator-coalescing/provenance/dense_frontier_native_worker.py
+  sha256: 7c062d1cd6686c247690a7367f021cdbad8a8a2b45aba358085d88c2507828b5
+recipes:
+- method: gptq
+  bits: 4
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 0
+  group_size: 64
+  seed: 17
+  context: 512
+- method: gptq
+  bits: 2
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 0
+  group_size: 64
+  seed: 17
+  context: 512
+- method: awq
+  bits: 4
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 0
+  group_size: 64
+  seed: 17
+  context: 512
+- method: awq
+  bits: 2
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 0
+  group_size: 64
+  seed: 17
+  context: 512
+- method: dwq
+  bits: 4
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 16
+  group_size: 64
+  seed: 17
+  context: 512
+- method: dwq
+  bits: 2
+  embedding_bits: 4
+  calibration_components: 64
+  internal_components: 16
+  group_size: 64
+  seed: 17
+  context: 512
+calibration_order: first80 disjoint components sorted by document_id; first64train
+  next16fit_internal
+numerics:
+  temperature: 1
+  chunk_size: 32
+  negative_kl_floor_per_target: 2.0e-06
+  decision_resolution: 2.0e-05
+  accumulation: cpu_float64
+  vocabulary: complete
+  capability_tolerance: null
+preparation_limits:
+  phase_wall_seconds: 7200
+  memory_bytes: 8589934592
+  family_disk_bytes: 12884901888
+  campaign_wall_seconds: 28800
+resource_freeze: null
+accounting_profile: dense-native-contexts-v2
+tokenization_policy: no-special-tokens-v2

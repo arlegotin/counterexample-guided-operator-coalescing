@@ -1,0 +1,33 @@
+"""Finite wait for prior neural queue, then one bounded dense campaign."""
+from pathlib import Path
+import sys,time,json
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+from provenance.dense_frontier_campaign import read_contract,PROPOSAL
+from provenance.dense_frontier_execution import (reference,read_reference,require_dense_qualification,dense_serial_evidence,
+    require_dense_serial_admission,dense_execution_env)
+from provenance import sharing_frontier_study as core
+from poc.recovery_endpoints import finite_json,write_once
+prov=ROOT/'provenance/dense-baseline-expansion-v2';c=read_contract(PROPOSAL);qref=reference(prov/'qualification-v1.json')
+refs=require_dense_qualification(c,proposal_path=PROPOSAL,qualification=qref)
+requirement=finite_json(prov/'serial-requirement-v1.json');up=Path(requirement['upstream_root'])/'provenance/cold-recovery1024-family-v1'
+begun=time.monotonic();deadline=begun+60*3600
+try:
+ while not (up/'family-complete-v1.json').exists():
+  if (up/'queue-failed-v1.json').exists() or (up/'worker-failed-v1.json').exists():raise ValueError('preceding neural queue failed; preserve it, no automatic scientific retry')
+  if time.monotonic()>deadline:raise TimeoutError('finite60h neural serialization wait exhausted')
+  time.sleep(10)
+ serial=prov/'serial-admission-v1.json'
+ if serial.exists():require_dense_serial_admission(c,admission=reference(serial))
+ else:write_once(serial,dense_serial_evidence(c))
+ refs+=require_dense_serial_admission(c,admission=reference(serial))
+ command=[sys.executable,str(prov/'campaign-worker-v1.py.txt')]
+ caps={'wall_seconds':8*3600+1200,'memory_bytes':12*1024**3,'disk_bytes':12*1024**3}
+ stage=core.execute_stage(command,root=ROOT,output=Path(c['out']),stage=prov/'outer-stage-v1',caps=caps,
+  frozen_files=refs,execution_env=dense_execution_env())
+ core.require_stage_success(stage);core.check_stage_binding(stage,command=command,root=ROOT,output=Path(c['out']),caps=caps,required_refs=refs,execution_env=dense_execution_env())
+ completion=prov/'worker-complete-v1.json';value=finite_json(completion)
+ if value.get('status')!='bounded dense campaign complete; independent admission pending':raise ValueError('campaign worker handoff differs')
+ write_once(prov/'campaign-complete-v1.json',{'status':'finite dense campaign completed; independent acceptance pending',
+  'stage':stage,'worker_completion':reference(completion),'wait_and_execution_seconds':time.monotonic()-begun})
+except BaseException as exc:
+ write_once(prov/'queue-failed-v1.json',{'status':'failed','error':repr(exc),'source':reference(Path(__file__).resolve()),'no_automatic_retry':True});raise

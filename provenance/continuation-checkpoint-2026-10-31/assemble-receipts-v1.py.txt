@@ -1,0 +1,55 @@
+"""Copy already accepted numeric receipts and independently check their reductions."""
+from pathlib import Path
+from datetime import datetime,timezone
+import sys,json,hashlib,math
+import numpy as np
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+from poc.recovery_endpoints import finite_json,file_sha,verify_refs,write_once,paired_summary
+E=Path('/Users/artemlegotin/.codex-a/worktrees/c81a/counterexample-guided-operator-coalescing');M=Path('/Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing')
+out=ROOT/'provenance/continuation-checkpoint-2026-10-31';copies={}
+ref=lambda p:{'path':str(p),'sha256':file_sha(p)}
+def copy(name,reference):
+ verify_refs([reference]);dst=out/name
+ with dst.open('xb') as f:f.write(Path(reference['path']).read_bytes())
+ copies[name]={'sha256':file_sha(dst),'original':reference};return finite_json(dst)
+ea=copy('recovery-acceptance.json',ref(E/'provenance/counterpart-analysis-v1/acceptance-v1.json'))
+er=copy('recovery-analysis.json',ea['result'])
+if ea['status']!='accepted_exploratory_counterpart_comparison; original local pipeline resource failed':raise ValueError('original failure interpretation changed')
+endpoint={}
+for scope in ('local_sum','full_student'):
+ for step,row in er['curves'][scope].items():
+  obs=copy('recovery-'+scope+'-observation-'+step+'.json',row['observation'])
+  if step=='1024':endpoint[scope]=obs['populations']['tuning']
+paired=paired_summary(endpoint['local_sum'],endpoint['full_student'],seed=17,draws=10000)
+assert abs(paired['full_minus_local']['kl_difference']-er['full_minus_local']['kl_difference'])<1e-14
+assert np.allclose(paired['full_minus_local']['contrast_draws'],er['full_minus_local']['contrast_draws'],rtol=0,atol=1e-14)
+ma=copy('native-acceptance.json',ref(M/'provenance/shared-gptq-independent-admission-v3/acceptance.json'))
+mr=copy('native-admission.json',ma['result']);analysis=copy('native-frontier.json',mr['analysis'])
+index=finite_json(M/'artifacts/shared-gptq-execution-v3/evaluation-index.json')
+for label,item in index.items():
+ value=copy('native-'+label+'.json',item['output']);rows=value['rows'];n=sum(r['valid_targets'] for r in rows)
+ assert len(rows)==128 and n==65408
+ for metric in ('kl','nll'):
+  assert abs(math.fsum(r[metric+'_sum'] for r in rows)/n-analysis['points'][label][metric])<1e-13
+local=er['arms']['local_sum']['kl'];full=er['arms']['full_student']['kl'];initial=er['curves']['local_sum']['0']['tuning']['kl']
+summary={'schema_version':1,'checkpoint_date':'2026-10-31','scope':'copied accepted exploratory numeric evidence; no retraining/native replay or protected evaluation performed by this assembly',
+ 'recovery':{'pair':[0,15],'rank':8,'seed':17,'updates':1024,'raw_presentations_per_arm':8388608,'unique_fit_positions':261632,
+  'components':128,'valid_targets':65408,'initial_kl':initial,'local_sum_kl':local,'full_student_kl':full,
+  'local_fraction_repaired':1-local/initial,'full_fraction_repaired':1-full/initial,
+  'full_minus_local_kl':er['full_minus_local']['kl_difference'],'component_interval95':er['full_minus_local']['component_percentile95'],
+  'original_local_pipeline':'failed memory cap after saving complete1024; saved state independently admitted; failure and expense retained',
+  'scale_diagnostic':'not yet independently analyzed','algorithmic_replication':'one long pair/seed; pending additional long seeds'},
+ 'native_frontier':{'components':128,'valid_targets':65408,'named_ceiling_bytes':66064401,
+  'points':{k:{f:v[f] for f in ('complete_bytes','kl','nll')} for k,v in analysis['points'].items()},
+  'primary_shared_minus_dense_gptq4':mr['primary'],'comparability':'same native runtime and evaluation components; preparation differs; one calibration seed'},
+ 'claims':{'recovery_established_in_tested_regime':True,'sharing_beats_dense_quantization':False,
+  'counterexample_advantage_established':False,'capability_acceptability_established':False,'protected_confirmation':False,
+  'production_speedup_established':False},
+ 'reproduction':'raw observation arithmetic is available here; exact model/state/data/runtime assets remain separately required for training or inference replay'}
+write_once(out/'summary.json',summary)
+manifest={'schema_version':1,'created_utc':datetime.now(timezone.utc).isoformat(),'copied_receipts':copies,
+ 'summary':ref(out/'summary.json'),'assembly_source':ref(Path(__file__).resolve()),
+ 'checks':{'paired_component_bootstrap_draws':10000,'native_raw_component_reductions':len(index),'neural_calls':0,'raw_corpus_reads':0,'protected_reads':0},
+ 'scope':'exact original receipt bytes copied; local snapshots do not include model weights or grant access to omitted dependencies'}
+write_once(out/'manifest.json',manifest)
+print(json.dumps({'status':'accepted receipt copies and independent arithmetic','receipts':len(copies),'recovery_kl_contrast':summary['recovery']['full_minus_local_kl'],'native_points':len(index),'manifest':ref(out/'manifest.json')}),flush=True)

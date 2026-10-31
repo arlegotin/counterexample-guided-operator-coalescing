@@ -1,0 +1,105 @@
+schema_version: 2
+study: extra-natural-recovery1024-s17-v2
+asset_root: /Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2
+out: artifacts/extra-natural-recovery1024-s17-v2
+pair:
+- 0
+- 15
+rank: 8
+seed: 17
+calibration_components: 16
+warm_loss_scope: full_student
+warm_updates: 16
+recovery_updates: 1024
+owner_scope: affected_group
+alpha: 0
+observations:
+  warm:
+  - 0
+  - 16
+  recovery:
+  - 0
+  - 1
+  - 4
+  - 16
+  - 32
+  - 64
+  - 128
+  - 256
+  - 512
+  - 1024
+checkpoint_every: 16
+optimizer:
+  bank_lr: 0.0001
+  residual_lr: 0.0003
+  weight_decay: 0
+  lr_factor: 1
+populations:
+  fit:
+    path: /Users/artemlegotin/.codex-a/worktrees/9e23/counterexample-guided-operator-coalescing/data/reconstruction-paired-v2-population/fit-manifest.json
+    sha256: 84848fe1f2fe2ef0b261a80c9c4741220084f8627823b46c8cf99259af4c1dd2
+    components: 512
+  tuning:
+    path: /Users/artemlegotin/.codex-a/worktrees/9e23/counterexample-guided-operator-coalescing/data/reconstruction-paired-v2-population/tuning-manifest.json
+    sha256: 8f6c5dd416238d5a9a2ca8e9c6c361ffcdcb7a2c2d440369e8fc826b1cdc746d
+    components: 128
+initialization_checkpoint:
+  schema_version: 2
+  source_updates: 256
+  source_populations:
+    fit:
+      path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/data/recovery-diagnosis-v1-population/prepared/fit-manifest.json
+      sha256: 604eb83e032a2ed375751af797e55a8827c546eab70d07b1ca78af6d6d3817ad
+    tuning:
+      path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/data/recovery-diagnosis-v1-population/prepared/tuning-manifest.json
+      sha256: 5f8efb57981dc350f74426ceeb667e36cdbcb85ef73c7b64f71a6718ec5a1613
+  checkpoint_directory: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/artifacts/recovery-diagnosis-v2/runs/full_student-seed17/resume/anchor/generation-3decad659bab4c9b8acbed7025ea0bf0
+  checkpoint_manifest_sha256: 376214f02b377cfbb87811a6c5eba4b33ff2873ea4b61446c4e19b7401761afe
+  run_spec_path: /Users/artemlegotin/.codex-a/worktrees/9e23/counterexample-guided-operator-coalescing/data/reconstruction-paired-v2-population/source-metadata/source-spec.json
+  run_spec_sha256: 3d06f9d73d3ded5f3f960a12cb31ef4b2f07c3ee5905a65bfe690d61c0fe31de
+  initialization_record_path: /Users/artemlegotin/.codex-a/worktrees/9e23/counterexample-guided-operator-coalescing/data/reconstruction-paired-v2-population/source-metadata/source-initialization.json
+  initialization_record_sha256: 18868e235b9537c1e953a39d2784891405885385272ad2b271e62745d3239687
+numerical_profile:
+  device: mps
+  dtype: float32
+  chunk_size: 32
+  kl_floor_per_target: 2.0e-06
+  decision_resolution: 2.0e-05
+profile_resource_budget:
+  setup:
+    updates: 0
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 25769803776
+    memory_bytes: 8589934592
+  warm:
+    updates: 16
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 25769803776
+    memory_bytes: 8589934592
+  recovery:
+    updates: 1
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 25769803776
+    memory_bytes: 8589934592
+resource_budget: null
+retained_dependency_roots:
+- /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/artifacts/recovery-diagnosis-v2/runs/full_student-seed17/resume/anchor/generation-3decad659bab4c9b8acbed7025ea0bf0
+- /Users/artemlegotin/.codex-a/worktrees/9e23/counterexample-guided-operator-coalescing/data/reconstruction-paired-v2-population/source-metadata

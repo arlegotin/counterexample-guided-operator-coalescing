@@ -90,15 +90,20 @@ def _load_scientific(path, manifest, *, values=None):
             if model.rank:
                 for name in ('gate_proj','up_proj','down_proj'):
                     prefix = f'layers.{depth}.mlp.residuals.{name}'
+                    if raw.get('factor_presence') is not None and not raw['factor_presence'][depth][name]: continue
                     factors[name] = _Factors(owners[prefix+'.A'],owners[prefix+'.B'])
                     # _Factors makes Parameter wrappers; preserve canonical object and trainability.
                     factors[name].A, factors[name].B = owners[prefix+'.A'],owners[prefix+'.B']
             model.layers[depth].mlp = _BankUse(model.bank,index,factors)
+    if raw.get('inference_only') is True: model._deployment_inference_only = True
     model.eval()
     # CPU source identity includes actual scalar state, aliases and canonical values.
     # A device move changes scientific identity, so other source backends retain
     # their immutable source provenance while the loaded CPU model gets its own.
-    if raw['source_backend'] == 'torch_cpu' and raw['source_checkpoint_digest'] != model.manifest().checkpoint_digest:
+    if raw.get('schema_version', 1) == 2:
+        if raw['deployment_checkpoint_digest'] != model.manifest().checkpoint_digest:
+            raise ValueError('reconstructed deployment checkpoint digest mismatch')
+    elif raw['source_backend'] == 'torch_cpu' and raw['source_checkpoint_digest'] != model.manifest().checkpoint_digest:
         raise ValueError('reconstructed scientific checkpoint digest mismatch')
     return model
 

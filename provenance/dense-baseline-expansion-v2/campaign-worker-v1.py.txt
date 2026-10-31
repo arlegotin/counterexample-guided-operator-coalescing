@@ -1,0 +1,36 @@
+"""Exactly one admitted finite campaign; no neural work before live outer guard."""
+from pathlib import Path
+import sys,os,json,subprocess
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+from provenance.dense_frontier_campaign import read_contract,PROPOSAL
+from provenance.dense_frontier_execution import (reference,read_reference,require_dense_qualification,require_dense_serial_admission,dense_execution_env)
+from provenance.shared_calibration_study import verify_live_parent
+from provenance import sharing_frontier_study as core
+from poc.recovery_endpoints import finite_json,verify_refs,write_once
+prov=ROOT/'provenance/dense-baseline-expansion-v2';c=read_contract(PROPOSAL)
+qref=reference(prov/'qualification-v1.json');refs=require_dense_qualification(c,proposal_path=PROPOSAL,qualification=qref)
+refs+=require_dense_serial_admission(c,admission=reference(prov/'serial-admission-v1.json'))
+stage=prov/'outer-stage-v1';pp=stage/'protocol.json';verify_live_parent(pp);p=finite_json(pp);start=finite_json(stage/'stage-start.json')
+caps={'wall_seconds':8*3600+1200,'memory_bytes':12*1024**3,'disk_bytes':12*1024**3}
+command=[sys.executable,str(Path(__file__).resolve())];bound={r['path']:r['sha256'] for r in p['frozen_files']}
+if (p.get('command')!=command or p.get('root')!=str(ROOT) or p.get('output')!=c['out'] or p.get('caps')!=caps
+ or start.get('pid')!=os.getppid() or start.get('protocol_sha256')!=reference(pp)['sha256']
+ or any(bound.get(r['path'])!=r['sha256'] for r in refs)):
+ raise ValueError('exact live finite outer/source/serial guard required')
+verify_refs(p['frozen_files']);os.environ.update(dense_execution_env())
+for key in ('HF_HUB_OFFLINE','PYTORCH_ENABLE_MPS_FALLBACK'):os.environ.pop(key,None)
+try:
+ for mode,config in [('controls',PROPOSAL),('profile',PROPOSAL),('run',ROOT/'configs/dense-baseline-expansion-v2-run-v1.yaml')]:
+  verify_refs(refs)
+  command=[sys.executable,str(ROOT/'provenance/dense_frontier_campaign.py'),'--config',str(config),'--mode',mode]
+  subprocess.run(command,cwd=ROOT,check=True)
+  print(json.dumps({'mode':mode,'status':'common driver completed'}),flush=True)
+  if mode=='profile' and (Path(c['out'])/'analysis-completion.json').is_file():break
+ completion=Path(c['out'])/'analysis-completion.json';value=finite_json(completion)
+ if value.get('status')!='common-driver analysis complete; independent admission pending':raise ValueError('final raw/report handoff missing')
+ write_once(prov/'worker-complete-v1.json',{'status':'bounded dense campaign complete; independent admission pending',
+  'proposal':reference(PROPOSAL),'run_configuration':reference(ROOT/'configs/dense-baseline-expansion-v2-run-v1.yaml') if (ROOT/'configs/dense-baseline-expansion-v2-run-v1.yaml').is_file() else None,
+  'campaign_status':value.get('campaign_status','complete_grid; see analysis for failed recipes'),
+  'analysis_completion':reference(completion),'source_qualification':qref,'serial_admission':reference(prov/'serial-admission-v1.json')})
+except BaseException as exc:
+ write_once(prov/'worker-failed-v1.json',{'status':'failed','error':repr(exc),'no_automatic_retry':True});raise

@@ -1,0 +1,55 @@
+"""New isolated metadata correction; preserve source-qualified W and all receipts."""
+from pathlib import Path
+from datetime import datetime,timezone
+import sys,subprocess,json,hashlib,platform
+ROOT=Path(__file__).resolve().parents[2];W=Path('/Users/artemlegotin/.codex-a/worktrees/8d38/counterexample-guided-operator-coalescing')
+h=lambda b:hashlib.sha256(b).hexdigest()
+ref=lambda p:{'path':str(p),'sha256':h(Path(p).read_bytes())}
+prov=ROOT/'provenance/dense-baseline-expansion-v2'
+git=lambda *args:subprocess.check_output(['git',*args],cwd=ROOT)
+tracked=git('ls-files','-z').decode().split('\0')
+frozen={p:h((ROOT/p).read_bytes()) for p in tracked if p and (p.startswith(('provenance/','results/')) or p in ('REPORT.md','artifacts/release_manifest.json'))}
+baseline={'created_utc':datetime.now(timezone.utc).isoformat(),'root':str(ROOT),'commit':git('rev-parse','HEAD').decode().strip(),
+ 'branch':git('branch','--show-current').decode().strip(),'status':git('status','--short').decode(),'tracked_diff':git('diff','--binary','HEAD').decode(),
+ 'frozen_evidence':frozen,'environment':{'python':sys.version,'executable':sys.executable,'platform':platform.platform()},'operation':ref(Path(__file__).resolve())}
+(prov/'baseline-lineage-v2.json').write_text(json.dumps(baseline,indent=2,sort_keys=True)+'\n')
+sp=W/'provenance/dense-baseline-expansion-v2/final-source-v1.json';parent=json.loads(sp.read_text());copied={};installed=0
+for name,digest in parent['files'].items():
+ path=Path(name)
+ if h(path.read_bytes())!=digest:raise ValueError('qualified parent source changed:'+name)
+ if path.is_relative_to(W):
+  rel=path.relative_to(W);dst=ROOT/rel;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(path.read_bytes());copied[str(rel)]=digest
+ else:installed+=1
+sys.path.insert(0,str(ROOT))
+import yaml
+from poc.records import canonical_json
+from poc.recovery_endpoints import write_once
+from poc.data.manifest import load_manifest
+old_c=yaml.safe_load((W/'configs/dense-baseline-expansion-v2-proposal-v1.yaml').read_text())
+old_der=json.loads((W/'provenance/dense-baseline-expansion-v2/fit-parent-derivation-v1.json').read_text())
+p=old_der['parent_manifest'];parent_fit=load_manifest(Path(p['path']),expected_sha256=p['sha256'],roles={'fit'})
+old_child=Path(old_c['fit_manifest']['path']);raw=json.loads(old_child.read_text())
+old_lineage=raw['lineage_sha256'];raw['lineage_sha256']=parent_fit.digest();raw['exposure_path']=str(ROOT/'data/dense-baseline-expansion-v2/fit80-exposure.jsonl')
+child=ROOT/'data/dense-baseline-expansion-v2/fit80-manifest.json';write_once(child,raw)
+c={**old_c,'out':str(ROOT/'artifacts/dense-baseline-expansion-v2'),'fit_manifest':ref(child),
+ 'worker':ref(ROOT/'provenance/dense_frontier_native_worker.py')}
+proposal=ROOT/'configs/dense-baseline-expansion-v2-proposal-v1.yaml';proposal.write_text(yaml.safe_dump(c,sort_keys=False))
+write_once(prov/'fit-parent-derivation-v1.json',{**old_der,'child_manifest':ref(child)}) if not (prov/'fit-parent-derivation-v1.json').exists() else (prov/'fit-parent-derivation-v1.json').write_bytes(canonical_json({**old_der,'child_manifest':ref(child)}))
+# Sole operational-source edit: use a distinct external qualification directory.
+qualifier=prov/'qualify-source-v1.py.txt';s=qualifier.read_text();s=s.replace('/private/tmp/cgoc-dense-v2-source-qualification-v1','/private/tmp/cgoc-dense-v2-lineage-qualification-v2');qualifier.write_text(s)
+for category in ('plans','specs'):
+ src=W/'docs/superpowers'/category/'2026-10-31-dense-baseline-expansion-v1.md';dst=ROOT/'docs/superpowers'/category/src.name;dst.parent.mkdir(parents=True,exist_ok=True);dst.write_bytes(src.read_bytes())
+old_validation={'command':[sys.executable,'provenance/dense_frontier_campaign.py','--config','configs/dense-baseline-expansion-v2-proposal-v1.yaml','--mode','validate'],
+ 'source_worktree':str(W),'status':'failed_closed','reason':'child lineage b180... differs from loaded512parent digest604e...; documents/roles/membership unchanged',
+ 'old_parent_qualification':ref(W/'provenance/dense-baseline-expansion-v2/qualification-v1.json'),'old_child':ref(old_child),'old_claimed_lineage':old_lineage,'required_lineage':parent_fit.digest()}
+write_once(prov/'preserved-validation-failure-v1.json',old_validation)
+write_once(prov/'lineage-correction-v2.json',{'schema_version':1,'parent_source':ref(sp),'parent_qualification':old_validation['old_parent_qualification'],
+ 'copied_repository_sources':copied,'unchanged_installed_sources':installed,'old_proposal':ref(W/'configs/dense-baseline-expansion-v2-proposal-v1.yaml'),
+ 'new_proposal':ref(proposal),'old_child':ref(old_child),'new_child':ref(child),'parent_manifest':p,
+ 'changes':['correct explicit parent lineage and new exposure journal/output/worker paths','qualification scratch uses new distinct path'],
+ 'population_changes':False,'raw_content_reads':0,'neural_dispatches':0,'scope':'new isolated continuation attempt; no old source, data or receipt overwritten; no claim of fresh data'})
+from provenance.dense_frontier_study import metadata_validate
+result=metadata_validate(proposal)
+write_once(prov/'accepted-metadata-preflight-v2.json',result)
+print(json.dumps({'status':result['status'],'metadata_preflight':'accepted','copied_repo_files':len(copied),'unchanged_installed':installed,
+ 'new_fit_manifest':ref(child),'new_proposal':ref(proposal),'new_native_dispatches':0}),flush=True)

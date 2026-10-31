@@ -2,7 +2,9 @@
 
 CGOC tests whether a language model can reuse feed-forward weights across layers, and whether deliberately difficult examples help choose which layers to merge. The goal is a smaller stored model that keeps the original model's behavior.
 
-Sharing learns back some of that behavior. **The tested sharing recipes still do not offer a compelling quality–storage tradeoff against ordinary quantization.** A new bounded recovery pilot reduced teacher disagreement by 15.2% with ordinary-text fitting; the counterexample mixture did slightly worse. The original selector study remains inconclusive, and active selection has no demonstrated advantage.
+Sharing learns back some of that behavior. **The tested sharing recipes still have no established useful advantage over strong dense quantization.** A completed long diagnostic repaired about 62% of the initial teacher disagreement on one pair and seed. Counterexample selection has no demonstrated added benefit.
+
+**Research checkpoint — 31 October 2026:** the current implementation and evidence package are closed for now, with further experiments listed separately. [Current results and limits](docs/continuation-status-2026-10-31.md) · [Dense baseline campaign guide](docs/dense-baseline-campaign.md) · [Numeric receipts](provenance/continuation-checkpoint-2026-10-31/manifest.json)
 
 [Results](#results) · [How it works](#how-it-works) · [Quick check](#quick-check) · [Continuation report](provenance/continuation-v2/REPORT.md) · [Historical report](REPORT.md) · [Reproduce](docs/reproduction.md) · [Citation](CITATION.cff)
 
@@ -12,13 +14,13 @@ A transformer usually stores a separate feed-forward network (FFN) for every lay
 
 The difficult part is deciding what can share. Two FFNs can look similar as matrices and still behave differently on the inputs that matter. CGOC compares their behavior on ordinary text and on counterexamples built to expose disagreement. If those stress examples reveal damage that ordinary text misses, they should help choose a safer merge.
 
-The original model (the teacher) is a frozen **SmolLM2-135M** with 30 layers; the shared models use rank-8 corrections. The implementation includes teacher-equivalent initialization, merge fitting, counterexample probes, checkpoint recovery, offline Torch/MLX bundles and native payload accounting. Experiments ran locally on a 36-GiB M3 Max. [Design](docs/superpowers/specs/2026-10-27-cgoc-design.md) · [Prior art and blueprint review](docs/analysis/2026-10-27-blueprint-review.md)
+The original model (the teacher) is a frozen **SmolLM2-135M** with 30 layers; the shared models use rank-8 corrections. The implementation includes teacher-equivalent initialization, merge fitting, counterexample probes, checkpoint recovery, offline Torch/MLX bundles and native payload accounting. Native receipts record an M3 Max with “36 GB” memory. [Design](docs/superpowers/specs/2026-10-27-cgoc-design.md) · [Prior art and blueprint review](docs/analysis/2026-10-27-blueprint-review.md)
 
 ## Results
 
-### Continuation: some recovery, a weak practical tradeoff
+### Historical continuation v2: some recovery, a weak practical tradeoff
 
-The new exploratory pilot compares three separate 16-update trajectories for pair **(0,15)**, rank 8, seed 17, with a frozen SmolLM2-135M teacher. All use the same chosen parent; the first two start with identical weights. Validation uses eight previously exposed development components outside the twelve fitting components.
+The earlier exploratory pilot compares three separate 16-update trajectories for pair **(0,15)**, rank 8, seed 17, with a frozen SmolLM2-135M teacher. All use the same chosen parent; the first two start with identical weights. Validation uses eight previously exposed development components outside the twelve fitting components.
 
 | Fitting recipe | Initial KL | Final KL |
 | --- | ---: | ---: |

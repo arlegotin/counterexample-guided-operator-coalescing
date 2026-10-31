@@ -1,0 +1,63 @@
+alpha: 0
+asset_root: /Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/data/prepared-135m-v2
+checkpoint_every: 16
+initialization_checkpoint: null
+initializer:
+  calibration_components: 16
+  max_condition: 100000000.0
+  method: parent_svd
+  ridge_relative: 1.0e-06
+  schema_version: 1
+loss_scopes:
+- full_student
+numerical_profile:
+  chunk_size: 32
+  decision_resolution: 2.0e-05
+  device: mps
+  dtype: float32
+  kl_floor_per_target: 2.0e-06
+observation_policy: optimizer_plus_tuning_v2
+observations:
+- 0
+- 1
+- 4
+- 16
+- 32
+- 64
+- 128
+- 256
+out: artifacts/initializer-fixed-parent-r8-s17-parent-svd-v2
+owner_scope: affected_group
+pair:
+- 0
+- 15
+parent_fit_components: 16
+populations:
+  fit:
+    components: 512
+    path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/data/recovery-diagnosis-v1-population/prepared/fit-manifest.json
+    sha256: 604eb83e032a2ed375751af797e55a8827c546eab70d07b1ca78af6d6d3817ad
+  tuning:
+    components: 128
+    path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/data/recovery-diagnosis-v1-population/prepared/tuning-manifest.json
+    sha256: 5f8efb57981dc350f74426ceeb667e36cdbcb85ef73c7b64f71a6718ec5a1613
+preparation: null
+profile_resource_budget:
+  disk_bytes: 34359738368
+  memory_bytes: 6442450944
+  search_proposals: 10
+  search_seconds: 900
+  student_backward_calls: 100000
+  suffix_backward_calls: 100000
+  teacher_forward_calls: 2000000
+  updates: 1
+  valid_target_presentations: 4000000
+  wall_seconds: 900
+rank: 8
+raw_targets_per_update: 8192
+resource_budget: null
+schema_version: 4
+seeds:
+- 17
+study: initializer-fixed-parent-r8-s17-parent-svd-v2
+updates: 256

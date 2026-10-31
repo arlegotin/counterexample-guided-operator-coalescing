@@ -1,0 +1,28 @@
+schema_version: 1
+study: recovery-diagnosis-v1
+asset_root: null
+out: artifacts/recovery-diagnosis-v1
+pair: [0, 15]
+rank: 8
+seeds: [17, 23, 31]
+loss_scopes: [local_sum, full_student]
+owner_scope: affected_group
+alpha: 0
+raw_targets_per_update: 8192
+updates: 256
+observations: [0, 1, 4, 16, 32, 64, 128, 256]
+checkpoint_every: 16
+parent_fit_components: 16
+populations:
+  fit: {path: null, sha256: null, components: 512}
+  tuning: {path: null, sha256: null, components: 128}
+numerical_profile:
+  device: mps
+  dtype: float32
+  chunk_size: 32
+  kl_floor_per_target: 0.000002
+  decision_resolution: 0.00002
+resource_budget: null
+preparation: null
+# Fill paths and freeze measured budgets after an outcome-blind profile.
+# local_mean is separately costed and excluded from primary winner selection.

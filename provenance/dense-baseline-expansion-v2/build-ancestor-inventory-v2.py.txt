@@ -1,0 +1,75 @@
+"""Metadata-only bounded import of calibration/recovery expense and failures."""
+from pathlib import Path
+import sys,json,yaml,time
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+from provenance.dense_frontier_execution import reference,read_reference,record_dense_phase,dense_executed_sources
+from poc.recovery_endpoints import write_once,verify_refs
+from poc.cost_ancestry import read_cost_ancestry,prior_calibration_inventory_reference
+
+
+def build(c):
+ parent=read_reference(c['reference_config']) if c['reference_config']['path'].endswith('.json') else yaml.safe_load(Path(c['reference_config']['path']).read_text())
+ verify_refs([c['reference_config']]);nodes=[]
+ cal_admission=read_reference(parent['calibration']['acceptance']);cal=read_reference(cal_admission['result'])
+ if cal_admission.get('status')!='accepted' or cal.get('status')!='accepted':raise ValueError('independent calibration admission required')
+ for label,value in cal['results'].items():
+  packet=read_reference(value['packet'])
+  if packet['terminal_cost_path']!=value['terminal_cost']['path']:raise ValueError('final calibration terminal differs from admitted packet')
+  nodes.append({'id':'calibration:'+label,'kind':'terminal','classification':'shared_calibration','run_id':packet['run_id'],
+   'terminal':value['terminal_cost'],'admission':parent['calibration']['acceptance']})
+ terminal=read_reference(cal['analysis_terminal_cost'])
+ nodes.append({'id':'calibration:analysis','kind':'terminal','classification':'shared_calibration','run_id':terminal['run_id'],
+  'terminal':cal['analysis_terminal_cost'],'admission':parent['calibration']['acceptance']})
+ # The independent calibration admission pins the prior failure inventory.
+ cal_contract=read_reference(cal_admission['contract']);freeze=read_reference(cal['execution_freeze'])
+ amendment_path=Path(cal['execution_freeze']['path']).parent/'resource-amendment-v2.json'
+ expected=prior_calibration_inventory_reference(cal_contract,amendment_path)
+ amendment=read_reference(expected);prior_refs={r['path']:{k:r[k] for k in ('path','sha256')} for r in amendment['prior_inventory']}
+ for name,ledger in sorted(prior_refs.items()):
+  path=Path(name)
+  if path.name!='costs.jsonl':continue
+  spec=prior_refs.get(str(path.parent/'spec.json'));attempts=[r for p,r in prior_refs.items() if Path(p).name=='run.json' and Path(p).is_relative_to(path.parent)]
+  if spec is None or not attempts:
+   nodes.append({'kind':'unknown','id':'calibration-failed:'+path.parent.name,'classification':'calibration_failed',
+    'reason':'retained preceding cost prefix lacks a complete declared spec/attempt inventory','references':[ledger,expected]});continue
+  nodes.append({'id':'calibration-failed:'+path.parent.name,'kind':'raw_ledger','classification':'calibration_failed',
+   'run_id':path.parent.name,'ledger':ledger,'spec':spec,'attempts':attempts,'admission':parent['calibration']['acceptance']})
+ # All retained profile/setup/initialization/fitting ledgers of the direct
+ # recovery producer are enumerated. Shared roots are counted once, not perpoint.
+ observation=Path(parent['reference']['scientific_observation']['path']);verify_refs([parent['reference']['scientific_observation']])
+ recovery_root=observation.parents[3]
+ found=False
+ for ledger in sorted(recovery_root.glob('*/ledgers/*/costs.jsonl')):
+  run_id=ledger.parent.name;spec=ledger.parent/'spec.json';attempts=sorted((ledger.parent/'attempts').glob('*/run.json'))
+  if not spec.exists() or not attempts:
+   nodes.append({'id':'recovery-unclosed:'+run_id,'kind':'unknown','classification':'source_recovery',
+    'reason':'retained recovery cost prefix lacks complete original spec/attempt metadata','references':[reference(ledger)]});continue
+  node={'id':'recovery:'+run_id,'kind':'raw_ledger','classification':'source_recovery','run_id':run_id,
+    'ledger':reference(ledger),'spec':reference(spec),'attempts':[reference(p) for p in attempts]}
+  if run_id==parent['reference']['source_run_id']:
+   node['snapshot']=reference(observation.parent.parent/'result.json');found=True
+  nodes.append(node)
+ if not found:raise ValueError('named source-recovery run missing from actual retained ledger inventory')
+ # These histories are provenance-linked but lack a currently admitted terminal
+ # inventory here. They remain unknown, never silently priced as zero.
+ nodes.append({'id':'other-export-runtime-and-development','kind':'unknown','classification':'other_ancestral_preparation',
+   'reason':'source export/runtime qualification and earlier independent development costs are not fully admitted by this bounded calibration/recovery inventory; no complete all-upstream expense claim',
+   'references':[c['reference_config'],cal['analysis'],parent['calibration']['acceptance']]})
+ descriptor={'schema_version':1,'study':c['study'],'parent_config':c['reference_config'],'nodes':nodes,
+  'scope':'bounded actual final calibration, retained failed calibration, and direct recovery-producer ledgers; shared costs deduplicated, other ancestry explicitly unknown'}
+ path=ROOT/'provenance'/c['study']/'ancestor-cost-inventory-v1.json';write_once(path,descriptor)
+ result=read_cost_ancestry(reference(path),expected_parent=c['reference_config'])
+ out=ROOT/'artifacts/dense-ancestor-inventory-controls-v2/result.json';write_once(out,result)
+ return {'result':reference(out),'inventory':reference(path),'known_ledgers':len(result['ledgers']),'unknown_ancestors':len(result['unknown_nodes']),
+  'scope':'CPU saved-cost verification only; no model/raw-corpus/protected read or neural execution'}
+
+
+def main():
+ config=ROOT/'configs/dense-baseline-expansion-v2-proposal-v1.yaml';c=yaml.safe_load(config.read_text())
+ identity={**c,'study':'dense-ancestor-inventory-controls-v2','out':str(ROOT/'artifacts/dense-ancestor-inventory-controls-v2')}
+ zero=dict(updates=0,valid_target_presentations=0,teacher_forward_calls=0,student_forward_calls=0,student_backward_calls=0,raw_corpus_target_presentations=0)
+ value=record_dense_phase(identity,'verify-ancestor-costs',dense_executed_sources(config),lambda rec:build(c),
+  resource={'wall_seconds':600,'memory_bytes':8*1024**3,'disk_bytes':256*1024**2},work=zero)
+ print(json.dumps({'status':'accepted bounded saved-cost inventory',**value}),flush=True)
+
+if __name__=='__main__':main()

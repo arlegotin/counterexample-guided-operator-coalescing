@@ -1,0 +1,12 @@
+{
+  "copied_exact_predecessor_auxiliary_files": {
+    "docs/superpowers/plans/2026-10-31-confirmation-access-v1.md": "e8748397d657719785c605c3ba9416632bb75e39afae6084e3a2903d6bf42560",
+    "docs/superpowers/specs/2026-10-31-confirmation-access-v1.md": "f353bfca3f9a6d8c97dc1ec4a8e0a80f1abb2cdae5b1230a8aa3d67316845459",
+    "provenance/confirmation-access-v1/qualify-source-v1.py.txt": "32dd8d86fe58c3de69c0ad4b9850b9deada676b4ba647b900b52d898ff9fb781"
+  },
+  "preserved_failed_stage": "/Users/artemlegotin/.codex-a/worktrees/1cab/counterexample-guided-operator-coalescing/provenance/dense-baseline-expansion-v2/qualification-focused_cpu-v1",
+  "reason": "focused qualification262pass1missing predecessor doc fixture; no production/scientific test assertion changed",
+  "schema_version": 1,
+  "scope": "environment/input packaging repair; no neural or science outcome",
+  "source": "/Users/artemlegotin/.codex-a/worktrees/8d38/counterexample-guided-operator-coalescing"
+}

@@ -1,0 +1,32 @@
+{
+  "outer_caps": {
+    "disk_bytes": 32212254720,
+    "memory_bytes": 12884901888,
+    "wall_seconds": 172800
+  },
+  "policy": "require completed finite cold-family outer guard and exact five planned horizons; independent quality analysis may run on CPU; no condition on quality or effect sign",
+  "release_scope": "serialization only; independent endpoint/cost/quality interpretation remains separate",
+  "schema_version": 1,
+  "study": "dense-baseline-expansion-v2",
+  "upstream_controller": {
+    "path": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing/provenance/cold-recovery1024-family-v1/execute-family-v4.py.txt",
+    "sha256": "cbd01ec816ce0bb54dd1379631b16cd0f8ec029bdb09b7702d398069591ec4a7"
+  },
+  "upstream_independent_admission": {
+    "path": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing/provenance/cold-recovery1024-family-v1/independent-admission-v1.json",
+    "sha256": "732af2dec41676e9be62507e4653aefbd5498cfb651ec8a50983cf974fd6ee75"
+  },
+  "upstream_proposal": {
+    "path": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing/provenance/cold-recovery1024-family-v1/family-proposal-v3.json",
+    "sha256": "44f7243b8f46de044312673099432dd662ba367cac659a43217875c335cc5859"
+  },
+  "upstream_qualification": {
+    "path": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing/provenance/cold-recovery1024-family-v1/qualification-v1.json",
+    "sha256": "8194f821f01ed78d169f067484dd02cbf651da08bd58ebe96238db3259b96ab6"
+  },
+  "upstream_root": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing",
+  "upstream_worker": {
+    "path": "/Users/artemlegotin/.codex-a/worktrees/ec04/counterexample-guided-operator-coalescing/provenance/cold-recovery1024-family-v1/family-worker-v4.py.txt",
+    "sha256": "8f8f40d5026667759818082012467daa9983b8047e9901417e184fc1b5ac8783"
+  }
+}

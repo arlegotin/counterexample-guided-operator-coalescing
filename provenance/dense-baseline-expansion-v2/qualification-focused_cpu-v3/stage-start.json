@@ -1,0 +1,23 @@
+{
+  "started_utc": "2026-10-31T09:49:05.484278+00:00",
+  "pid": 36502,
+  "command": [
+    "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+    "-m",
+    "pytest",
+    "tests/test_dense_admission.py",
+    "tests/test_dense_cost_ancestry.py",
+    "tests/test_dense_campaign.py",
+    "tests/test_dense_frontier.py",
+    "tests/test_dense_dispatch_accounting.py",
+    "tests/test_quantization.py",
+    "tests/test_data_access.py",
+    "tests/test_export.py",
+    "tests/test_offline_bundle.py",
+    "tests/test_budget.py",
+    "-q",
+    "--basetemp=/private/tmp/cgoc-dense-final-stable-qualification-v4/focused_cpu/pytest"
+  ],
+  "protocol_sha256": "216cd83c2277385de380c55d40c86428f8fea950432216e51f38f571a1b7baa5",
+  "scope": "fixed RTN artifact study; finite source-bound stage; no retries"
+}

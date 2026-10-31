@@ -1,0 +1,43 @@
+"""One finite source/review-bound CPU/public qualification; no native import."""
+from pathlib import Path
+from datetime import datetime,timezone
+import sys,platform,tarfile,io,json
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+from provenance.dense_frontier_execution import (dense_executed_sources,dense_qualification_specs,dense_execution_env,
+    require_dense_qualification,reference)
+from provenance.dense_frontier_campaign import read_contract,PROPOSAL
+from provenance import sharing_frontier_study as core
+from poc.recovery_endpoints import finite_json,verify_refs,write_once
+prov=ROOT/'provenance/dense-baseline-expansion-v2';c=read_contract(PROPOSAL)
+files=dense_executed_sources(PROPOSAL);review=prov/'review-resolution-v2.json';r=finite_json(review)
+if r.get('status')!='resolved' or r.get('source_files')!=files or r.get('unresolved_critical')!=0 or r.get('unresolved_important')!=0:
+ raise ValueError('one completed source-bound whole-feature review required')
+source=prov/'final-source-v2.json';archive=prov/'final-source-v2.tar.gz';environment=prov/'qualification-environment-v2.json'
+write_once(source,{'schema_version':1,'files':files,'review':reference(review),
+ 'scope':'all executed code/untracked drivers/configs and installed original sources; measured run YAML separately bound'})
+with archive.open('xb') as stream:
+ with tarfile.open(fileobj=stream,mode='w:gz') as tar:
+  for name,h in files.items():
+   path=Path(name);body=path.read_bytes()
+   if reference(path)['sha256']!=h:raise ValueError('source changed before archive')
+   label=str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else 'installed-source/'+name.lstrip('/')
+   info=tarfile.TarInfo(label);info.size=len(body);info.mode=0o644;info.mtime=0;tar.addfile(info,io.BytesIO(body))
+write_once(environment,{'python':sys.version,'executable':sys.executable,'platform':platform.platform(),'machine':platform.machine(),
+ 'scope':'observed installed environment; CPU/public qualification, native/backend proof separate'})
+operation=reference(Path(__file__).resolve());refs=[{'path':p,'sha256':h} for p,h in files.items()]
+refs +=[reference(PROPOSAL),reference(source),reference(archive),reference(review),reference(environment),operation]
+work=Path('/private/tmp/cgoc-dense-v2-lineage-qualification-v3');work.mkdir(parents=True,exist_ok=False);stages={}
+for name,args,caps in dense_qualification_specs(work):
+ output=work/name;output.mkdir(parents=True,exist_ok=False);command=[sys.executable,*args]
+ if name!='public':command.append('--basetemp='+str(output/'pytest'))
+ stage=core.execute_stage(command,root=ROOT,output=output,stage=prov/('qualification-'+name+'-v2'),caps=caps,frozen_files=refs,execution_env=dense_execution_env())
+ core.require_stage_success(stage);core.check_stage_binding(stage,command=command,root=ROOT,output=output,caps=caps,required_refs=refs,execution_env=dense_execution_env())
+ stages[name]={'command':command,'caps':caps,'output':str(output),'stage':stage}
+ print(json.dumps({'stage':name,'status':'accepted'}),flush=True)
+q={'schema_version':1,'status':'qualified_dense_source_cpu','study':c['study'],
+ 'scientific_contract_sha256':__import__('poc.dense_frontier',fromlist=['dense_contract_digest']).dense_contract_digest(c),
+ 'proposal':reference(PROPOSAL),'source_manifest':reference(source),'source_archive':reference(archive),
+ 'review':reference(review),'environment':reference(environment),'operation':operation,'work_root':str(work),'stages':stages}
+path=prov/'qualification-v1.json';write_once(path,q)
+require_dense_qualification(c,proposal_path=PROPOSAL,qualification=reference(path))
+print(json.dumps({'status':'qualified source/CPU/public only; native and serial gates pending','qualification':reference(path)}),flush=True)

@@ -81,6 +81,8 @@ class CostRecord:
     search_proposals: int = 0
     search_seconds: float = 0
     student_forward_calls: int = 0
+    # Additive opt-in v1 instrumentation; historical rows did not measure this.
+    raw_corpus_target_presentations: int = 0
 
     def __post_init__(self) -> None:
         for field in fields(self):
@@ -409,7 +411,7 @@ class BundleManifest:
     metadata: Mapping
 
     def __post_init__(self):
-        if type(self.schema_version) is not int or self.schema_version != 1:
+        if type(self.schema_version) is not int or self.schema_version not in (1, 2):
             raise ValueError('unsupported bundle schema')
         object.__setattr__(self, 'file_entries', freeze(self.file_entries))
         object.__setattr__(self, 'metadata', freeze(self.metadata))

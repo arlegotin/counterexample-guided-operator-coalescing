@@ -1,0 +1,109 @@
+schema_version: 1
+study: shared-gptq-execution-v3
+out: /Users/artemlegotin/.codex-a/worktrees/e2b7/counterexample-guided-operator-coalescing/artifacts/shared-gptq-execution-v3
+teacher:
+  directory: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/artifacts/teacher_noop
+  manifest_sha256: 0b461c4d88965ec7b44ca4c26fe321be57fd0e471844d95b641b661cc4c1927e
+shared:
+  directory: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/artifacts/shared_full17_float
+  manifest_sha256: ad2153036f70682a3061f7db07c82c0a663488de00345239109d4a50cd063439
+inputs:
+  path: /Users/artemlegotin/.codex-a/worktrees/5db6/counterexample-guided-operator-coalescing/artifacts/native-baseline-recovery256-v2/inputs/windows.json
+  population_manifest_sha256: 5f8efb57981dc350f74426ceeb667e36cdbcb85ef73c7b64f71a6718ec5a1613
+  sha256: aea47ba9eca3450151f911d0ce05b732c7c482390d19fc2776f32536779fab40
+worker:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-rtn-frontier-v1/native-fidelity-worker-v1.py
+  sha256: 7c062d1cd6686c247690a7367f021cdbad8a8a2b45aba358085d88c2507828b5
+calibration:
+  packet:
+    path: /Users/artemlegotin/.codex-a/worktrees/c8a4/counterexample-guided-operator-coalescing/artifacts/shared-calibration-execution-v2/run/packet.json
+    sha256: ea4aed586143179f9e73e9a17b4997faf2cd7e4b35d7b31a028184d835eef448
+  acceptance:
+    path: /Users/artemlegotin/.codex-a/worktrees/c8a4/counterexample-guided-operator-coalescing/provenance/shared-calibration-acceptance-v2/acceptance.json
+    sha256: 049793e6f39110a31af1eb2ac62f2c01811731247074ecb3f5b0b77c5f4b159d
+  fit_subset:
+    path: /Users/artemlegotin/.codex-a/worktrees/c8a4/counterexample-guided-operator-coalescing/artifacts/shared-calibration-execution-v2/inputs/fit-subset-manifest.json
+    sha256: 82b4249ff69f8c8e925afda6f9fdcf70b7314ebdb07e16871b616d24dfbba167
+  statistics:
+    directory: /Users/artemlegotin/.codex-a/worktrees/c8a4/counterexample-guided-operator-coalescing/artifacts/shared-calibration-execution-v2/run/statistics
+    manifest_sha256: 0c9c489d33b7bec9198e3d24253deff105d350b460b9b8cf07dbb3378b1bc580
+  contract_sha256: 1446ab1d4bc75082cbcef0b4e6c238eb1410b499ae9ace8798f4e2b70f697e60
+reference:
+  teacher_mps_digest: b5b12555a38fe9ab6ddcd3d487d8ea11738bd9c7e921dc6a283bc06ec34518f5
+  source_run_id: 3d06f9d73d3ded5f3f960a12cb31ef4b2f07c3ee5905a65bfe690d61c0fe31de
+  scientific_observation:
+    path: /Users/artemlegotin/.codex-a/worktrees/e789/counterexample-guided-operator-coalescing/artifacts/recovery-diagnosis-v2/runs/full_student-seed17/observations/0256.json
+    sha256: a5f70381b8cefbf52a330fee9304b7835c5105ed3ac378995580f44419cc754d
+upstream_rtn_acceptance:
+  path: /Users/artemlegotin/.codex-a/worktrees/3d34/counterexample-guided-operator-coalescing/provenance/shared-rtn-frontier-analysis-v2/acceptance.json
+  sha256: 456e6b2309f41890c34d4ca6498db0dc704d54137a385172be248642d1eabe12
+grid:
+- label: teacher_noop
+  kind: dense
+  method: float
+  bits: 32
+  embedding_bits: 32
+- label: shared_float
+  kind: shared
+  method: float
+  bits: 32
+  embedding_bits: 32
+- label: dense_rtn8
+  kind: dense
+  method: rtn
+  bits: 8
+  embedding_bits: 8
+- label: dense_rtn4
+  kind: dense
+  method: rtn
+  bits: 4
+  embedding_bits: 4
+- label: dense_rtn2
+  kind: dense
+  method: rtn
+  bits: 2
+  embedding_bits: 2
+- label: dense_rtn2_embedding4
+  kind: dense
+  method: rtn
+  bits: 2
+  embedding_bits: 4
+- label: dense_gptq4
+  kind: dense
+  method: gptq
+  bits: 4
+  embedding_bits: 4
+- label: dense_gptq2_embedding4
+  kind: dense
+  method: gptq
+  bits: 2
+  embedding_bits: 4
+- label: shared_rtn4
+  kind: shared
+  method: rtn
+  bits: 4
+  embedding_bits: 4
+- label: shared_rtn2_embedding4
+  kind: shared
+  method: rtn
+  bits: 2
+  embedding_bits: 4
+- label: shared_gptq4
+  kind: shared
+  method: gptq
+  bits: 4
+  embedding_bits: 4
+- label: shared_gptq2_embedding4
+  kind: shared
+  method: gptq
+  bits: 2
+  embedding_bits: 4
+resource:
+  preparation_wall_seconds: 900
+  phase_memory_bytes: 12884901888
+  phase_disk_bytes: 2147483648
+  profile_wall_seconds: 300
+  evaluation_wall_ceiling: 1800
+  campaign_wall_seconds: 12000
+  family_disk_bytes: 68719476736
+  deadline_unix: 1793782799

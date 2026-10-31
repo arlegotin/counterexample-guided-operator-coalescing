@@ -76,14 +76,22 @@ class TrainingSources:
     probes: tuple[ProbeTrainingSource, ...] = ()
     natural_role: str = 'fit'
     manifest_hashes: Mapping = field(default_factory=dict)
+    raw_plan: object | None = None
 
     def __post_init__(self):
+        if self.raw_plan is not None:
+            from poc.recovery_study import NaturalWindowPlan,NaturalWindowSegment
+            if not isinstance(self.raw_plan,(NaturalWindowPlan,NaturalWindowSegment)) or self.natural or self.probes:
+                raise ValueError('immutable raw plan requires exclusive natural sources')
         if self.natural_role != 'fit': raise PermissionError('natural fitting requires fit role')
         object.__setattr__(self,'natural',tuple(self.natural))
         object.__setattr__(self,'probes',tuple(self.probes))
         if any(not isinstance(p,ProbeTrainingSource) for p in self.probes): raise ValueError('typed probe sources required')
 
     def digest(self):
+        if self.raw_plan is not None:
+            if self.natural or self.probes:raise ValueError('raw plan cannot mix legacy sources')
+            return self.raw_plan.digest
         h=hashlib.sha256(canonical_json({'manifests':dict(self.manifest_hashes),'natural_role':self.natural_role,
             'probes':[{'source':p.source,'role':p.role,'identity':p.identity} for p in self.probes]}))
         for b in (*self.natural,*(p.template for p in self.probes)):
@@ -181,8 +189,19 @@ class MethodResult:
     checkpoint: object | None = None
 
 
-def configure_trainable_owners(student: BankDecoder, config: TrainingConfig, *, apply=True) -> dict:
+def configure_trainable_owners(student: BankDecoder, config: TrainingConfig, *, apply=True, objective_spec=None) -> dict:
     if not isinstance(student,BankDecoder): raise ValueError('common fitter requires canonical BankDecoder')
+    if getattr(student,'_deployment_inference_only',False):
+        raise ValueError('inference-only elided payload cannot train or resume; use the scientific checkpoint')
+    if objective_spec is not None:
+        from poc.recovery_objectives import affected_owners, owner_names_hash
+        owners=affected_owners(student,objective_spec.affected_depths,owner_scope=objective_spec.owner_scope)
+        if owner_names_hash(student,objective_spec.affected_depths,owner_scope=objective_spec.owner_scope)!=objective_spec.owner_names_sha256:
+            raise ValueError('recovery owner identity mismatch')
+        if apply:
+            for n,p in student.named_parameters():p.requires_grad_(n in owners);p.grad=None
+            student.eval()
+        return owners
     census=owner_census(student); parameters=dict(student.named_parameters())
     selected=set(config.affected_depths)
     if any(type(d) is not int or not 0<=d<len(student.layers) for d in selected): raise ValueError('affected depth outside model')
@@ -273,10 +292,13 @@ class _Counts:
     def record(self,cost):self.recorder.record(replace(cost,wall_seconds=0))
 
 
-def backward_update(student,teacher,update,config,recorder,*,probe_sources=None):
+def backward_update(student,teacher,update,config,recorder,*,probe_sources=None,objective_spec=None,raw_templates=None):
     """One zero/one step is the caller's responsibility; this only accumulates."""
     metrics=[]
-    if config.phase=='global':
+    if objective_spec is not None:
+        from poc.recovery_objectives import backward_recovery
+        metrics=backward_recovery(student,teacher,update,config,recorder,objective_spec,raw_templates)
+    elif config.phase=='global':
         for b in update.batches:
             count=int(b.target_mask.sum().item())
             counts=dict(valid_target_presentations=count,student_backward_calls=1,
@@ -311,7 +333,10 @@ def backward_update(student,teacher,update,config,recorder,*,probe_sources=None)
                 for hook in hooks:hook.remove()
             metrics.append(m)
     for m in metrics:
-        if m.kl < -config.kl_floor_per_target*m.valid_targets:raise FloatingPointError('KL exceeds qualified negative floor')
+        if objective_spec is not None and objective_spec.loss_scope=='ffn_mse_sum':
+            if not math.isfinite(m.squared_error_sum) or m.squared_error_sum<0:
+                raise FloatingPointError('invalid FFN reconstruction sum')
+        elif m.kl < -config.kl_floor_per_target*m.valid_targets:raise FloatingPointError('KL exceeds qualified negative floor')
     return metrics
 
 
@@ -331,6 +356,8 @@ def _restore_rng(state):
 
 
 def _model_schema(student):
+    if getattr(student,'_deployment_inference_only',False):
+        raise ValueError('inference-only elided payload cannot become a scientific checkpoint')
     from poc.runtime.torch_decoder import EXECUTION_PROFILE
     from dataclasses import asdict
     import json
@@ -344,7 +371,22 @@ def _model_schema(student):
         tied=student.lm_head.weight is student.embed_tokens.weight)
 
 
-def _snapshot(student,optimizer,scheduler,config,sources,step,cursor,probe_cursor,events,recorder,teacher_digest,visited):
+def _training_hash(config,objective_spec):
+    value={'training':config.identity()}
+    if objective_spec is not None:value['recovery_objective']=objective_spec.identity()
+    # Retain legacy byte identity exactly.
+    return hashlib.sha256(canonical_json(config.identity() if objective_spec is None else value)).hexdigest()
+
+
+def _source_order(sources):
+    if sources.raw_plan is not None:
+        from poc.recovery_study import NaturalWindowSegment
+        kind='raw_plan_segment_v1' if isinstance(sources.raw_plan,NaturalWindowSegment) else 'raw_plan_v1'
+        return (kind,sources.raw_plan.digest)
+    return tuple(b.document_ids for b in sources.natural)
+
+
+def _snapshot(student,optimizer,scheduler,config,sources,step,cursor,probe_cursor,events,recorder,teacher_digest,visited,objective_spec=None):
     def cpu(value):
         if isinstance(value,torch.Tensor):return value.detach().cpu().clone()
         if isinstance(value,dict):return {k:cpu(v) for k,v in value.items()}
@@ -357,11 +399,11 @@ def _snapshot(student,optimizer,scheduler,config,sources,step,cursor,probe_curso
         for name,p in zip(group['owner_ids'],group['params'],strict=True):optimizer_state['state'][name]=cpu(optimizer.state[p])
     if hasattr(recorder.recorder,'aggregate'):recorder.total=recorder.recorder.aggregate()
     elif hasattr(recorder.recorder,'totals'):recorder.total=recorder.recorder.totals
-    order=tuple(b.document_ids for b in sources.natural)
+    order=_source_order(sources)
     probes=tuple(p.identity for p in sources.probes)
     return TrainingState(config.run_spec,{n:cpu(p) for n,p in student.named_parameters()},_model_schema(student),
         optimizer_state,scheduler,_rng(),step,cursor,probe_cursor,order,probes,student.partition.groups,
-        student.manifest().checkpoint_digest,tuple(visited),sources.digest(),hashlib.sha256(canonical_json(config.identity())).hexdigest(),
+        student.manifest().checkpoint_digest,tuple(visited),sources.digest(),_training_hash(config,objective_spec),
         recorder.total.to_dict(),list(events),teacher_digest)
 
 
@@ -386,8 +428,16 @@ def _saved_digest(student,values,*,device_override=None):
     return hashlib.sha256(json.dumps((h.hexdigest(),student.partition.groups,student.rank,student.base_digest),sort_keys=True).encode()).hexdigest()
 
 
-def _recovery_cursors(sources,config,step):
+def _recovery_cursors(sources,config,step,objective_spec=None):
     if step==0:return 0,0
+    if objective_spec is not None:
+        if step>sources.raw_plan.updates:raise ValueError('recovery step exceeds finite plan')
+        calls=0
+        if objective_spec.loss_scope!='full_student':
+            for i,u in enumerate(sources.raw_plan.iter_updates('cpu')):
+                if i>=step:break
+                calls+=len(u.batches)*len(objective_spec.affected_depths)
+        return step*config.target_count,calls
     batches=sources.natural if config.phase=='global' else tuple(p.template for p in sources.probes)
     counts=[int(b.target_mask.sum().item()) for b in batches]
     completed=cursor=probes=0
@@ -407,9 +457,9 @@ def _recovery_cursors(sources,config,step):
     raise ValueError('recovery step exceeds saved source order')
 
 
-def _restore(state,student,optimizer,config,sources,teacher_digest):
+def _restore(state,student,optimizer,config,sources,teacher_digest,objective_spec=None):
     if not state.safe_boundary:raise ValueError('only complete update boundaries can resume')
-    if state.spec!=config.run_spec or state.config_hash!=hashlib.sha256(canonical_json(config.identity())).hexdigest() or state.source_hash!=sources.digest():raise ValueError('resume lineage mismatch: config/data/source')
+    if state.spec!=config.run_spec or state.config_hash!=_training_hash(config,objective_spec) or state.source_hash!=sources.digest():raise ValueError('resume lineage mismatch: config/data/source')
     if state.partition!=student.partition.groups or state.teacher_digest!=teacher_digest:raise ValueError('resume lineage mismatch: map/teacher')
     expected_schema=_model_schema(student)
     if 'device' not in state.model_schema:expected_schema.pop('device') # legacy owned v1
@@ -418,13 +468,19 @@ def _restore(state,student,optimizer,config,sources,teacher_digest):
     if state.model_schema!=expected_schema:raise ValueError('resume owner/schema mismatch')
     if type(state.step) is not int or not 0<=state.step<=config.max_updates:raise ValueError('invalid recovery step')
     if any(type(v) is not int or v<0 for v in (state.target_cursor,state.probe_cursor)):raise ValueError('invalid recovery cursor')
-    if state.order!=tuple(b.document_ids for b in sources.natural) or state.probe_order!=tuple(p.identity for p in sources.probes):raise ValueError('recovery order mismatch')
-    if (state.target_cursor,state.probe_cursor)!=_recovery_cursors(sources,config,state.step):raise ValueError('recovery cursor mismatch')
+    if state.order!=_source_order(sources) or state.probe_order!=tuple(p.identity for p in sources.probes):raise ValueError('recovery order mismatch')
+    if (state.target_cursor,state.probe_cursor)!=_recovery_cursors(sources,config,state.step,objective_spec):raise ValueError('recovery cursor mismatch')
     import re
     if (len(state.visited)!=state.step or any(type(d) is not str or not re.fullmatch('[0-9a-f]{64}',d) for d in state.visited)
             or state.step and state.visited[-1]!=state.candidate_digest):raise ValueError('recovery visited history mismatch')
     updates=[e for e in state.events if e.get('kind')=='update']
     if [e.get('step') for e in updates]!=list(range(1,state.step+1)) or sum(e.get('valid_targets',0) for e in updates)!=state.target_cursor:raise ValueError('recovery event cursor mismatch')
+    if objective_spec is not None:
+        if any(e.get('raw_target_presentations')!=config.target_count or
+               e.get('scored_target_presentations')!=config.target_count*objective_spec.scored_multiplier for e in updates):
+            raise ValueError('recovery raw/scored accounting mismatch')
+        if state.budget_totals.get('raw_corpus_target_presentations',0)<state.target_cursor:
+            raise ValueError('recovery raw ledger below completed cursor')
     if state.scheduler!=_schedule_state(state.step,config.max_updates):raise ValueError('recovery scheduler mismatch')
     CostRecord(**state.budget_totals)
     parameters=dict(student.named_parameters())
@@ -510,17 +566,33 @@ def finish_attempt_cost(recorder,*,elapsed):
 
 
 def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSources,
-              config: TrainingConfig, budget: Budget, recorder: Recorder) -> MethodResult:
+              config: TrainingConfig, budget: Budget, recorder: Recorder, *, objective_spec=None) -> MethodResult:
     if config.run_spec is not None:
         if config.run_spec.budgets!=budget:raise ValueError('immutable RunSpec budget mismatch')
         if thaw(config.run_spec.resolved_config).get('training')!=config.identity():raise ValueError('RunSpec must bind the complete resolved training config')
+    if objective_spec is not None:
+        from poc.recovery_objectives import RecoveryObjectiveSpec
+        if not isinstance(objective_spec,RecoveryObjectiveSpec):raise ValueError('typed objective spec required')
+        if config.run_spec is None:raise ValueError('recovery requires a bound RunSpec')
+        resolved=thaw(config.run_spec.resolved_config)
+        if resolved.get('recovery_objective')!=__import__('json').loads(canonical_json(objective_spec.identity())):
+            raise ValueError('RunSpec recovery objective identity mismatch')
+        if (data.raw_plan is None or data.raw_plan.digest!=objective_spec.raw_plan_sha256
+                or data.raw_plan.updates!=config.max_updates or data.raw_plan.raw_targets_per_update!=config.target_count
+                or config.epochs!=1 or config.alpha!=0 or config.phase!='global'
+                or config.affected_depths!=objective_spec.affected_depths or config.mixture_weights!={'natural':1.0}):
+            raise ValueError('recovery finite raw plan/objective normalization mismatch')
+        if (config.run_spec.input_manifests.get('raw_plan')!=objective_spec.raw_plan_sha256 or
+                config.run_spec.input_manifests.get('owner_names')!=objective_spec.owner_names_sha256):
+            raise ValueError('RunSpec must bind raw plan and exact owner names')
+    elif data.raw_plan is not None:raise ValueError('raw plan requires explicit recovery objective')
     if any(p.requires_grad for p in teacher.parameters()):raise ValueError('teacher must remain frozen')
-    if config.phase=='global' and data.probes:raise ValueError('global fit receives natural source only')
-    if config.phase!='global' and data.natural:raise ValueError('local natural states require typed full probe provenance')
+    if objective_spec is None and config.phase=='global' and data.probes:raise ValueError('global fit receives natural source only')
+    if objective_spec is None and config.phase!='global' and data.natural:raise ValueError('local natural states require typed full probe provenance')
     if student.dtype not in (torch.float32,torch.float64):raise ValueError('scientific fitting requires FP32 or CPU FP64 reference')
     if student.dtype==torch.float64 and student.device.type!='cpu':raise ValueError('FP64 reference is CPU only')
     if list(student.named_buffers()):raise ValueError('unmodeled persistent buffers are unsupported')
-    owners=configure_trainable_owners(student,config,apply=config.resume is None);optimizer=_optimizer(owners,config)
+    owners=configure_trainable_owners(student,config,apply=config.resume is None,objective_spec=objective_spec);optimizer=_optimizer(owners,config)
     guard=_Guard(recorder,budget);teacher_digest=teacher.manifest().checkpoint_digest
     step=cursor=probe_cursor=0;events=[];visited=[];metrics=[];checkpoint_ref=None
     if config.resume is not None:
@@ -530,33 +602,41 @@ def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSour
             current=getattr(guard.total,k,None)
             if k not in ('memory_bytes','disk_bytes','memory_unavailable_reason','estimation_method') and isinstance(v,(int,float)) and current<v:
                 raise ValueError('authoritative spending cannot roll back to checkpoint')
-        _restore(saved,student,optimizer,config,data,teacher_digest)
-        configure_trainable_owners(student,config)
+        _restore(saved,student,optimizer,config,data,teacher_digest,objective_spec)
+        configure_trainable_owners(student,config,objective_spec=objective_spec)
         step,cursor,probe_cursor=saved.step,saved.target_cursor,saved.probe_cursor
         events=list(saved.events);visited=list(saved.visited)
     schedule=_schedule(optimizer,step,config.max_updates)
     batches=data.natural if config.phase=='global' else tuple(p.template for p in data.probes)
-    if config.phase!='global' and set(p.source for p in data.probes)!=set(config.mixture_weights):raise ValueError('required mixture source absent')
+    if objective_spec is None and config.phase!='global' and set(p.source for p in data.probes)!=set(config.mixture_weights):raise ValueError('required mixture source absent')
     for i,b in enumerate(batches):
         if not b.target_mask.any().item() and not any(e.get('kind')=='skipped' and e.get('source_index')==i for e in events):
             events.append(dict(kind='skipped',source_index=i,reason='no_valid_targets'))
+    safe_state=None
+    if objective_spec is not None:
+        safe_state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited,objective_spec)
+        if config.checkpoint_root is not None and config.resume is None:
+            from poc.checkpoint import save_checkpoint
+            checkpoint_ref=save_checkpoint(safe_state,config.checkpoint_root/'anchor',recorder=guard)
+            safe_state=None
     started=time.monotonic();initial_step=step;sequence_index=0
     wall_baseline=recorder.attempt_cost.wall_seconds if isinstance(recorder,BudgetTracker) else 0
     try:
         for epoch in range(config.epochs):
-            for update in iter_update_targets(batches,config.target_count):
+            for update in (data.raw_plan.iter_updates(student.device) if objective_spec is not None else iter_update_targets(batches,config.target_count)):
                 sequence_index+=1
                 if sequence_index<=step:continue
                 if step>=config.max_updates or (config.stop_after_updates is not None and step-initial_step>=config.stop_after_updates):break
-                guard.check(CostRecord(updates=1,valid_target_presentations=update.valid_targets))
+                guard.check(CostRecord(updates=1,valid_target_presentations=update.valid_targets*(objective_spec.scored_multiplier if objective_spec is not None else 1)))
                 optimizer.zero_grad(set_to_none=True)
                 try:
-                    sums=backward_update(student,teacher,update,config,guard,probe_sources=data.probes)
+                    sums=backward_update(student,teacher,update,config,guard,probe_sources=data.probes,objective_spec=objective_spec,raw_templates=data.raw_plan)
                     if any(p.grad is not None and not torch.isfinite(p.grad).all().item() for p in owners.values()):raise FloatingPointError('nonfinite owner gradient')
                     if not any(p.grad is not None for p in owners.values()):raise ValueError('update has no trainable gradient')
                     if config.record_norms:
                         gradient_norm=math.sqrt(math.fsum(float(p.grad.detach().float().square().sum().item()) for p in owners.values() if p.grad is not None))
                         before_step={n:p.detach().clone() for n,p in owners.items()}
+                    actual_lrs={('bank' if g['owner_ids'][0].startswith('bank.') else 'residual'):g['lr'] for g in optimizer.param_groups} if objective_spec is not None else None
                     torch.nn.utils.clip_grad_norm_(list(owners.values()),1,error_if_nonfinite=True)
                     _call(guard,optimizer.step,updates=1)
                     if config.record_norms:
@@ -569,47 +649,74 @@ def _fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSour
                     raise
                 optimizer.zero_grad(set_to_none=True)
                 step+=1;cursor+=update.valid_targets
-                if config.phase!='global':probe_cursor+=len(update.batches)
+                if objective_spec is not None:
+                    if objective_spec.loss_scope!='full_student':probe_cursor+=len(update.batches)*len(objective_spec.affected_depths)
+                elif config.phase!='global':probe_cursor+=len(update.batches)
                 schedule=_schedule(optimizer,step,config.max_updates)
+                reconstruction=objective_spec is not None and objective_spec.loss_scope=='ffn_mse_sum'
                 row=dict(kind='update',step=step,epoch=epoch,valid_targets=update.valid_targets,
-                    kl_sum=math.fsum(s.kl for s in sums),nll_sum=math.fsum(s.nll for s in sums),
-                    source_counts={s:sum(int(b.target_mask.sum().item()) for b,(i,_,_) in zip(update.batches,update.slices,strict=True) if (s=='natural' if config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights})
+                    kl_sum=None if reconstruction else math.fsum(s.kl for s in sums),
+                    nll_sum=None if reconstruction else math.fsum(s.nll for s in sums),
+                    source_counts={s:sum(int(b.target_mask.sum().item()) for b,(i,_,_) in zip(update.batches,update.slices,strict=True) if (s=='natural' if objective_spec is not None or config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights})
                 events.append(row);metrics.append(row)
-                source_sums={s:math.fsum(m.kl for m,(i,_,_) in zip(sums,update.slices,strict=True)
-                    if (s=='natural' if config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights}
-                row['source_kl_sums']=source_sums
-                row['weighted_objective']=((row['kl_sum']+config.alpha*row['nll_sum'])/update.valid_targets
-                    if config.phase=='global' else math.fsum(config.mixture_weights[s]*source_sums[s]/row['source_counts'][s] for s in config.mixture_weights))
+                if objective_spec is not None:
+                    row.update(raw_target_presentations=update.valid_targets,
+                        scored_target_presentations=sum(m.valid_targets for m in sums),
+                        source_counts={'natural':update.valid_targets},
+                        weighted_objective=(math.fsum(s.squared_error_sum for s in sums) if reconstruction else row['kl_sum'])*objective_spec.scale/update.valid_targets,
+                        raw_plan_sha256=objective_spec.raw_plan_sha256,learning_rates=actual_lrs)
+                    if reconstruction:
+                        row.update(objective_name='ffn_output_mse_sum',reconstruction_sum=math.fsum(s.squared_error_sum for s in sums),
+                            reconstruction_by_depth={str(d):{'output_width':next(s.output_width for s in sums if s.depth==d),'squared_error_sum':math.fsum(s.squared_error_sum for s in sums if s.depth==d),
+                                'valid_targets':sum(s.valid_targets for s in sums if s.depth==d)} for d in objective_spec.affected_depths})
+                        row['source_reconstruction_sums']={'natural':row['reconstruction_sum']}
+                    else:row['source_kl_sums']={'natural':row['kl_sum']}
+                    if config.record_norms:row['clip_applied']=gradient_norm>1
+                else:
+                    source_sums={s:math.fsum(m.kl for m,(i,_,_) in zip(sums,update.slices,strict=True)
+                        if (s=='natural' if config.phase=='global' else data.probes[i].source==s)) for s in config.mixture_weights}
+                    row['source_kl_sums']=source_sums
+                    row['weighted_objective']=((row['kl_sum']+config.alpha*row['nll_sum'])/update.valid_targets
+                        if config.phase=='global' else math.fsum(config.mixture_weights[s]*source_sums[s]/row['source_counts'][s] for s in config.mixture_weights))
                 if config.record_norms:row.update(gradient_norm_pre_clip=gradient_norm,parameter_update_norm=update_norm)
                 visited.append(student.manifest().checkpoint_digest)
-                if config.checkpoint_root is not None:
+                if config.checkpoint_root is not None and (objective_spec is None or step%objective_spec.checkpoint_every==0
+                        or step in config.observation_steps or step==config.max_updates
+                        or config.stop_after_updates is not None and step-initial_step>=config.stop_after_updates):
                     from poc.checkpoint import save_checkpoint
-                    state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited)
+                    state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited,objective_spec)
                     checkpoint_ref=save_checkpoint(state,config.checkpoint_root,recorder=guard)
                     del state
                 if step in config.observation_steps and config.on_update is not None:_observe(config.on_update,step,student,teacher)
                 guard.check(CostRecord())
             if step>=config.max_updates or (config.stop_after_updates is not None and step-initial_step>=config.stop_after_updates):break
+    except BaseException:
+        if objective_spec is not None:
+            from poc.checkpoint import load_checkpoint
+            saved=load_checkpoint(checkpoint_ref,config.run_spec) if checkpoint_ref is not None else safe_state
+            _restore(saved,student,optimizer,config,data,teacher_digest,objective_spec)
+            configure_trainable_owners(student,config,objective_spec=objective_spec)
+        raise
     finally:
         optimizer.zero_grad(set_to_none=True)
         # Nested dispatches measure only counted work, so fill orchestration time once.
         if isinstance(recorder,BudgetTracker):
             finish_attempt_cost(recorder,elapsed=wall_baseline+time.monotonic()-started)
             guard.total=recorder.totals
-    state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited)
+    state=_snapshot(student,optimizer,schedule,config,data,step,cursor,probe_cursor,events,guard,teacher_digest,visited,objective_spec)
     outcome='invalid' if not cursor else 'exhausted'
     reason='no_valid_targets' if not cursor else 'declared bounded fitting completed; compression target not evaluated'
     return MethodResult(outcome,reason,state,tuple(metrics),checkpoint_ref)
 
 
 def fit_model(student: BankDecoder, teacher: DecoderAdapter, data: TrainingSources,
-              config: TrainingConfig, budget: Budget, recorder: Recorder) -> MethodResult:
+              config: TrainingConfig, budget: Budget, recorder: Recorder, *, objective_spec=None) -> MethodResult:
     """Charge the entire call, including setup failures and final snapshots."""
     started=time.monotonic()
     baseline=recorder.attempt_cost.wall_seconds if isinstance(recorder,BudgetTracker) else 0
     result=None
     try:
-        result=_fit_model(student,teacher,data,config,budget,recorder)
+        result=_fit_model(student,teacher,data,config,budget,recorder,objective_spec=objective_spec)
         return result
     finally:
         if isinstance(recorder,BudgetTracker):

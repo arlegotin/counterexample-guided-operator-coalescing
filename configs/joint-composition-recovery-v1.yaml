@@ -1,0 +1,107 @@
+# Unresolved schema6 template; freeze source, controls, measured profile and finite budgets before run.
+alpha: 0
+asset_root: null
+checkpoint_every: 16
+composition:
+  checkpoint_directory: null
+  checkpoint_manifest_sha256: null
+  expected_partition:
+  - - 0
+    - 15
+  - - 1
+  - - 2
+  - - 3
+  - - 4
+  - - 5
+  - - 6
+  - - 7
+  - - 8
+  - - 9
+  - - 10
+  - - 11
+  - - 12
+    - 20
+  - - 13
+  - - 14
+  - - 16
+  - - 17
+  - - 18
+  - - 19
+  - - 21
+  - - 22
+  - - 23
+  - - 24
+  - - 25
+  - - 26
+  - - 27
+  - - 28
+  - - 29
+  forced_parent: 12
+  merge_pair:
+  - 12
+  - 20
+  reference: current_continuation
+  schema_version: 1
+  source_run_spec_path: null
+  source_run_spec_sha256: null
+initialization_checkpoint: null
+initializer: null
+loss_scopes:
+- full_student
+numerical_profile:
+  chunk_size: 32
+  decision_resolution: 2.0e-05
+  device: mps
+  dtype: float32
+  kl_floor_per_target: 2.0e-06
+observation_policy: optimizer_plus_tuning_v2
+observations:
+- 0
+- 1
+- 4
+- 16
+- 32
+- 64
+- 128
+- 256
+out: artifacts/joint-composition-recovery-v1
+owner_scope: affected_groups
+pair:
+- 12
+- 20
+parent_fit_components: 16
+populations:
+  fit:
+    components: 512
+    path: null
+    sha256: null
+  tuning:
+    components: 128
+    path: null
+    sha256: null
+preparation: null
+profile_resource_budget:
+  disk_bytes: 34359738368
+  memory_bytes: 6442450944
+  search_proposals: 10
+  search_seconds: 3000
+  student_backward_calls: 100000
+  suffix_backward_calls: 100000
+  teacher_forward_calls: 2000000
+  updates: 1
+  valid_target_presentations: 4000000
+  wall_seconds: 3000
+rank: 8
+raw_targets_per_update: 8192
+resource_budget: null
+retained_dependency_roots: []
+schema_version: 6
+seeds:
+- 17
+study: joint-composition-recovery-v1
+trainable_depths:
+- 0
+- 12
+- 15
+- 20
+updates: 256

@@ -1,0 +1,86 @@
+schema_version: 1
+study: nonlinear-reconstruction-v1
+asset_root: null
+out: artifacts/nonlinear-reconstruction-v1
+pair:
+- 0
+- 15
+rank: 8
+seed: 17
+calibration_components: 16
+warm_loss_scope: ffn_mse_sum
+warm_updates: 16
+recovery_updates: 256
+owner_scope: affected_group
+alpha: 0
+observations:
+  warm:
+  - 0
+  - 16
+  recovery:
+  - 0
+  - 1
+  - 4
+  - 16
+  - 32
+  - 64
+  - 128
+  - 256
+checkpoint_every: 16
+optimizer:
+  bank_lr: 0.0001
+  residual_lr: 0.0003
+  weight_decay: 0
+  lr_factor: 1
+populations:
+  fit:
+    path: null
+    sha256: null
+    components: 512
+  tuning:
+    path: null
+    sha256: null
+    components: 128
+initialization_checkpoint: null
+numerical_profile:
+  device: mps
+  dtype: float32
+  chunk_size: 32
+  kl_floor_per_target: 2.0e-06
+  decision_resolution: 2.0e-05
+profile_resource_budget:
+  setup:
+    updates: 0
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 34359738368
+    memory_bytes: 6442450944
+  warm:
+    updates: 16
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 34359738368
+    memory_bytes: 6442450944
+  recovery:
+    updates: 1
+    valid_target_presentations: 4000000
+    teacher_forward_calls: 2000000
+    suffix_backward_calls: 100000
+    student_backward_calls: 100000
+    search_proposals: 0
+    search_seconds: 0
+    wall_seconds: 1800
+    disk_bytes: 34359738368
+    memory_bytes: 6442450944
+resource_budget: null
+retained_dependency_roots: []

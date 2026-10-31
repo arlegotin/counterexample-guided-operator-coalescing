@@ -25,6 +25,7 @@ class MergeTrial:
     sources: TrainingSources|None=None
     recorder: object|None=None
     fit_summary: dict=field(default_factory=dict)
+    parent_policy: dict|None=None
 
 
 def centered_linear_cka(x,y):
@@ -63,7 +64,7 @@ def _fit_batches(fit,teacher):
     return tuple(result)
 
 
-def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,int],fit:DataManifest,seed:int,*,batches:Sequence[Batch]|None=None,recorder=None)->MergeTrial:
+def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,int],fit:DataManifest,seed:int,*,batches:Sequence[Batch]|None=None,recorder=None,forced_parent:int|None=None)->MergeTrial:
     if not isinstance(current,BankDecoder):raise ValueError('canonical bank required')
     if current.base_digest != teacher.manifest().checkpoint_digest:
         raise ValueError('merge teacher lineage differs from current base_digest')
@@ -72,6 +73,9 @@ def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,i
     if len(pair)!=2 or any(type(x) is not int for x in pair) or not 0<=pair[0]<pair[1]<len(current.layers):raise ValueError('canonical depth pair required')
     groups=current.partition.groups;indices=tuple(current.partition.reuse_map[d] for d in pair)
     if indices[0]==indices[1]:raise ValueError('pair already shares an operator')
+    representatives={groups[i][0] for i in indices}
+    if forced_parent is not None and (type(forced_parent) is not int or forced_parent not in representatives):
+        raise ValueError('forced parent must be a canonical current group representative')
     affected=tuple(sorted(groups[indices[0]]+groups[indices[1]]))
     batches=tuple(batches) if batches is not None else _fit_batches(fit,teacher)
     if not batches or set(i for b in batches for i in b.document_ids)!=set(fit.roles):raise ValueError('exact fit document population required')
@@ -114,7 +118,8 @@ def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,i
         score=sum(sums)/len(sums);parent=groups[index][0]
         if not torch.isfinite(torch.tensor(score)):raise ValueError('nonfinite medoid reconstruction')
         rows.append(dict(parent=parent,mse=score,fit_digest=fit_digest,components=len(set(fit.membership.values())),documents=len(fit.records)))
-        if best is None or score<best[0]:
+        keep=(best is None or score<best[0]) if forced_parent is None else parent==forced_parent
+        if keep:
             best=(score,index,parent)
             # Only changed residuals, not a second model/optimizer snapshot.
             best_delta={d:{k:v.detach().cpu().clone() for k,v in candidate.layers[d].mlp.residuals.state_dict().items()} for d in affected}
@@ -122,7 +127,8 @@ def initialize_merge(current:BankDecoder,teacher:DecoderAdapter,pair:tuple[int,i
         with torch.no_grad():
             for name in PROJECTIONS:getattr(candidate.bank[merged_index],name).weight.copy_(getattr(current.bank[best[1]],name).weight)
         for d,values in best_delta.items():candidate.layers[d].mlp.residuals.load_state_dict(values)
-    return MergeTrial(candidate,teacher,pair,affected,best[2],tuple(rows),candidate.manifest().checkpoint_digest,recorder=recorder)
+    return MergeTrial(candidate,teacher,pair,affected,best[2],tuple(rows),candidate.manifest().checkpoint_digest,recorder=recorder,
+        parent_policy=None if forced_parent is None else {'schema_version':1,'kind':'forced_current_group_representative','parent':forced_parent})
 
 
 def fit_trial(trial:MergeTrial,schedule:TrainingConfig,budget:Budget)->MergeTrial:
@@ -153,6 +159,16 @@ def initializer_sensitivity_control():
     return errors|{'interpretation':'raw SVD is not neuron alignment','fixture_seed':23,'evaluation_seed':731,'evaluation_positions':96}
 
 
+
+def _validate_parent_policy(policy,current,pair,parent):
+    representatives={current.partition.groups[current.partition.reuse_map[d]][0] for d in pair}
+    if (not isinstance(policy,dict) or set(policy)!={'schema_version','kind','parent'} or
+            type(policy['schema_version']) is not int or policy['schema_version']!=1 or
+            policy['kind']!='forced_current_group_representative' or
+            type(policy['parent']) is not int or policy['parent'] not in representatives or type(parent) is not int or policy['parent']!=parent):
+        raise ValueError('invalid forced initialization parent policy')
+
+
 def save_trial_delta(trial,current,path):
     """Keep only changed owners for delayed damage evaluation, never Adam/full model."""
     import json
@@ -166,6 +182,9 @@ def save_trial_delta(trial,current,path):
     from poc.runtime.torch_decoder import EXECUTION_PROFILE
     metadata=dict(execution_profile=EXECUTION_PROFILE,base_digest=current.manifest().checkpoint_digest,teacher_digest=trial.teacher.manifest().checkpoint_digest,pair=trial.pair,affected_depths=trial.affected_depths,selected_parent=trial.selected_parent,medoid_scores=trial.medoid_scores,initialized_digest=trial.initialized_digest,fitted_digest=trial.fitted_digest,fit_summary=trial.fit_summary,weights_sha256=hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest())
     metadata['owner_trainability']={n:p.requires_grad for n,p in trial.model.named_parameters()}
+    if trial.parent_policy is not None:
+        _validate_parent_policy(trial.parent_policy,current,trial.pair,trial.selected_parent)
+        metadata.update(initialization_schema_version=2,initialization_policy=trial.parent_policy)
     (path/'metadata.json').write_text(json.dumps(metadata,sort_keys=True)+'\n')
 
 
@@ -179,6 +198,11 @@ def restore_trial_delta(current,teacher,path,*,recorder=None):
     if metadata['base_digest']!=current.manifest().checkpoint_digest or metadata['teacher_digest']!=teacher.manifest().checkpoint_digest:raise ValueError('delta base identity changed')
     if hashlib.sha256((path/'weights.safetensors').read_bytes()).hexdigest()!=metadata['weights_sha256']:raise ValueError('delta weights hash mismatch')
     pair=tuple(metadata['pair']);affected=tuple(metadata['affected_depths']);indices={current.partition.reuse_map[d] for d in pair}
+    policy=metadata.get('initialization_policy')
+    if 'initialization_schema_version' in metadata or policy is not None:
+        if type(metadata.get('initialization_schema_version')) is not int or metadata['initialization_schema_version']!=2:
+            raise ValueError('unsupported initialization policy schema')
+        _validate_parent_policy(policy,current,pair,metadata['selected_parent'])
     merged=canonicalize_partition([g for k,g in enumerate(current.partition.groups) if k not in indices]+[affected],len(current.layers))
     candidate=deepcopy(current);old={g:current.bank[k] for k,g in enumerate(current.partition.groups)}
     candidate.bank=nn.ModuleList([deepcopy(current.bank[current.partition.reuse_map[pair[0]]] if g==affected else old[g]) for g in merged.groups]);candidate.partition=merged
@@ -193,4 +217,4 @@ def restore_trial_delta(current,teacher,path,*,recorder=None):
         for n,v in values.items():parameters[n].copy_(v)
         for n,p in parameters.items():p.requires_grad_(flags[n])
     if candidate.manifest().checkpoint_digest!=metadata['fitted_digest']:raise ValueError('restored fitted state digest mismatch')
-    return MergeTrial(candidate,teacher,pair,affected,metadata['selected_parent'],tuple(metadata['medoid_scores']),metadata['initialized_digest'],metadata['fitted_digest'],recorder=recorder,fit_summary=metadata['fit_summary'])
+    return MergeTrial(candidate,teacher,pair,affected,metadata['selected_parent'],tuple(metadata['medoid_scores']),metadata['initialized_digest'],metadata['fitted_digest'],recorder=recorder,fit_summary=metadata['fit_summary'],parent_policy=policy)

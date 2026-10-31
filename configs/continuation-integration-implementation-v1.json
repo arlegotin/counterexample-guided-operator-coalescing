@@ -1,0 +1,25 @@
+{
+  "owned_suite_out": "artifacts/selector-tiny-bank-controls-integrated-v2",
+  "qualification_caps": {
+    "default_cpu": {
+      "disk_bytes": 8589934592,
+      "memory_bytes": 12884901888,
+      "wall_seconds": 1800
+    },
+    "owned_suite": {
+      "disk_bytes": 134217728,
+      "memory_bytes": 2147483648,
+      "wall_seconds": 180
+    },
+    "public": {
+      "disk_bytes": 1048576,
+      "memory_bytes": 1073741824,
+      "wall_seconds": 120
+    }
+  },
+  "real_model_or_protected_access": false,
+  "schema_version": 1,
+  "scope": "owned_cpu_public_source_qualification_only",
+  "source_binding_path": "provenance/continuation-integration-v1/owned-selector-source-binding-v2.json",
+  "study": "continuation-integration-implementation-v1"
+}

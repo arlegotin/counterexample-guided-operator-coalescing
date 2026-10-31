@@ -36,6 +36,8 @@ def _state_categories(bank):
 def write_bank_state(bank: BankDecoder, destination: Path) -> BankStateRef:
     if not isinstance(bank, BankDecoder):
         raise ValueError('bank state requires BankDecoder')
+    if getattr(bank,'_deployment_inference_only',False):
+        raise ValueError('inference-only elided payload cannot become a scientific bank state')
     destination = Path(destination)
     if destination.exists():
         raise FileExistsError(destination)
@@ -230,9 +232,17 @@ def _expected_schema(metadata):
         for name, shape in (('gate_proj',(f,h)), ('up_proj',(f,h)), ('down_proj',(h,f))):
             prefix = f'layers.{i}.mlp' if kind == 'dense' else f'bank.{i}'
             expected[f'{prefix}.{name}.weight'] = (shape, 'dense_ffn' if kind == 'dense' else 'bank')
+    presence = metadata.get('factor_presence')
+    if metadata.get('schema_version') == 2:
+        projections = {'gate_proj', 'up_proj', 'down_proj'}
+        if (kind != 'compact' or not rank or not isinstance(presence, list) or len(presence) != n
+                or any(not isinstance(site, dict) or set(site) != projections or
+                       any(type(flag) is not bool for flag in site.values()) for site in presence)):
+            raise ValueError('invalid deployed factor presence')
     if rank:
         for i in range(n):
             for name, shape in (('gate_proj',(f,h)), ('up_proj',(f,h)), ('down_proj',(h,f))):
+                if presence is not None and not presence[i][name]: continue
                 prefix = f'layers.{i}.mlp.residuals.{name}'
                 expected[prefix+'.A'] = ((rank,shape[1]), 'residual')
                 expected[prefix+'.B'] = ((shape[0],rank), 'residual')
@@ -268,8 +278,14 @@ def verify_bundle(path: Path) -> BundleManifest:
             'head_dim','rope_theta','norm_epsilons','tokenizer_digest','source_checkpoint_digest',
             'dtype','source_backend','dependency_lock_sha256','install_bytes','install_unknown_reason','tokenizer_files',
             'license_files','omitted_weight_files','execution_profile'}
-    if not isinstance(raw,dict) or set(raw) != keys or type(raw['schema_version']) is not int or raw['schema_version'] != 1:
+    version = raw.get('schema_version') if isinstance(raw, dict) else None
+    if version == 2: keys |= {'factor_presence', 'inference_only', 'deployment_checkpoint_digest'}
+    if not isinstance(raw,dict) or set(raw) != keys or type(version) is not int or version not in (1, 2):
         raise ValueError('unsupported deployment manifest schema')
+    if version == 2:
+        import re
+        if raw['inference_only'] is not True or not isinstance(raw['deployment_checkpoint_digest'], str) or not re.fullmatch('[0-9a-f]{64}',raw['deployment_checkpoint_digest']):
+            raise ValueError('invalid inference-only deployment identity')
     entries = raw['file_entries']
     if not isinstance(entries,dict) or set(files) != set(entries) | {'manifest.json'} or 'manifest.json' in entries:
         raise ValueError('undeclared or missing bundle file')
@@ -329,6 +345,7 @@ def verify_bundle(path: Path) -> BundleManifest:
         if set(owner) != {'name','shape','dtype','category','file','aliases','use_sites','trainable'}:
             raise ValueError('invalid owner record')
         name = owner['name']; shape, category = expected[name]
+        if version == 2 and owner['trainable'] is not False: raise ValueError('elided deployment owners must be frozen')
         if packed and name in quant['owners']:
             fmt=quant['owners'][name]
             if set(fmt)!={'bits','group_size'} or category=='residual': raise ValueError('invalid packed owner format')
@@ -357,7 +374,15 @@ def verify_bundle(path: Path) -> BundleManifest:
     if set(raw['omitted_weight_files']) != set(WEIGHT_FILES.values()) - used:
         raise ValueError('invalid omitted categories')
     ByteAccounting(sum(p.stat().st_size for p in files.values()), install_bytes=raw['install_bytes'], install_unknown_reason=raw['install_unknown_reason'])
-    return BundleManifest(1, entries, raw)
+    result = BundleManifest(version, entries, raw)
+    if version == 2 and not packed:
+        # All floating consumers, including native loading and quantization,
+        # verify the CPU reconstruction identity before trusting provenance.
+        # In packed descendants this digest identifies the verified floating
+        # ancestor; actual packed tensors have their own file/runtime identity.
+        from poc.export import _load_scientific
+        _load_scientific(root, result)
+    return result
 
 
 def _write_runtime(root):
@@ -372,9 +397,10 @@ def _write_runtime(root):
             archive.writestr(info,source_root.joinpath(filename).read_bytes())
 
 
-def write_bundle(decoder: DecoderAdapter, destination: Path, runtime: RuntimeSpec) -> BundleRef:
+def write_bundle(decoder: DecoderAdapter, destination: Path, runtime: RuntimeSpec, *, elide_zero_residuals: bool = False) -> BundleRef:
     if not isinstance(runtime, RuntimeSpec): raise ValueError('explicit RuntimeSpec required')
     if not isinstance(decoder, TorchDecoder): raise ValueError('floating export requires TorchDecoder')
+    if type(elide_zero_residuals) is not bool: raise ValueError('elision flag must be boolean')
     # Checks mapping and actual norm epsilon before taking a snapshot.
     source_manifest = decoder.manifest()
     if list(decoder.named_buffers()): raise ValueError('unmodeled persistent buffers are unsupported')
@@ -400,6 +426,31 @@ def write_bundle(decoder: DecoderAdapter, destination: Path, runtime: RuntimeSpe
         meta['owners'].append({'name':record.name,'shape':list(record.shape),'dtype':source_manifest.dtype,
                                'category':record.category,'file':WEIGHT_FILES[record.category],
                                'aliases':aliases[id(params[record.name])], 'use_sites':list(record.use_sites), 'trainable':record.trainable})
+    if elide_zero_residuals:
+        if not is_bank or not decoder.rank: raise ValueError('zero correction elision requires a ranked bank')
+        # The scientific checkpoint remains untouched, including live zero-B factors.
+        # A CPU deployment clone provides a distinct, independently verified identity.
+        from copy import deepcopy
+        deployed = deepcopy(decoder).cpu().requires_grad_(False)
+        presence = []
+        for layer in deployed.layers:
+            site = {}
+            for name in ('gate_proj', 'up_proj', 'down_proj'):
+                if name not in layer.mlp.residuals:
+                    site[name] = False
+                    continue
+                factors = layer.mlp.residuals[name]
+                if not all(torch.isfinite(t).all().item() for t in (factors.A, factors.B)):
+                    raise ValueError('nonfinite correction factors')
+                keep = bool(torch.count_nonzero(factors.A).item() and torch.count_nonzero(factors.B).item())
+                site[name] = keep
+                if not keep: del layer.mlp.residuals[name]
+            presence.append(site)
+        retained = set(dict(deployed.named_parameters()))
+        meta.update(schema_version=2, factor_presence=presence, inference_only=True,
+                    deployment_checkpoint_digest=deployed.manifest().checkpoint_digest)
+        meta['owners'] = [dict(o, trainable=False) for o in meta['owners'] if o['name'] in retained]
+        del deployed
     _expected_schema(meta)
     destination = Path(destination)
     if destination.exists(): raise FileExistsError(destination)

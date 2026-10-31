@@ -1,0 +1,13 @@
+{
+  "started_utc": "2026-10-31T09:36:52.000379+00:00",
+  "pid": 32727,
+  "command": [
+    "/Users/artemlegotin/Documents/git_alter/counterexample-guided-operator-coalescing/.venv/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "--basetemp=/private/tmp/cgoc-dense-v2-lineage-qualification-v3/default_cpu/pytest"
+  ],
+  "protocol_sha256": "7bef937019d6175813f98951a3eb9c96038b04a6d552c44b2985166b23352794",
+  "scope": "fixed RTN artifact study; finite source-bound stage; no retries"
+}

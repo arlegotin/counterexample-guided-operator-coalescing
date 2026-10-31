@@ -1,0 +1,18 @@
+"""Bounded CPU-only actual reference-import diagnostic; no native imports."""
+from pathlib import Path
+import builtins,sys,yaml
+ROOT=Path(__file__).resolve().parents[2];sys.path.insert(0,str(ROOT))
+original=builtins.__import__
+def guarded(name,*args,**kwargs):
+ if name=='mlx' or name.startswith(('mlx.','mlx_lm')):raise RuntimeError('native backend import forbidden in reference verification')
+ return original(name,*args,**kwargs)
+builtins.__import__=guarded
+from provenance.dense_frontier_execution import record_dense_phase,import_dense_references,dense_executed_sources,reference
+from poc.recovery_endpoints import write_once
+config=ROOT/'configs/dense-baseline-expansion-v2-proposal-v1.yaml';c=yaml.safe_load(config.read_text())
+identity={**c,'study':'dense-reference-import-controls-v1','out':str(ROOT/'artifacts/dense-reference-import-controls-v1')}
+work=dict(updates=0,valid_target_presentations=0,teacher_forward_calls=0,student_forward_calls=0,student_backward_calls=0,raw_corpus_target_presentations=0)
+value=record_dense_phase(identity,'actual-import',dense_executed_sources(config),lambda rec:import_dense_references(c,config_path=config),
+ resource={'wall_seconds':300,'memory_bytes':8*1024**3,'disk_bytes':256*1024**2},work=work)
+path=Path(identity['out'])/'result.json';write_once(path,value)
+print({'status':'accepted exact original reference observations; CPU only','result':reference(path),'points':len(value['measurements']),'new_neural_calls':0})

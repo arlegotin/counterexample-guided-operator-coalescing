@@ -1,0 +1,37 @@
+"""Final source/CPU/public qualification only; no new model experiment."""
+from pathlib import Path
+from datetime import datetime,timezone
+import sys,os,json,tarfile,io,ast
+ROOT=Path(__file__).resolve().parents[2]
+for k,v in {'PYTHONPATH':str(ROOT),'OMP_NUM_THREADS':'1','MKL_NUM_THREADS':'1','TMPDIR':'/private/tmp'}.items():os.environ[k]=v
+for k in ('HF_HUB_OFFLINE','PYTORCH_ENABLE_MPS_FALLBACK'):os.environ.pop(k,None)
+sys.path.insert(0,str(ROOT))
+from provenance import recovery_diagnosis as d
+from provenance import sharing_frontier_study as core
+from poc.recovery_endpoints import file_sha,write_once
+prov=ROOT/'provenance/confirmation-access-v1';config=ROOT/'configs/confirmation-access-implementation-v1.json';ref=lambda p:{'path':str(p),'sha256':file_sha(p)}
+focused=Path('/private/tmp/cgoc-confirmation-review-green-v1.log')
+if '106 passed' not in focused.read_text():raise ValueError('review covering focused suite not green')
+source=d.executed_sources(config)
+for rel in ('licenses/mlx-lm-MIT.txt','configs/confirmation-access-implementation-v1.json','docs/superpowers/specs/2026-10-31-confirmation-access-v1.md','docs/superpowers/plans/2026-10-31-confirmation-access-v1.md','provenance/confirmation-access-v1/qualify-source-v1.py.txt'):
+ source['files'][rel]=file_sha(ROOT/rel)
+write_once(prov/'qualification-source-v1.json',source);write_once(prov/'qualification-environment-v1.json',d.environment())
+archive=prov/'qualified-source-v1.tar.gz'
+with archive.open('xb') as raw:
+ with tarfile.open(fileobj=raw,mode='w:gz') as tar:
+  for rel in source['files']:
+   data=(ROOT/rel).read_bytes();e=tarfile.TarInfo(rel);e.size=len(data);e.mtime=e.uid=e.gid=0;e.mode=0o644;tar.addfile(e,io.BytesIO(data))
+refs=[{'path':str(ROOT/p),'sha256':h} for p,h in source['files'].items()]+[ref(prov/p) for p in ('qualification-source-v1.json','qualification-environment-v1.json','parent-source-v1.json','review-resolution-v1.json')]+[ref(archive),ref(focused)]
+temp=Path('/private/tmp/cgoc-confirmation-access-qualified-v1');temp.mkdir(exist_ok=False);stages={}
+env={'PYTHONPATH':str(ROOT),'OMP_NUM_THREADS':'1','MKL_NUM_THREADS':'1','TMPDIR':'/private/tmp'}
+try:
+ for name,args,caps in [('default_cpu',['-m','pytest','-q'],{'wall_seconds':1800,'memory_bytes':12*1024**3,'disk_bytes':8*1024**3}),('public',['provenance/verify_public_continuation.py'],{'wall_seconds':120,'memory_bytes':1024**3,'disk_bytes':1024**2})]:
+  output=temp/name;output.mkdir();command=[sys.executable,*args]
+  if name=='default_cpu':command.append('--basetemp='+str(output/'pytest'))
+  stage=core.execute_stage(command,root=ROOT,output=output,stage=prov/('qualification-'+name+'-v1'),caps=caps,frozen_files=refs,execution_env=env)
+  core.require_stage_success(stage);core.check_stage_binding(stage,command=command,root=ROOT,output=output,caps=caps,required_refs=refs,execution_env=env)
+  stages[name]={'stage':stage,'command':command,'caps':caps,'output':str(output)};write_once(prov/('accepted-'+name+'-v1.json'),stages[name]);print(json.dumps({'stage':name,'status':'accepted'}),flush=True)
+ q={'schema_version':2,'status':'qualified_confirmation_access_implementation','created_utc':datetime.now(timezone.utc).isoformat(),'source_manifest':ref(prov/'qualification-source-v1.json'),'source_archive':ref(archive),'environment':ref(prov/'qualification-environment-v1.json'),'review':ref(prov/'review-resolution-v1.json'),'focused':ref(focused),'implementation_contract':ref(config),'frozen_refs':refs,'stages':stages,'scope':'owned-fixture CPU/public implementation qualification only; no real confirmation/corpus/native/pretrained execution; final scientific protocol, authority, sample size, artifact completeness and backend remain independent gates'}
+ write_once(prov/'qualification-v1.json',q);print(json.dumps({'status':q['status'],'qualification':ref(prov/'qualification-v1.json'),'source_files':len(source['files'])}),flush=True)
+except BaseException as exc:
+ write_once(prov/'qualification-failed-v1.json',{'status':'failed','error':repr(exc),'stages':stages,'no_automatic_retry':True});raise

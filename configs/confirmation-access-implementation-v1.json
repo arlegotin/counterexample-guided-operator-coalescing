@@ -1,0 +1,23 @@
+{
+  "new_roles": [
+    "confirm_A",
+    "confirm_B"
+  ],
+  "protected_benchmark_allowed": false,
+  "qualification_caps": {
+    "default_cpu": {
+      "disk_bytes": 8589934592,
+      "memory_bytes": 12884901888,
+      "wall_seconds": 1800
+    },
+    "public": {
+      "disk_bytes": 1048576,
+      "memory_bytes": 1073741824,
+      "wall_seconds": 120
+    }
+  },
+  "real_confirmation_authorized": false,
+  "schema_version": 1,
+  "scope": "owned_fixture_qualification_only",
+  "study": "confirmation-access-implementation-v1"
+}
