@@ -1,0 +1,55 @@
+{
+  "artifact_verification_driver_sha256": "b1cca1c9ab7f295e2df241a7f0f1abc7cd8d94c355d3040a35987dfa9daf5a3f",
+  "full_cpu": {
+    "caps": {
+      "disk_bytes": 8589934592,
+      "memory_bytes": 12884901888,
+      "wall_seconds": 2400
+    },
+    "legacy_supervisor_scope_label": "The reused generic supervisor retains a fixed RTN study label; the command and present record define this stage as CPU pytest validation.",
+    "log": "validation-default-cpu-v1/execution.log",
+    "native_deselected": 68,
+    "passed": 1943,
+    "receipt": "validation-default-cpu-v1/attempt.json",
+    "sampled_process_tree_rss_bytes": 1029701632,
+    "sampled_scratch_peak_bytes": 454994633,
+    "skipped": 1,
+    "source_manifest": "validation-default-cpu-v1/protocol.json",
+    "wall_seconds": 876.8361960829934,
+    "warning": "Existing owned multiprocessing fork deprecation warning; test passed.",
+    "warnings": 1
+  },
+  "metadata": {
+    "changed_markdown_links": 27,
+    "citation_schema": "official 1.2.0",
+    "existing_ci": "byte-identical to public main",
+    "frozen_files_unchanged": 202,
+    "inherited_whitespace": "Preserved original source and failure logs from checkpoint 9d5d156; no edits to historical evidence.",
+    "release_diff_whitespace": "passed"
+  },
+  "new_release_metadata": "This record and copied test receipts are added after the frozen test stage. Implementation and scientific modules retain the tested bytes.",
+  "public_verifiers": {
+    "checkpoint_hashed_files": 42,
+    "checkpoint_native_artifacts": 12,
+    "checkpoint_recovery_observations": 20,
+    "legacy_hashed_files": 92,
+    "native_interval_reproduced": true,
+    "recovery_bootstrap_draws_reproduced": 10000
+  },
+  "receipt_hashes": {
+    "attempt.json": "cb66c147cb20e87d89da6af052f6888cc84cd457e312e3639526f8b0f6cf6436",
+    "execution.log": "e5285239f232a7df7a943507cff48177664773542322345ef865f56abc7812f0",
+    "protocol.json": "33659f5d4afb740be619466b02204a222d0d98989be6a9cb387416f05f13c7b8",
+    "stage-start.json": "961fd4d5a0fce02f1713129f3d9432c5f9d917dcc32aa2120ab3baf7346e2d2d",
+    "supervisor.log": "c2f4742d3c42f1ef11e852708b97e1095a8ae259603d91d4e8d327dc90beeee2"
+  },
+  "review": {
+    "critical": 0,
+    "important": 0,
+    "minor_deferred": 1,
+    "record": "review-resolution.json"
+  },
+  "schema_version": 1,
+  "scope": "CPU implementation, public evidence and release packaging checks; no new model training, native inference or protected evaluation",
+  "tested_commit": "ef470e92c4eed48cc009231fe116d54d656fb73e"
+}
