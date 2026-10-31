@@ -15,7 +15,7 @@ Full minus local KL is **+0.000764611 nats/target**, with a paired component 95%
 
 The original local pipeline exceeded its memory ceiling during final accounting after saving the complete trajectory. Its saved state and observations were independently admitted; **the pipeline remains failed**. The full-student counterpart completed under a different, explicitly qualified accounting implementation. Their wall times therefore do not isolate objective speed. The loss-scale diagnostic and additional long seeds are not included as completed results here.
 
-The accepted native campaign evaluated twelve complete artifacts on the same 128 components and 65,408 valid targets. Selected rows are below; sizes are decimal bytes, and all twelve rows are retained in the linked evidence.
+The accepted native campaign used the earlier 256-update recovered checkpoint; the 1,024-update endpoints above have no native exports in this release. It evaluated twelve complete artifacts on the same 128 components and 65,408 valid targets. Selected rows are below; sizes are decimal bytes, and all twelve rows are retained in the linked evidence.
 
 | Artifact | Complete bytes | KL/target |
 | --- | ---: | ---: |
@@ -49,7 +49,7 @@ The source has one whole-feature review and one material fix pass. CPU/public qu
 2. After the serial slot and native controls qualify, profile and evaluate the six fixed dense baselines before testing another sharing frontier.
 3. Advance composition, initialization or counterexample studies only where the resulting evidence motivates them. Freeze a promising claim and obtain fresh confirmation before making practical or capability claims.
 
-The broader independent-family reader is an unshipped draft in a separate worktree. It is not part of this completed checkpoint. No new experimental sweep is launched by finishing this deliverable. No push, merge or publication is performed.
+The broader independent-family reader is an unshipped draft in a separate worktree and is not part of these findings. Version 0.2.0 publishes the retained checkpoint and portable numeric checks; it launches no new experimental sweep.
 
 ## Check the included receipt copies offline
 

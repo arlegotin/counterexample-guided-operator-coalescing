@@ -1,0 +1,13 @@
+{
+  "ci": "existing historicalreport andlegacycontinuation workflow preserved; newportablechecksvalidatedlocally",
+  "citation_schema": "https://citation-file-format.github.io/1.2.0/schema.json",
+  "citation_validation": "passed with system jsonschema4.26.0, official1.2.0schema",
+  "focused_tests": {
+    "command": "pytest tests/test_release_archives.py tests/test_checkpoint_release.py tests/test_public_continuation.py tests/test_report.py -q",
+    "passed": 103
+  },
+  "licensing": "existing AGPL-3.0-only software andCC-BY-4.0writing retained; unchanged license bytes; MITMLX-LM source archive notice added",
+  "private_or_native_model_runs": 0,
+  "readme_skill": "arlegotin/write-like-me@b7a28e64fed749406a2fd8406d5ebd3eedd584c0",
+  "readme_words": 372
+}

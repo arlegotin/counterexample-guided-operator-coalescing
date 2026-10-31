@@ -43,7 +43,7 @@ DWQ's last distribution target is charged even when the official model sees a tr
 
 The common report stays provisional until a separate saved-result consumer admits its raw observations, artifacts and costs. Complete bytes, fidelity, capability and production runtime are distinct outcomes. No practical acceptability threshold has been supplied.
 
-## Evidence and qualification
+## Retained implementation qualification
 
 - [Resolved one-pass review](../provenance/dense-baseline-expansion-v2/review-resolution-v2.json)
 - [Actual corrected-input metadata preflight](../provenance/dense-baseline-expansion-v2/accepted-metadata-preflight-v2.json)
@@ -52,4 +52,4 @@ The common report stays provisional until a separate saved-result consumer admit
 - [Input correction and unchanged population](../provenance/dense-baseline-expansion-v2/lineage-correction-v2.json)
 - [Owned-fixture packaging failure and repair](../provenance/dense-baseline-expansion-v2/owned-fixture-closure-v2.json)
 
-No qualification receipt should be inferred merely from a file name. Each consumer checks its source archive, exact commands, successful finite guards, environment and referenced bytes.
+These source/CPU qualification receipts belong to the retained implementation snapshot `9d5d156`, before release-only metadata and public-verifier changes. They are not native qualification or a turnkey permission to run the frozen author-workspace config from another checkout. No qualification receipt should be inferred merely from a file name. Each consumer checks its source archive, exact commands, successful finite guards, environment and referenced bytes.

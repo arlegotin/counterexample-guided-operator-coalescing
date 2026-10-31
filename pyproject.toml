@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cgoc-poc"
-version = "0.1.0"
-description = "Local counterexample-guided operator coalescing research harness"
+version = "0.2.0"
+description = "Functional tests and controlled recovery for language-model FFN weight sharing"
 readme = "README.md"
 authors = [{name = "Artem Legotin"}]
 license = "AGPL-3.0-only AND CC-BY-4.0"

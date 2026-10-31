@@ -1,0 +1,95 @@
+{
+  "account_repositories": [
+    {
+      "description": "Optimizer-aware checks for low-rank gradients: tested AdamW previews, full-cost MPS benchmarks, and reproducible synthetic evidence.",
+      "files": {
+        "CITATION.cff": "b7702e03c70aed4ca989cdc790682907940e0894c6fc7504e1ef6c9e5a350467",
+        "LICENSE": "e9df4c4e4e64b8168a71c3c67668dcffabbe8fca11d4ac4a7d5482562cd1679c",
+        "LICENSING.md": "9af2c815430ed180a7b5120c7ef31e7a774db486281be4b0127f9c7603249225",
+        "README.md": "1b6f3a7e634bf40cc5594bfbd505f562a26acaf3e8eeb0df635406e11b6643af"
+      },
+      "head": "9d8ad069c51b4d0e6c13e9c6e465579e9b44a339",
+      "license": {
+        "key": "agpl-3.0",
+        "name": "GNU Affero General Public License v3.0",
+        "node_id": "MDc6TGljZW5zZTE=",
+        "spdx_id": "AGPL-3.0",
+        "url": "https://api.github.com/licenses/agpl-3.0"
+      },
+      "repo": "optimizer-aware-residual-auditing"
+    },
+    {
+      "description": "Exact weight sharing for related LLMs: 20.49% smaller storage, verified reconstruction, and documented numerical and latency limits.",
+      "files": {
+        "CITATION.cff": "b9e0f4d9bb71908cf2a00112d05f0adc9701d7efe7461752ad0b5145a1d87114",
+        "LICENSE": "41c454984ccb03e15b90fecd4ac64405dddb1b61e8aaba7e6aadb6e54a34456e",
+        "LICENSING.md": "733d1860e231c9ec695816aed9a8c0edf4d1ad2347309938baa183812489e651",
+        "README.md": "7c649e177e2231437ca2b92f3a0cbaac2454ad0df149bc3a22f33df8823bcb7d"
+      },
+      "head": "0096365d5f71a7b222ebd58f2a3f76dc650c4a12",
+      "license": {
+        "key": "agpl-3.0",
+        "name": "GNU Affero General Public License v3.0",
+        "node_id": "MDc6TGljZW5zZTE=",
+        "spdx_id": "AGPL-3.0",
+        "url": "https://api.github.com/licenses/agpl-3.0"
+      },
+      "repo": "FamilyTiles"
+    },
+    {
+      "description": "Streaming memory for deferred temporal queries: exact age moments, matched byte budgets, and a reproducible synthetic/sensor study with no demonstrated overall advantage.",
+      "files": {
+        "CITATION.cff": "6d08b119ae6f2d15e44a280878896c67b0c5a9dc94e51bec1f083bdd4c450a6e",
+        "LICENSE": "e9df4c4e4e64b8168a71c3c67668dcffabbe8fca11d4ac4a7d5482562cd1679c",
+        "LICENSING.md": "0f5af6eb777d435c7d64180a9f44018487e2dc1443533326a55a2ab6c2d6962d",
+        "README.md": "45c5b9a2d8e44fae18bf15ca2eda3e446957112fc5853c69bf63ce0f3143122a"
+      },
+      "head": "9dec5367567568233e67cfeede8319e330e504e9",
+      "license": {
+        "key": "agpl-3.0",
+        "name": "GNU Affero General Public License v3.0",
+        "node_id": "MDc6TGljZW5zZTE=",
+        "spdx_id": "AGPL-3.0",
+        "url": "https://api.github.com/licenses/agpl-3.0"
+      },
+      "repo": "FAM-Jet"
+    },
+    {
+      "description": "Function-preserving neuron growth in PyTorch, exact training-state recovery, and controlled capacity-allocation experiments with scoped negative results.",
+      "files": {
+        "CITATION.cff": "688f733835ba37d7dfce90ac8d07ed97a0407185a7030fc73e602c9087e7e45c",
+        "LICENSE": "e9df4c4e4e64b8168a71c3c67668dcffabbe8fca11d4ac4a7d5482562cd1679c",
+        "LICENSING.md": "3b00255f5052f88154a931a407c9b8749a4018f45633ce85f14f0c8bbbbd51f2",
+        "README.md": "6e04356b387454e37b6a76824f9d744f04ab630cba5c97b02961076093be5e6a"
+      },
+      "head": "fe406e698ac77dd65f5813bebef9615a3a1f01e3",
+      "license": {
+        "key": "agpl-3.0",
+        "name": "GNU Affero General Public License v3.0",
+        "node_id": "MDc6TGljZW5zZTE=",
+        "spdx_id": "AGPL-3.0",
+        "url": "https://api.github.com/licenses/agpl-3.0"
+      },
+      "repo": "adaptive-tree-neurons"
+    }
+  ],
+  "license_policy": "retain current split; no relabeling of upstream or facts",
+  "readme_skill": {
+    "file_hashes": {
+      "README.md": "24967608888df63c93d9ab7b11cc3223daf13ab8cb0030e9bba8d4eb25c875ee",
+      "skills/write-like-me/SKILL.md": "d85c5b21257c33ae9231644780cc2304584dcda4b03f8212354d9c85235f6554",
+      "skills/write-like-me/references/anti-slop.md": "b12ed50f1069290617c2eb2964f4ac8e2de402597e7cf8eb1aa4dfa443cae732",
+      "skills/write-like-me/references/revision.md": "43414d9dd9dd9bc61dc54d1a601dd8009fdf1850f3abd51285f18bfa4fc39c1e",
+      "skills/write-like-me/references/voice.md": "a80a2df7e5669619d05925bb8f7a4d3fdd620ba2026861abf4b601dfe8f42750"
+    },
+    "files": [
+      "README.md",
+      "skills/write-like-me/SKILL.md",
+      "skills/write-like-me/references/anti-slop.md",
+      "skills/write-like-me/references/revision.md",
+      "skills/write-like-me/references/voice.md"
+    ],
+    "repo": "arlegotin/write-like-me",
+    "sha": "b7a28e64fed749406a2fd8406d5ebd3eedd584c0"
+  }
+}
