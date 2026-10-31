@@ -1,0 +1,45 @@
+{
+  "critical": 0,
+  "declined_to_judge_rulings": [
+    "Remote publication, CI, tag and downloaded asset checks remain root execution gates before completion.",
+    "No training, native model execution, capability or protected confirmation is authorized as release validation; none is inferred.",
+    "Author-specific historical paths remain provenance. The portable verifier never opens them.",
+    "Receipt hashes and arithmetic verification establish integrity, not independent historical scientific replication.",
+    "Root retrieved account repositories and the requested README skill at recorded immutable revisions before review.",
+    "License and attribution consistency were checked; no independent legal ownership determination is claimed.",
+    "The bounded archive audit and inspected tracked inventory are retained; no claim of exhaustive semantic secret or corpus detection.",
+    "Historical qualification binds its original implementation snapshot. Release-only edits do not imply new native qualification."
+  ],
+  "implementation_fix_pass": "No Critical or Important findings; no implementation changes after review.",
+  "important": 0,
+  "minor": [
+    {
+      "disposition": "Deferred. All actual reviewed source, nested-source and evidence archives independently have no extraction aliases. Publication uses exact rebuilt and audited assets. This is future auditor hardening, not an artifact defect. No implementation fix or re-review in this release.",
+      "finding": "Archive auditor accepts raw path aliases with a dot component or repeated separator.",
+      "grade": "Minor"
+    }
+  ],
+  "publication_authorization": "User explicitly requested prepare and publish; normal fast-forward main push and GitHub release, no force or registry upload.",
+  "review_sha256": "dc053dd01bd60b5c9b8fce587a8aa54011314958cd456016d416a5fffd0fd0b1",
+  "reviewed_commit": "53e411d5f8fe86f0347f064e3d14c3b8c23b615c",
+  "reviewed_files": {
+    "CHANGELOG.md": "8c7cfad922bafe3d1062e4af29748b4b3d957a9fcb903c09fc54c966898732c3",
+    "CITATION.cff": "b6537456af0d15c725387c6d6037f63d8822ee29b26d98c4c3edb79ce4b92bcb",
+    "README.md": "21766409705f6a73508f0e8dd99f0394d604ed16084993ec0652ff2dcaed4df8",
+    "THIRD_PARTY_NOTICES.md": "f190407a37d91592737c5b1d9adf16b701f742ec193161126fb3adde26544dcc",
+    "docs/continuation-status-2026-10-31.md": "8e668fae3654f3a783dc4d3a2691e365eab52e11485acf9d8d14808cafa4f31a",
+    "docs/dense-baseline-campaign.md": "cac130277f50a7f527c06590b5c1b6c0c88aed04c64945e7c6adf2c63d7e567c",
+    "docs/superpowers/plans/2026-10-31-release-v0.2.0.md": "8bdedeabb108b132fb2bc539362b89ea344d9ebfb0090f9b9a29647717d69124",
+    "docs/superpowers/specs/2026-10-31-release-v0.2.0.md": "d9e8fef4be269df1d323693d5623df93d12c450ba1fa5e1500416f5ee5c8e74d",
+    "provenance/build_release.py": "73da96e505609d673aec407cd2ede0bca04ee3330ebe99d94145af53d7cfed6d",
+    "provenance/releases/v0.2.0/baseline.json": "cc59e7dc7c373b621bdd37418ae3bff80659eb48c44b3fa309451528cfd1f66c",
+    "provenance/releases/v0.2.0/checkpoint-sha256.json": "e8cc80040fc1b20dc00ec342c8437dadc3de41c9f10b51504b228639adfda062",
+    "provenance/releases/v0.2.0/metadata-checks.json": "cfbde7d476c64c76c1144e5ed107bdbe7025e51a40ad0d78abb7a22027a4a1fa",
+    "provenance/releases/v0.2.0/references.json": "f4da850fa222d3ca713133f8b6019b9291c4b4fa166a54c623933582197ed454",
+    "provenance/verify_checkpoint.py": "5ffe29aa7ffaa6882e463f92590d3b3b8ea4d3c090e3c2735c55769f36ded02e",
+    "pyproject.toml": "aff6907843d9fdec2b265cc86a8db8dfd0668f5d099572cf73be6b753c9159af",
+    "tests/test_checkpoint_release.py": "089b50dbe14a1621c5062f7bbeb82a0c0e74f0dc50183ee8a11141da08d6aa44",
+    "tests/test_release_archives.py": "80b8c1d764b62c3bbc203ef024f028d9abea0b3f3882e95cc2d39653c98f15a8"
+  },
+  "schema_version": 1
+}
